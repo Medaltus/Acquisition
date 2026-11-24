@@ -1,1 +1,830 @@
-placeholder
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Medaltus · Brand Portfolio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+@font-face { font-family:'GT Walsheim Pro Bold';   src:url('GT Walsheim Pro Bold.ttf') format('truetype');   font-weight:700; font-style:normal; }
+@font-face { font-family:'GT Walsheim Pro Medium'; src:url('GT Walsheim Pro Medium.ttf') format('truetype'); font-weight:500; font-style:normal; }
+@font-face { font-family:'GT Walsheim Pro Light';  src:url('GT Walsheim Pro Light.ttf') format('truetype');  font-weight:300; font-style:normal; }
+@font-face { font-family:'Plantin MT Pro Italic';  src:url('Monotype - PlantinMTPro-Italic.otf') format('opentype'); font-style:italic; }
+
+:root{
+  --navy:#001F60; --slate:#6B7BA2; --green:#24E9A3; --sand:#F4DFD0; --silver:#CCD3D5;
+  --white:#ffffff; --bg:#F5F6F9; --bg2:#ECEEF4;
+  --navy-dim:rgba(0,31,96,0.06); --green-dim:rgba(36,233,163,0.13);
+  --border:rgba(0,31,96,0.10); --border2:rgba(0,31,96,0.06);
+  --text:#001F60; --muted:#6B7BA2; --success:#24e9a3; --warn:#C87D2F; --danger:#db372d;
+  --green-ink:#139a6b;
+  --sidebar-w:224px;
+  --font:'GT Walsheim Pro Light','DM Sans',system-ui,sans-serif; --mono:'DM Mono','Fira Mono',monospace;
+  --font-header:'GT Walsheim Pro Medium','DM Sans',system-ui,sans-serif;
+  --font-bold:'GT Walsheim Pro Bold','DM Sans',system-ui,sans-serif;
+  --font-subheader:'Plantin MT Pro Italic',Georgia,'Times New Roman',serif;
+  --radius:10px; --radius-sm:6px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+strong,b{font-family:var(--font-bold);font-weight:700;}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--font);font-size:13px;line-height:1.55;}
+a{color:inherit;}
+button,input,select,textarea{font-family:var(--font);}
+:focus-visible{outline:2px solid var(--green);outline-offset:2px;}
+
+/* ── Layout ── */
+.shell{display:flex;height:100vh;overflow:hidden;}
+.sidebar{width:var(--sidebar-w);min-width:var(--sidebar-w);background:var(--navy);display:flex;flex-direction:column;overflow-y:auto;flex-shrink:0;}
+.main{flex:1;overflow-y:auto;display:flex;flex-direction:column;min-width:0;}
+
+/* ── Sidebar ── */
+.sb-brand{padding:20px 16px 14px;border-bottom:1px solid rgba(255,255,255,0.07);}
+.sb-brand-logo{display:flex;align-items:center;gap:6px;font-size:16px;font-weight:600;color:#fff;letter-spacing:-.3px;}
+.sb-brand-logo img{height:18px;width:auto;}
+.sb-brand-logo .dot{color:var(--green);}
+.sb-brand-sub{font-size:10px;color:rgba(255,255,255,0.35);text-transform:uppercase;letter-spacing:.08em;margin-top:3px;}
+nav{flex:1;padding:8px 8px 0;}
+.nav-section{font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,0.28);padding:0 8px;margin:14px 0 4px;}
+.nav-section:first-child{margin-top:4px;}
+.nav-btn{display:flex;align-items:center;gap:8px;width:100%;padding:8px 10px;border:none;background:none;color:rgba(255,255,255,0.95);font-size:12.5px;border-radius:var(--radius-sm);cursor:pointer;text-align:left;transition:all .13s;}
+.nav-btn:hover{background:rgba(255,255,255,0.06);color:#fff;}
+.nav-btn.active{background:rgba(36,233,163,0.14);color:var(--green);}
+.nav-btn svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:1.6;flex-shrink:0;}
+.nav-badge{margin-left:auto;background:rgba(36,233,163,0.2);color:var(--green);font-size:9px;font-weight:700;padding:1px 6px;border-radius:10px;letter-spacing:.03em;}
+.sb-foot{padding:14px 16px;border-top:1px solid rgba(255,255,255,0.07);font-size:10.5px;color:rgba(255,255,255,0.4);}
+.sb-foot button{background:none;border:none;color:rgba(255,255,255,0.55);cursor:pointer;font-size:10.5px;padding:0;text-decoration:underline;}
+
+/* ── Topbar ── */
+.topbar{background:var(--white);border-bottom:1px solid var(--border);padding:0 28px;height:52px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;gap:12px;}
+.topbar-title{font-size:14px;font-weight:600;color:var(--navy);letter-spacing:-.2px;font-family:var(--font-header);}
+.topbar-right{display:flex;align-items:center;gap:10px;}
+.topbar-date{font-size:11px;color:var(--muted);background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);padding:4px 10px;}
+.confidential-badge{background:rgba(219,55,45,0.10);border:1px solid rgba(219,55,45,0.20);border-radius:20px;padding:3px 10px;font-size:10px;font-weight:600;color:var(--danger);letter-spacing:.04em;text-transform:uppercase;}
+.sheet-link-btn{display:inline-flex;align-items:center;gap:6px;background:var(--white);border:1px solid var(--border);border-radius:999px;padding:6px 13px;font-size:11.5px;font-weight:600;color:var(--navy);cursor:pointer;text-decoration:none;transition:all .13s;}
+.sheet-link-btn:hover{background:var(--bg2);}
+.sheet-link-btn svg{width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:1.6;}
+
+/* ── Page ── */
+.page{display:none;flex:1;padding:28px;}
+.page.active{display:block;}
+.page-hd{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:22px;gap:12px;flex-wrap:wrap;}
+.page-title{font-size:22px;font-weight:700;letter-spacing:-.3px;color:var(--navy);font-family:var(--font-subheader);}
+.page-sub{font-size:12px;color:var(--muted);margin-top:3px;max-width:62ch;}
+
+/* ── KPI row ── */
+.kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px;margin-bottom:22px;}
+.kpi-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:20px;min-height:108px;}
+.kpi-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:11px;}
+.kpi-value{font-size:30px;font-weight:600;letter-spacing:-1px;line-height:1;color:var(--navy);font-family:var(--font-subheader);}
+.kpi-sub{font-size:11.5px;color:var(--muted);margin-top:7px;}
+
+/* ── Card / table ── */
+.card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;}
+.table-wrap{overflow-x:auto;}
+table.data-table{width:100%;border-collapse:collapse;}
+table.data-table thead tr{background:var(--navy);}
+table.data-table thead th{padding:10px 12px;font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--white);text-align:left;white-space:nowrap;}
+table.data-table thead th.sortable{cursor:pointer;user-select:none;}
+table.data-table thead th.sortable:hover{color:var(--green);}
+table.data-table tbody tr{border-bottom:1px solid var(--border2);}
+table.data-table.plain tbody tr:nth-child(odd){background:var(--bg);}
+table.data-table tbody td{padding:11px 12px;font-size:12px;color:var(--navy);vertical-align:middle;}
+.brand-cell{display:flex;align-items:center;gap:10px;min-width:200px;}
+.brand-mark{width:30px;height:30px;border-radius:50%;background:var(--white);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0;font-family:var(--font-subheader);font-size:14px;color:var(--navy);}
+.brand-mark img{width:100%;height:100%;object-fit:contain;padding:3px;}
+.brand-name{font-family:var(--font-header);font-size:13px;color:var(--navy);}
+.brand-site{font-size:11px;color:var(--muted);text-decoration:none;}
+.brand-site:hover{color:var(--navy);text-decoration:underline;}
+.muted{color:var(--muted);}
+.small{font-size:11px;}
+.nowrap{white-space:nowrap;}
+.empty{padding:48px 24px;text-align:center;color:var(--muted);}
+.empty strong{display:block;color:var(--navy);font-family:var(--font-subheader);font-size:17px;font-weight:400;margin-bottom:6px;}
+
+/* Tenure bar */
+.tenure{display:flex;flex-direction:column;gap:5px;min-width:120px;}
+.tenure-track{height:4px;background:var(--bg2);border-radius:2px;overflow:hidden;}
+.tenure-fill{height:100%;background:var(--green);border-radius:2px;}
+
+/* Pills */
+.pill{display:inline-block;font-size:10px;font-weight:700;padding:3px 10px;border-radius:10px;letter-spacing:.03em;white-space:nowrap;}
+.az-not{background:var(--green-dim);color:var(--green-ink);}
+.az-resell{background:rgba(200,125,47,.14);color:var(--warn);}
+.az-single{background:var(--navy-dim);color:var(--navy);}
+.az-nooffer{background:rgba(219,55,45,.10);color:var(--danger);}
+.az-pending{background:var(--bg2);color:var(--muted);}
+.chip{display:inline-block;font-size:10.5px;color:var(--navy);background:var(--bg2);border-radius:999px;padding:2px 8px;margin:0 4px 3px 0;white-space:nowrap;}
+
+/* Buttons */
+.btn{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:8px 16px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid transparent;transition:all .13s;}
+.btn-primary{background:var(--green);color:var(--navy);border-color:var(--green);}
+.btn-primary:hover{filter:brightness(.95);}
+.btn-ghost{background:var(--white);color:var(--navy);border-color:var(--border);}
+.btn-ghost:hover{background:var(--bg2);}
+.btn-sm{padding:4px 11px;font-size:11px;border-radius:var(--radius-sm);}
+.btn-link{background:none;border:none;color:var(--muted);font-size:11px;cursor:pointer;text-decoration:underline;padding:0;}
+.btn-link:hover{color:var(--navy);}
+.btn[disabled]{opacity:.5;cursor:default;}
+
+/* ── Prospect pipeline (stage strip) ── */
+.pipeline{display:grid;grid-template-columns:repeat(7,minmax(0,1fr)) minmax(120px,.9fr);gap:0;background:var(--white);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:16px;}
+.stage{position:relative;border:none;background:none;text-align:left;padding:16px 16px 18px;cursor:pointer;border-right:1px solid var(--border2);transition:background .13s;}
+.stage:hover{background:var(--bg);}
+.stage-count{font-family:var(--font-subheader);font-size:30px;line-height:1;color:var(--navy);letter-spacing:-.5px;}
+.stage-label{font-size:11.5px;color:var(--muted);margin-top:8px;line-height:1.3;}
+.stage::after{content:'';position:absolute;left:0;right:0;bottom:0;height:3px;background:var(--stage-color,var(--bg2));}
+.stage.active{background:var(--navy);}
+.stage.active .stage-count{color:#fff;}
+.stage.active .stage-label{color:rgba(255,255,255,.7);}
+.stage.closed{background:var(--bg);}
+.stage.closed.active{background:var(--navy);}
+
+/* Filter bar */
+.filters{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-bottom:16px;}
+.seg{display:flex;flex-wrap:wrap;gap:2px;background:var(--white);border:1px solid var(--border);border-radius:999px;padding:4px;}
+.seg button{padding:6px 13px;border:none;background:none;border-radius:999px;font-size:11.5px;font-weight:600;color:var(--muted);cursor:pointer;white-space:nowrap;}
+.seg button:hover{background:var(--bg2);color:var(--navy);}
+.seg button.active{background:var(--navy);color:#fff;}
+.seg .n{font-weight:400;opacity:.75;margin-left:3px;}
+.field{border:1px solid var(--border);background:var(--white);border-radius:999px;padding:7px 13px;font-size:12px;color:var(--navy);}
+.field:focus{outline:none;border-color:var(--navy);}
+input.field[type=search]{min-width:220px;}
+.toggle{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;color:var(--muted);cursor:pointer;}
+.result-count{margin-left:auto;font-size:11.5px;color:var(--muted);}
+
+/* Prospect rows */
+tr.row{cursor:pointer;}
+tr.row:hover td{background:rgba(36,233,163,0.05);}
+tr.row.open td{background:rgba(36,233,163,0.08);}
+.outreach-select{border:1px solid var(--border);background:var(--white);border-radius:var(--radius-sm);padding:5px 8px;font-size:11.5px;color:var(--navy);cursor:pointer;max-width:150px;}
+.az-meta{font-size:10.5px;color:var(--muted);margin-top:4px;}
+.prod-count{font-family:var(--font-header);font-size:13px;}
+
+/* Detail panel */
+tr.detail > td{padding:0 !important;background:var(--white) !important;}
+.detail-inner{padding:20px 22px 22px;border-left:3px solid var(--green);}
+.detail-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px;margin-bottom:20px;}
+.detail-hd{font-family:var(--font-subheader);font-size:15px;color:var(--navy);margin-bottom:10px;}
+.kv{display:grid;grid-template-columns:110px 1fr;gap:5px 10px;font-size:12px;}
+.kv dt{color:var(--muted);}
+.kv dd{color:var(--navy);word-break:break-word;}
+.signals{list-style:none;font-size:12px;}
+.signals li{padding:5px 0;border-bottom:1px solid var(--border2);}
+.signals li:last-child{border-bottom:none;}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.form-grid label{display:flex;flex-direction:column;gap:3px;font-size:10.5px;color:var(--muted);}
+.form-grid label.full{grid-column:1/-1;}
+.input{border:1px solid var(--border);border-radius:var(--radius-sm);padding:7px 9px;font-size:12px;color:var(--navy);background:var(--white);width:100%;}
+.input:focus{outline:none;border-color:var(--navy);}
+textarea.input{resize:vertical;min-height:64px;line-height:1.5;}
+.form-actions{display:flex;justify-content:flex-end;align-items:center;gap:10px;margin-top:10px;}
+.products-hd{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px;flex-wrap:wrap;}
+.products-box{border:1px solid var(--border);border-radius:var(--radius-sm);max-height:380px;overflow:auto;}
+.products-box table.data-table thead th{position:sticky;top:0;background:var(--navy);z-index:1;}
+.gap-neg{color:var(--danger);font-weight:600;}
+
+/* Modal */
+.modal-bg{position:fixed;inset:0;background:rgba(0,31,96,.45);display:none;align-items:center;justify-content:center;z-index:50;padding:20px;}
+.modal-bg.open{display:flex;}
+.modal{background:var(--white);border-radius:var(--radius);padding:24px;width:100%;max-width:480px;box-shadow:0 20px 50px rgba(0,31,96,.25);}
+.modal h3{font-family:var(--font-subheader);font-weight:400;font-size:19px;margin-bottom:4px;}
+.modal p{font-size:12px;color:var(--muted);margin-bottom:16px;}
+
+/* Gate */
+.gate{position:fixed;inset:0;background:linear-gradient(135deg,var(--navy) 0%,#0d3494 100%);display:none;align-items:center;justify-content:center;z-index:100;padding:20px;}
+.gate.open{display:flex;}
+.gate-card{background:var(--white);border-radius:var(--radius);padding:30px;width:100%;max-width:360px;}
+.gate-card h1{font-family:var(--font-subheader);font-weight:400;font-size:24px;color:var(--navy);margin-bottom:4px;}
+.gate-card p{font-size:12px;color:var(--muted);margin-bottom:18px;}
+.gate-err{color:var(--danger);font-size:11.5px;margin-top:8px;min-height:16px;}
+
+/* Toast + loading */
+.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--navy);color:#fff;padding:9px 18px;border-radius:999px;font-size:12px;opacity:0;pointer-events:none;transition:all .2s;z-index:60;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+.toast.err{background:var(--danger);}
+.loading{padding:60px 24px;text-align:center;color:var(--muted);}
+.more-row{display:flex;justify-content:center;padding:14px;}
+
+@media (max-width:1100px){
+  .pipeline{grid-template-columns:repeat(4,minmax(0,1fr));}
+  .stage{border-bottom:1px solid var(--border2);}
+  .detail-grid{grid-template-columns:1fr;}
+}
+@media (max-width:860px){
+  .shell{flex-direction:column;height:auto;min-height:100vh;}
+  .sidebar{width:100%;min-width:0;flex-direction:row;align-items:center;overflow-x:auto;}
+  .sb-brand{border-bottom:none;padding:12px 14px;}
+  .sb-brand-sub,.nav-section,.sb-foot{display:none;}
+  nav{display:flex;padding:8px;gap:4px;}
+  .nav-btn{white-space:nowrap;}
+  .main{overflow:visible;}
+  .page{padding:18px;}
+  .topbar{padding:0 18px;}
+  .topbar-date,.confidential-badge{display:none;}
+  .pipeline{grid-template-columns:repeat(2,minmax(0,1fr));}
+  input.field[type=search]{min-width:0;flex:1;}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none !important;}}
+</style>
+</head>
+<body>
+
+<!-- Password gate -->
+<div class="gate" id="gate">
+  <form class="gate-card" onsubmit="signIn(event)">
+    <h1>Brand Portfolio</h1>
+    <p>Internal Medaltus dashboard. Enter the dashboard password to continue.</p>
+    <input class="input" type="password" id="gate-pw" placeholder="Dashboard password" autocomplete="current-password" required>
+    <div class="gate-err" id="gate-err"></div>
+    <div class="form-actions"><button class="btn btn-primary" type="submit">Sign in</button></div>
+  </form>
+</div>
+
+<div class="shell">
+<aside class="sidebar">
+  <div class="sb-brand">
+    <div class="sb-brand-logo">
+      <span class="dot">•</span>
+      <img src="/Medaltus_Typeface Logo_dark bground_RGB.svg" alt="Medaltus" onerror="this.replaceWith(document.createTextNode('Medaltus'))">
+    </div>
+    <div class="sb-brand-sub">Brand Portfolio</div>
+  </div>
+  <nav>
+    <div class="nav-section">Partners</div>
+    <button class="nav-btn active" data-page="current" onclick="showPage('current')">
+      <svg viewBox="0 0 16 16"><circle cx="8" cy="5.5" r="3"/><path d="M2.5 14.5c.8-2.8 3-4.3 5.5-4.3s4.7 1.5 5.5 4.3"/></svg>Current Brands<span class="nav-badge" id="nb-current">–</span>
+    </button>
+    <button class="nav-btn" data-page="retired" onclick="showPage('retired')">
+      <svg viewBox="0 0 16 16"><rect x="1.5" y="3" width="13" height="3" rx="1"/><path d="M2.5 6v7.5a1 1 0 001 1h9a1 1 0 001-1V6M6.5 9h3"/></svg>Retired Brands<span class="nav-badge" id="nb-retired">–</span>
+    </button>
+    <div class="nav-section">Growth</div>
+    <button class="nav-btn" data-page="prospects" onclick="showPage('prospects')">
+      <svg viewBox="0 0 16 16"><circle cx="7" cy="7" r="5"/><path d="M10.7 10.7L14.5 14.5"/></svg>Future Prospects<span class="nav-badge" id="nb-prospects">–</span>
+    </button>
+  </nav>
+  <div class="sb-foot">
+    <div id="sb-updated">Loading…</div>
+    <button id="signout-btn" onclick="signOut()" hidden>Sign out</button>
+  </div>
+</aside>
+
+<main class="main">
+  <div class="topbar">
+    <div class="topbar-title" id="topbar-title">Current Brands</div>
+    <div class="topbar-right">
+      <span class="confidential-badge">Internal</span>
+      <span class="topbar-date" id="topbar-date"></span>
+      <a class="sheet-link-btn" id="sheet-link" href="#" target="_blank" rel="noopener" hidden>
+        <svg viewBox="0 0 16 16"><rect x="2" y="1.5" width="12" height="13" rx="1.5"/><path d="M2 6h12M2 10h12M6 6v8.5"/></svg>Open sheet
+      </a>
+      <button class="sheet-link-btn" onclick="load(true)">
+        <svg viewBox="0 0 16 16"><path d="M13.5 8A5.5 5.5 0 113 4.8M3 1.5v3.5h3.5"/></svg>Refresh
+      </button>
+    </div>
+  </div>
+
+  <!-- ══ CURRENT ══ -->
+  <section class="page active" id="page-current">
+    <div class="page-hd">
+      <div>
+        <div class="page-title">Current Brands</div>
+        <div class="page-sub">Every brand we partner with today, with when the partnership started.</div>
+      </div>
+      <button class="btn btn-primary" onclick="openAddModal()">Add brand</button>
+    </div>
+    <div class="kpi-row" id="current-kpis"></div>
+    <div class="card"><div class="table-wrap" id="current-table"><div class="loading">Loading brands…</div></div></div>
+  </section>
+
+  <!-- ══ RETIRED ══ -->
+  <section class="page" id="page-retired">
+    <div class="page-hd">
+      <div>
+        <div class="page-title">Retired Brands</div>
+        <div class="page-sub">Past partners, how long we worked together, and why it ended.</div>
+      </div>
+    </div>
+    <div class="kpi-row" id="retired-kpis"></div>
+    <div class="card"><div class="table-wrap" id="retired-table"><div class="loading">Loading brands…</div></div></div>
+  </section>
+
+  <!-- ══ PROSPECTS ══ -->
+  <section class="page" id="page-prospects">
+    <div class="page-hd">
+      <div>
+        <div class="page-title">Future Prospects</div>
+        <div class="page-sub">Brands found by the scanner. Click a stage to filter, click a brand for its products and outreach notes.</div>
+      </div>
+    </div>
+    <div class="pipeline" id="pipeline"></div>
+    <div class="filters">
+      <div class="seg" id="az-seg"></div>
+    </div>
+    <div class="filters">
+      <input class="field" type="search" id="f-search" placeholder="Search brands" oninput="onFilter()">
+      <select class="field" id="f-category" onchange="onFilter()"><option value="">All categories</option></select>
+      <select class="field" id="f-source" onchange="onFilter()"><option value="">All sources</option></select>
+      <select class="field" id="f-sort" onchange="onFilter()">
+        <option value="fit">Sort: best fit</option>
+        <option value="retailers">Sort: most retailers</option>
+        <option value="products">Sort: most products</option>
+        <option value="newest">Sort: newest found</option>
+        <option value="updated">Sort: recently updated</option>
+        <option value="name">Sort: name</option>
+      </select>
+      <label class="toggle"><input type="checkbox" id="f-hidefit" checked onchange="onFilter()"> Hide brands marked not a fit</label>
+      <span class="result-count" id="result-count"></span>
+    </div>
+    <div class="card"><div class="table-wrap" id="prospect-table"><div class="loading">Loading prospects…</div></div></div>
+  </section>
+</main>
+</div>
+
+<!-- Add brand modal -->
+<div class="modal-bg" id="add-modal" onclick="if(event.target===this)closeModal('add-modal')">
+  <form class="modal" onsubmit="saveNewPartner(event)">
+    <h3>Add a current brand</h3>
+    <p>Adds a row to the Partner Brands tab. The scanner will skip this brand from now on.</p>
+    <div class="form-grid">
+      <label class="full">Brand name<input class="input" name="brand_name" required></label>
+      <label class="full">Website<input class="input" name="website_url" placeholder="https://"></label>
+      <label>Partner since<input class="input" type="date" name="sign_date"></label>
+      <label>Partnership model
+        <select class="input" name="partnership_model">
+          <option value="">Choose…</option><option>Fully managed</option><option>Resale</option><option>3PL</option><option>Resale + 3PL</option>
+        </select>
+      </label>
+      <label>Brand manager<input class="input" name="brand_manager"></label>
+      <label>Channels<input class="input" name="channels" placeholder="Amazon, Walmart, TikTok Shop"></label>
+      <label class="full">Dashboard link<input class="input" name="dashboard_url" placeholder="https://"></label>
+    </div>
+    <div class="form-actions">
+      <button type="button" class="btn btn-ghost" onclick="closeModal('add-modal')">Cancel</button>
+      <button type="submit" class="btn btn-primary">Add brand</button>
+    </div>
+  </form>
+</div>
+
+<!-- Retire modal -->
+<div class="modal-bg" id="retire-modal" onclick="if(event.target===this)closeModal('retire-modal')">
+  <form class="modal" onsubmit="saveRetire(event)">
+    <h3 id="retire-title">Retire brand</h3>
+    <p>Moves the brand to Retired Brands. You can reinstate it later.</p>
+    <input type="hidden" name="brand_name">
+    <div class="form-grid">
+      <label>Partnership ended<input class="input" type="date" name="end_date" required></label>
+      <label>Reason
+        <select class="input" name="retired_reason" required>
+          <option value="">Choose…</option><option>Brand closed</option><option>Contract ended</option>
+          <option>Brand moved in-house</option><option>Moved to another agency</option><option>Medaltus ended it</option><option>Other</option>
+        </select>
+      </label>
+      <label class="full">Notes<textarea class="input" name="notes"></textarea></label>
+    </div>
+    <div class="form-actions">
+      <button type="button" class="btn btn-ghost" onclick="closeModal('retire-modal')">Cancel</button>
+      <button type="submit" class="btn btn-primary">Retire brand</button>
+    </div>
+  </form>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ───────────── State ───────────── */
+const KEY_STORE = 'medaltus_portfolio_key';
+let DATA = null;
+const UI = { stage: '', az: '', shown: 60, open: null, productCache: {}, missingOnly: {}, currentSort: 'sign_date' };
+const PAGE_TITLES = { current: 'Current Brands', retired: 'Retired Brands', prospects: 'Future Prospects' };
+
+const AZ = [
+  { key: 'Not on Amazon', cls: 'az-not', label: 'Not on Amazon', rank: 0 },
+  { key: 'On Amazon: reseller signals', cls: 'az-resell', label: 'Reseller signals', rank: 1 },
+  { key: 'Listed, no active offers', cls: 'az-nooffer', label: 'No active offers', rank: 2 },
+  { key: 'On Amazon: single seller', cls: 'az-single', label: 'Single seller', rank: 3 },
+  { key: '', cls: 'az-pending', label: 'Not checked yet', rank: 4 },
+];
+const azInfo = s => AZ.find(a => a.key === (s || '')) || AZ[4];
+const STAGE_COLORS = ['#CCD3D5', '#B7C6E4', '#8EA4D2', '#6B7BA2', '#3E5C9A', '#0d3494', '#24E9A3'];
+
+/* ───────────── Helpers ───────────── */
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const safeUrl = u => { const s = String(u || '').trim(); if (!s) return ''; const w = /^https?:\/\//i.test(s) ? s : 'https://' + s; try { const x = new URL(w); return /^https?:$/.test(x.protocol) ? x.href : ''; } catch { return ''; } };
+const domainOf = u => { try { return new URL(safeUrl(u)).hostname.replace(/^www\./, ''); } catch { return ''; } };
+const parseDate = s => { if (!s) return null; const d = new Date(/^\d{4}-\d{2}-\d{2}$/.test(s) ? s + 'T12:00:00' : s); return isNaN(d) ? null : d; };
+const fmtDate = s => { const d = parseDate(s); return d ? d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : ''; };
+const monthsBetween = (a, b) => (b.getFullYear() - a.getFullYear()) * 12 + (b.getMonth() - a.getMonth()) - (b.getDate() < a.getDate() ? 1 : 0);
+const fmtTenure = m => { if (m == null || m < 0) return ''; const y = Math.floor(m / 12), r = m % 12; if (!y) return `${r} mo`; return r ? `${y} yr${y > 1 ? 's' : ''} ${r} mo` : `${y} yr${y > 1 ? 's' : ''}`; };
+const relTime = s => { const d = parseDate(s); if (!d) return ''; const days = Math.floor((Date.now() - d) / 86400000); if (days <= 0) return 'Today'; if (days === 1) return 'Yesterday'; if (days < 30) return `${days} days ago`; return fmtDate(s); };
+const splitList = s => String(s || '').split(' | ').map(x => x.trim()).filter(Boolean);
+const todayIso = () => new Date().toISOString().slice(0, 10);
+const money = v => { const n = parseFloat(v); return Number.isFinite(n) ? '$' + n.toFixed(2) : ''; };
+
+function brandMark(name, logo) {
+  const initial = esc((String(name || '?').trim()[0] || '?').toUpperCase());
+  const src = safeUrl(logo);
+  return `<span class="brand-mark">${src ? `<img src="${esc(src)}" alt="" loading="lazy" onerror="this.parentNode.textContent='${initial}'">` : initial}</span>`;
+}
+function siteLink(url) {
+  const u = safeUrl(url);
+  return u ? `<a class="brand-site" href="${esc(u)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">${esc(domainOf(u))}</a>` : '<span class="brand-site">No website yet</span>';
+}
+function toast(msg, err = false) {
+  const t = $('toast'); t.textContent = msg; t.classList.toggle('err', err); t.classList.add('show');
+  clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove('show'), 2600);
+}
+
+/* ───────────── API ───────────── */
+async function api(path, opts = {}) {
+  const key = sessionStorage.getItem(KEY_STORE) || '';
+  const res = await fetch(path, { ...opts, headers: { 'Content-Type': 'application/json', 'x-dashboard-key': key, ...(opts.headers || {}) } });
+  if (res.status === 401) { sessionStorage.removeItem(KEY_STORE); showGate(key ? 'That password didn’t match. Check DASHBOARD_PASSWORD in Vercel.' : ''); throw new Error('unauthorized'); }
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(body.error || `Request failed (${res.status})`);
+  return body;
+}
+
+function showGate(msg = '') { $('gate').classList.add('open'); $('gate-err').textContent = msg; setTimeout(() => $('gate-pw').focus(), 50); }
+function signIn(e) { e.preventDefault(); sessionStorage.setItem(KEY_STORE, $('gate-pw').value); $('gate').classList.remove('open'); load(); }
+function signOut() { sessionStorage.removeItem(KEY_STORE); DATA = null; $('gate-pw').value = ''; showGate(); }
+
+async function load(manual = false) {
+  $('signout-btn').hidden = !sessionStorage.getItem(KEY_STORE);
+  try {
+    DATA = await api('/api/dashboard-data');
+    UI.productCache = {};
+    $('nb-current').textContent = DATA.current.length;
+    $('nb-retired').textContent = DATA.retired.length;
+    $('nb-prospects').textContent = DATA.prospects.filter(p => p.discovery_status !== 'Not a Fit').length;
+    $('sb-updated').textContent = 'Updated ' + new Date(DATA.generatedAt).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+    if (DATA.sheetUrl) { $('sheet-link').href = DATA.sheetUrl; $('sheet-link').hidden = false; }
+    buildProspectFilters();
+    renderAll();
+    if (manual) toast('Refreshed');
+  } catch (e) {
+    if (e.message !== 'unauthorized') {
+      ['current-table', 'retired-table', 'prospect-table'].forEach(id => $(id).innerHTML = `<div class="empty"><strong>Couldn’t load data</strong>${esc(e.message)}</div>`);
+    }
+  }
+}
+function renderAll() { renderCurrent(); renderRetired(); renderPipeline(); renderAzSeg(); renderProspects(); }
+
+/* ───────────── Navigation ───────────── */
+function showPage(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.toggle('active', p.id === 'page-' + page));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.toggle('active', b.dataset.page === page));
+  $('topbar-title').textContent = PAGE_TITLES[page];
+  history.replaceState(null, '', '#' + page);
+  document.querySelector('.main').scrollTop = 0;
+}
+
+/* ───────────── Current brands ───────────── */
+function setCurrentSort(k) { UI.currentSort = k; renderCurrent(); }
+function renderCurrent() {
+  const now = new Date();
+  const rows = DATA.current.map(p => { const d = parseDate(p.sign_date); return { ...p, _d: d, _m: d ? monthsBetween(d, now) : null }; });
+  const dated = rows.filter(r => r._d);
+  const maxM = Math.max(12, ...dated.map(r => r._m));
+  const avg = dated.length ? dated.reduce((a, r) => a + r._m, 0) / dated.length : null;
+  const newest = [...dated].sort((a, b) => b._d - a._d)[0];
+  const thisYear = dated.filter(r => r._d.getFullYear() === now.getFullYear()).length;
+  const managed = rows.filter(r => /fully managed/i.test(r.partnership_model)).length;
+
+  $('current-kpis').innerHTML = `
+    <div class="kpi-card"><div class="kpi-label">Active partners</div><div class="kpi-value">${rows.length}</div><div class="kpi-sub">${managed} fully managed</div></div>
+    <div class="kpi-card"><div class="kpi-label">Average partnership</div><div class="kpi-value">${avg == null ? '—' : fmtTenure(Math.round(avg))}</div><div class="kpi-sub">${dated.length < rows.length ? `${rows.length - dated.length} missing a sign date` : 'Across all current brands'}</div></div>
+    <div class="kpi-card"><div class="kpi-label">Signed this year</div><div class="kpi-value">${thisYear}</div><div class="kpi-sub">${now.getFullYear()}</div></div>
+    <div class="kpi-card"><div class="kpi-label">Newest partner</div><div class="kpi-value" style="font-size:22px">${newest ? esc(newest.brand_name) : '—'}</div><div class="kpi-sub">${newest ? 'Since ' + fmtDate(newest.sign_date) : ''}</div></div>`;
+
+  if (!rows.length) {
+    $('current-table').innerHTML = `<div class="empty"><strong>No current brands yet</strong>Add your partners with Add brand, or paste them into the Partner Brands tab of the sheet.</div>`;
+    return;
+  }
+  const s = UI.currentSort;
+  rows.sort((a, b) => s === 'name' ? a.brand_name.localeCompare(b.brand_name)
+    : s === 'newest' ? (b._d || 0) - (a._d || 0)
+    : (a._d || Infinity) - (b._d || Infinity));
+
+  $('current-table').innerHTML = `<table class="data-table plain"><thead><tr>
+      <th class="sortable" onclick="setCurrentSort('name')">Brand</th>
+      <th class="sortable" onclick="setCurrentSort(UI.currentSort==='sign_date'?'newest':'sign_date')">Partner since</th>
+      <th>Partnership length</th><th>Model</th><th>Brand manager</th><th>Channels</th><th>Dashboard</th><th></th>
+    </tr></thead><tbody>${rows.map(r => `<tr>
+      <td><div class="brand-cell">${brandMark(r.brand_name)}<div><div class="brand-name">${esc(r.brand_name)}</div>${siteLink(r.website_url)}</div></div></td>
+      <td class="nowrap">${r._d ? fmtDate(r.sign_date) : '<span class="muted">Add sign date</span>'}</td>
+      <td>${r._d ? `<div class="tenure"><span>${fmtTenure(r._m)}</span><div class="tenure-track"><div class="tenure-fill" style="width:${Math.max(3, Math.round(r._m / maxM * 100))}%"></div></div></div>` : '<span class="muted">—</span>'}</td>
+      <td>${esc(r.partnership_model) || '<span class="muted">—</span>'}</td>
+      <td>${esc(r.brand_manager) || '<span class="muted">—</span>'}</td>
+      <td>${splitChannels(r.channels)}</td>
+      <td>${safeUrl(r.dashboard_url) ? `<a class="btn btn-ghost btn-sm" href="${esc(safeUrl(r.dashboard_url))}" target="_blank" rel="noopener">Open</a>` : '<span class="muted">—</span>'}</td>
+      <td class="nowrap"><button class="btn-link" onclick="openRetire('${esc(r.brand_name).replace(/'/g, '&#39;')}')">Retire</button></td>
+    </tr>`).join('')}</tbody></table>`;
+}
+function splitChannels(s) {
+  const parts = String(s || '').split(/[,|]/).map(x => x.trim()).filter(Boolean);
+  return parts.length ? parts.map(p => `<span class="chip">${esc(p)}</span>`).join('') : '<span class="muted">—</span>';
+}
+
+/* ───────────── Retired brands ───────────── */
+function renderRetired() {
+  const rows = DATA.retired.map(p => { const a = parseDate(p.sign_date), b = parseDate(p.end_date); return { ...p, _a: a, _b: b, _m: a && b ? monthsBetween(a, b) : null }; })
+    .sort((x, y) => (y._b || 0) - (x._b || 0));
+  const withLen = rows.filter(r => r._m != null);
+  const avg = withLen.length ? withLen.reduce((s, r) => s + r._m, 0) / withLen.length : null;
+  const reasons = {};
+  rows.forEach(r => { if (r.retired_reason) reasons[r.retired_reason] = (reasons[r.retired_reason] || 0) + 1; });
+  const topReason = Object.entries(reasons).sort((a, b) => b[1] - a[1])[0];
+
+  $('retired-kpis').innerHTML = `
+    <div class="kpi-card"><div class="kpi-label">Retired brands</div><div class="kpi-value">${rows.length}</div></div>
+    <div class="kpi-card"><div class="kpi-label">Average partnership</div><div class="kpi-value">${avg == null ? '—' : fmtTenure(Math.round(avg))}</div></div>
+    <div class="kpi-card"><div class="kpi-label">Most common reason</div><div class="kpi-value" style="font-size:20px">${topReason ? esc(topReason[0]) : '—'}</div><div class="kpi-sub">${topReason ? `${topReason[1]} of ${rows.length}` : ''}</div></div>`;
+
+  if (!rows.length) { $('retired-table').innerHTML = `<div class="empty"><strong>No retired brands</strong>Retire a brand from Current Brands and it moves here.</div>`; return; }
+  $('retired-table').innerHTML = `<table class="data-table plain"><thead><tr>
+      <th>Brand</th><th>Partner since</th><th>Ended</th><th>Partnership length</th><th>Model</th><th>Reason</th><th>Notes</th><th></th>
+    </tr></thead><tbody>${rows.map(r => `<tr>
+      <td><div class="brand-cell">${brandMark(r.brand_name)}<div><div class="brand-name">${esc(r.brand_name)}</div>${siteLink(r.website_url)}</div></div></td>
+      <td class="nowrap">${fmtDate(r.sign_date) || '<span class="muted">—</span>'}</td>
+      <td class="nowrap">${fmtDate(r.end_date)}</td>
+      <td>${r._m != null ? fmtTenure(r._m) : '<span class="muted">—</span>'}</td>
+      <td>${esc(r.partnership_model) || '<span class="muted">—</span>'}</td>
+      <td>${esc(r.retired_reason) || '<span class="muted">—</span>'}</td>
+      <td class="small" style="max-width:260px">${esc(r.notes)}</td>
+      <td class="nowrap"><button class="btn-link" onclick="reinstate('${esc(r.brand_name).replace(/'/g, '&#39;')}')">Reinstate</button></td>
+    </tr>`).join('')}</tbody></table>`;
+}
+
+/* ───────────── Partner actions ───────────── */
+function openAddModal() { const f = $('add-modal').querySelector('form'); f.reset(); f.sign_date.value = todayIso(); $('add-modal').classList.add('open'); f.brand_name.focus(); }
+function closeModal(id) { $(id).classList.remove('open'); }
+async function saveNewPartner(e) {
+  e.preventDefault();
+  const data = Object.fromEntries(new FormData(e.target).entries());
+  try { await api('/api/dashboard-update', { method: 'POST', body: JSON.stringify({ type: 'partner', action: 'add', data }) });
+    closeModal('add-modal'); toast(`${data.brand_name} added`); load();
+  } catch (err) { if (err.message !== 'unauthorized') toast(err.message, true); }
+}
+function openRetire(name) {
+  const f = $('retire-modal').querySelector('form'); f.reset();
+  f.brand_name.value = name; f.end_date.value = todayIso();
+  $('retire-title').textContent = `Retire ${name}`;
+  $('retire-modal').classList.add('open');
+}
+async function saveRetire(e) {
+  e.preventDefault();
+  const data = Object.fromEntries(new FormData(e.target).entries());
+  const name = data.brand_name; delete data.brand_name;
+  const existing = DATA.current.find(p => p.brand_name === name);
+  if (data.notes && existing?.notes) data.notes = existing.notes + ' | ' + data.notes;
+  else if (!data.notes) delete data.notes;
+  try { await api('/api/dashboard-update', { method: 'POST', body: JSON.stringify({ type: 'partner', action: 'update', brand_name: name, data }) });
+    closeModal('retire-modal'); toast(`${name} retired`); load();
+  } catch (err) { if (err.message !== 'unauthorized') toast(err.message, true); }
+}
+async function reinstate(name) {
+  if (!confirm(`Move ${name} back to Current Brands?`)) return;
+  try { await api('/api/dashboard-update', { method: 'POST', body: JSON.stringify({ type: 'partner', action: 'update', brand_name: name, data: { end_date: '', retired_reason: '' } }) });
+    toast(`${name} reinstated`); load();
+  } catch (err) { if (err.message !== 'unauthorized') toast(err.message, true); }
+}
+
+/* ───────────── Prospects ───────────── */
+const stageOf = p => p.outreach_status || 'Not Contacted';
+function baseProspects() {
+  return DATA.prospects.filter(p => !($('f-hidefit').checked && p.discovery_status === 'Not a Fit'));
+}
+function buildProspectFilters() {
+  const cats = [...new Set(DATA.prospects.map(p => p.category).filter(Boolean))].sort();
+  const srcs = [...new Set(DATA.prospects.flatMap(p => splitList(p.sources)))].sort();
+  const keep = (sel, opts, label) => { const v = sel.value; sel.innerHTML = `<option value="">${label}</option>` + opts.map(o => `<option${o === v ? ' selected' : ''}>${esc(o)}</option>`).join(''); };
+  keep($('f-category'), cats, 'All categories');
+  keep($('f-source'), srcs, 'All sources');
+}
+function renderPipeline() {
+  const list = baseProspects();
+  const count = s => list.filter(p => stageOf(p) === s).length;
+  const closed = list.filter(p => DATA.closedStages.includes(stageOf(p))).length;
+  $('pipeline').innerHTML = DATA.stages.map((s, i) => `
+    <button class="stage${UI.stage === s ? ' active' : ''}" style="--stage-color:${STAGE_COLORS[i]}" onclick="setStage('${s}')" aria-pressed="${UI.stage === s}">
+      <div class="stage-count">${count(s)}</div><div class="stage-label">${esc(s)}</div>
+    </button>`).join('') + `
+    <button class="stage closed${UI.stage === '__closed' ? ' active' : ''}" onclick="setStage('__closed')" aria-pressed="${UI.stage === '__closed'}">
+      <div class="stage-count">${closed}</div><div class="stage-label">Not interested or disqualified</div>
+    </button>`;
+}
+function setStage(s) { UI.stage = UI.stage === s ? '' : s; UI.shown = 60; renderPipeline(); renderAzSeg(); renderProspects(); }
+function renderAzSeg() {
+  const list = stageFiltered(baseProspects());
+  const n = k => list.filter(p => (p.amazon_status || '') === k).length;
+  $('az-seg').innerHTML = `<button class="${UI.az === '' ? 'active' : ''}" onclick="setAz('')">All Amazon statuses<span class="n">${list.length}</span></button>` +
+    AZ.map(a => `<button class="${UI.az === a.key + '#' ? 'active' : ''}" onclick="setAz('${a.key}#')">${esc(a.label)}<span class="n">${n(a.key)}</span></button>`).join('');
+}
+function setAz(k) { UI.az = UI.az === k ? '' : k; UI.shown = 60; renderAzSeg(); renderProspects(); }
+function stageFiltered(list) {
+  if (!UI.stage) return list;
+  if (UI.stage === '__closed') return list.filter(p => DATA.closedStages.includes(stageOf(p)));
+  return list.filter(p => stageOf(p) === UI.stage);
+}
+function onFilter() { UI.shown = 60; renderPipeline(); renderAzSeg(); renderProspects(); }
+
+function filteredProspects() {
+  let list = stageFiltered(baseProspects());
+  if (UI.az) list = list.filter(p => (p.amazon_status || '') + '#' === UI.az);
+  const q = $('f-search').value.trim().toLowerCase();
+  if (q) list = list.filter(p => [p.brand_name, p.website_url, p.amazon_brand_name].some(v => String(v).toLowerCase().includes(q)));
+  const cat = $('f-category').value; if (cat) list = list.filter(p => p.category === cat);
+  const src = $('f-source').value; if (src) list = list.filter(p => splitList(p.sources).includes(src));
+  const sort = $('f-sort').value;
+  const num = v => Number(v) || 0;
+  const cmp = {
+    fit: (a, b) => azInfo(a.amazon_status).rank - azInfo(b.amazon_status).rank || num(b.source_count) - num(a.source_count) || (b.stats?.products || 0) - (a.stats?.products || 0),
+    retailers: (a, b) => num(b.source_count) - num(a.source_count),
+    products: (a, b) => (b.stats?.products || 0) - (a.stats?.products || 0),
+    newest: (a, b) => (parseDate(b.first_seen) || 0) - (parseDate(a.first_seen) || 0),
+    updated: (a, b) => (parseDate(b.outreach_updated) || 0) - (parseDate(a.outreach_updated) || 0),
+    name: (a, b) => a.brand_name.localeCompare(b.brand_name),
+  }[sort];
+  return [...list].sort(cmp);
+}
+
+function productSummary(p) {
+  const s = p.stats;
+  if (!s) {
+    const st = p.discovery_status;
+    const msg = st === 'Needs URL' || st === 'New' ? 'Waiting for site lookup' : st === 'Enriched' ? 'Product scan queued' : st || '—';
+    return `<span class="muted small">${esc(msg)}</span>`;
+  }
+  return `<div class="prod-count">${s.products} product${s.products === 1 ? '' : 's'}</div><div class="az-meta">${s.withUpc} with UPC${s.notOnAmazon ? `, ${s.notOnAmazon} missing on Amazon` : ''}</div>`;
+}
+function amazonCell(p) {
+  const a = azInfo(p.amazon_status);
+  let meta = '';
+  if (p.amazon_status) {
+    const bits = [];
+    if (p.amazon_upc_matches && p.amazon_upc_matches !== '0 of 0') bits.push(`${p.amazon_upc_matches} UPCs found`);
+    if (Number(p.amazon_max_sellers) > 1) bits.push(`up to ${p.amazon_max_sellers} sellers`);
+    if (p.amazon_price_gap && p.amazon_price_gap !== '0%') bits.push(`${p.amazon_price_gap} vs site`);
+    meta = bits.length ? `<div class="az-meta">${esc(bits.join(', '))}</div>` : '';
+  }
+  return `<span class="pill ${a.cls}">${esc(a.label)}</span>${meta}`;
+}
+function outreachSelect(p) {
+  const cur = stageOf(p);
+  const opts = [...DATA.stages, ...DATA.closedStages];
+  return `<select class="outreach-select" aria-label="Outreach status for ${esc(p.brand_name)}" onclick="event.stopPropagation()" onchange="setOutreach('${esc(p.brand_id)}', this.value)">
+    ${opts.map(o => `<option${o === cur ? ' selected' : ''}>${esc(o)}</option>`).join('')}</select>`;
+}
+
+function renderProspects() {
+  const list = filteredProspects();
+  $('result-count').textContent = `${list.length} brand${list.length === 1 ? '' : 's'}`;
+  if (!list.length) {
+    $('prospect-table').innerHTML = DATA.prospects.length
+      ? `<div class="empty"><strong>No brands match these filters</strong>Clear a stage, Amazon status, or search to see more.</div>`
+      : `<div class="empty"><strong>No prospects yet</strong>Run discover-brands to pull in brands from your sources.</div>`;
+    return;
+  }
+  const page = list.slice(0, UI.shown);
+  $('prospect-table').innerHTML = `<table class="data-table"><thead><tr>
+      <th>Brand</th><th>Category</th><th>Found at</th><th>Amazon</th><th>Products</th><th>Outreach</th><th>Updated</th>
+    </tr></thead><tbody>${page.map(p => `
+    <tr class="row${UI.open === p.brand_id ? ' open' : ''}" onclick="toggleDetail('${esc(p.brand_id)}')" tabindex="0" onkeydown="if(event.key==='Enter')toggleDetail('${esc(p.brand_id)}')">
+      <td><div class="brand-cell">${brandMark(p.brand_name, p.logo_url)}<div><div class="brand-name">${esc(p.brand_name)}</div>${siteLink(p.website_url)}</div></div></td>
+      <td>${esc(p.category) ? `<span class="chip">${esc(p.category)}</span>` : '<span class="muted">—</span>'}</td>
+      <td style="max-width:220px">${splitList(p.sources).map(s => `<span class="chip">${esc(s)}</span>`).join('')}</td>
+      <td>${amazonCell(p)}</td>
+      <td>${productSummary(p)}</td>
+      <td>${outreachSelect(p)}</td>
+      <td class="small muted nowrap">${esc(relTime(p.outreach_updated))}</td>
+    </tr>
+    ${UI.open === p.brand_id ? `<tr class="detail"><td colspan="7">${detailHtml(p)}</td></tr>` : ''}`).join('')}
+  </tbody></table>${list.length > UI.shown ? `<div class="more-row"><button class="btn btn-ghost" onclick="UI.shown+=60;renderProspects()">Show ${Math.min(60, list.length - UI.shown)} more</button></div>` : ''}`;
+  if (UI.open && page.some(p => p.brand_id === UI.open)) loadProducts(UI.open);
+}
+
+function toggleDetail(id) { UI.open = UI.open === id ? null : id; renderProspects(); }
+
+function detailHtml(p) {
+  const signals = splitList(p.signals);
+  const social = [
+    p.instagram_handle && `<a href="https://instagram.com/${esc(p.instagram_handle.replace(/^@/, ''))}" target="_blank" rel="noopener">${esc(p.instagram_handle)}</a> on Instagram`,
+    p.tiktok_handle && `<a href="https://www.tiktok.com/${esc(p.tiktok_handle.startsWith('@') ? p.tiktok_handle : '@' + p.tiktok_handle)}" target="_blank" rel="noopener">${esc(p.tiktok_handle)}</a> on TikTok`,
+  ].filter(Boolean);
+  const id = esc(p.brand_id);
+  return `<div class="detail-inner" onclick="event.stopPropagation()">
+    <div class="detail-grid">
+      <div>
+        <div class="detail-hd">Brand</div>
+        <dl class="kv">
+          <dt>Website</dt><dd>${siteLink(p.website_url)}</dd>
+          <dt>Platform</dt><dd>${esc(p.platform) || '—'}</dd>
+          <dt>First found</dt><dd>${fmtDate(p.first_seen) || '—'}</dd>
+          <dt>Social</dt><dd>${social.join('<br>') || '—'}</dd>
+          <dt>Scan status</dt><dd>${esc(p.discovery_status) || '—'}</dd>
+        </dl>
+        ${signals.length ? `<div class="detail-hd" style="margin-top:16px">Signals</div><ul class="signals">${signals.map(s => `<li>${esc(s)}</li>`).join('')}</ul>` : ''}
+      </div>
+      <div>
+        <div class="detail-hd">Amazon</div>
+        <dl class="kv">
+          <dt>Status</dt><dd>${amazonCell(p)}</dd>
+          <dt>Listed as</dt><dd>${esc(p.amazon_brand_name) || esc(p.brand_name)}</dd>
+          <dt>Listings found</dt><dd>${esc(p.amazon_asin_count) || '—'}</dd>
+          <dt>UPC matches</dt><dd>${esc(p.amazon_upc_matches) || '—'}</dd>
+          <dt>Most sellers</dt><dd>${esc(p.amazon_max_sellers) || '—'}</dd>
+          <dt>Price vs site</dt><dd>${esc(p.amazon_price_gap) || '—'}</dd>
+          <dt>Checked</dt><dd>${fmtDate(p.amazon_checked_at) || 'Not yet'}</dd>
+        </dl>
+        ${p.amazon_notes ? `<ul class="signals" style="margin-top:10px">${splitNotes(p.amazon_notes).map(n => `<li>${esc(n)}</li>`).join('')}</ul>` : ''}
+      </div>
+      <form onsubmit="saveOutreach(event,'${id}')">
+        <div class="detail-hd">Outreach</div>
+        <div class="form-grid">
+          <label>Status<select class="input" name="outreach_status">${[...DATA.stages, ...DATA.closedStages].map(o => `<option${o === stageOf(p) ? ' selected' : ''}>${esc(o)}</option>`).join('')}</select></label>
+          <label>Owner<input class="input" name="outreach_owner" value="${esc(p.outreach_owner)}"></label>
+          <label>Contact name<input class="input" name="contact_name" value="${esc(p.contact_name)}"></label>
+          <label>Contact title<input class="input" name="contact_title" value="${esc(p.contact_title)}"></label>
+          <label>Email<input class="input" type="email" name="contact_email" value="${esc(p.contact_email)}"></label>
+          <label>LinkedIn<input class="input" name="contact_linkedin" value="${esc(p.contact_linkedin)}"></label>
+          <label class="full">Next step<input class="input" name="next_step" value="${esc(p.next_step)}"></label>
+          <label class="full">Notes<textarea class="input" name="outreach_notes">${esc(p.outreach_notes)}</textarea></label>
+        </div>
+        <div class="form-actions"><span class="small muted">${p.outreach_updated ? 'Last updated ' + esc(relTime(p.outreach_updated)) : ''}</span><button class="btn btn-primary btn-sm" type="submit">Save outreach</button></div>
+      </form>
+    </div>
+    <div class="products-hd">
+      <div class="detail-hd" style="margin:0">Products on their website</div>
+      <label class="toggle"><input type="checkbox" ${UI.missingOnly[p.brand_id] ? 'checked' : ''} onchange="UI.missingOnly['${id}']=this.checked;renderProductTable('${id}')"> Only products missing on Amazon</label>
+    </div>
+    <div class="products-box" id="prod-${id}"><div class="loading" style="padding:24px">Loading products…</div></div>
+  </div>`;
+}
+const splitNotes = s => String(s || '').split(';').map(x => x.trim()).filter(Boolean);
+
+async function loadProducts(id) {
+  if (UI.productCache[id]) return renderProductTable(id);
+  try {
+    const { products } = await api('/api/brand-products?brand_id=' + encodeURIComponent(id));
+    UI.productCache[id] = products;
+    renderProductTable(id);
+  } catch (e) {
+    const box = $('prod-' + id);
+    if (box && e.message !== 'unauthorized') box.innerHTML = `<div class="empty" style="padding:24px">${esc(e.message)}</div>`;
+  }
+}
+function renderProductTable(id) {
+  const box = $('prod-' + id); if (!box) return;
+  let list = UI.productCache[id] || [];
+  if (!list.length) { box.innerHTML = `<div class="empty" style="padding:24px">No products captured yet. They appear after the product scan runs.</div>`; return; }
+  if (UI.missingOnly[id]) list = list.filter(r => !r.asin && String(r.match_method).startsWith('upc: not found'));
+  if (!list.length) { box.innerHTML = `<div class="empty" style="padding:24px">Every product with a UPC was found on Amazon.</div>`; return; }
+  box.innerHTML = `<table class="data-table plain"><thead><tr>
+      <th>Product</th><th>Price</th><th>UPC</th><th>Amazon</th><th>Buy Box</th><th>Sellers</th><th>vs site</th>
+    </tr></thead><tbody>${list.map(r => {
+      const url = safeUrl(r.product_url);
+      const title = esc(r.product_title) + (r.variant_title ? `<div class="small muted">${esc(r.variant_title)}</div>` : '');
+      const az = r.asin ? `<a href="https://www.amazon.com/dp/${esc(r.asin)}" target="_blank" rel="noopener">${esc(r.asin)}</a>`
+        : r.upc && String(r.match_method).startsWith('upc: not found') ? '<span class="pill az-not">Not on Amazon</span>'
+        : r.upc ? '<span class="muted small">Not checked</span>' : '<span class="muted small">No UPC</span>';
+      const gap = r.price_gap ? `<span class="${/^-/.test(r.price_gap) ? 'gap-neg' : ''}">${esc(r.price_gap)}</span>` : '';
+      return `<tr>
+        <td style="min-width:220px">${url ? `<a href="${esc(url)}" target="_blank" rel="noopener">${title}</a>` : title}</td>
+        <td class="nowrap">${money(r.price)}</td>
+        <td class="small" style="font-family:var(--mono)">${esc(r.upc)}</td>
+        <td>${az}</td>
+        <td class="nowrap">${r.buy_box_price ? money(r.buy_box_price) + (r.buy_box_fba ? ` <span class="small muted">${esc(r.buy_box_fba)}</span>` : '') : ''}</td>
+        <td>${esc(r.seller_count)}</td>
+        <td>${gap}</td>
+      </tr>`; }).join('')}</tbody></table>`;
+}
+
+async function setOutreach(id, status) {
+  await postOutreach(id, { outreach_status: status });
+}
+async function saveOutreach(e, id) {
+  e.preventDefault();
+  await postOutreach(id, Object.fromEntries(new FormData(e.target).entries()));
+}
+async function postOutreach(id, data) {
+  const p = DATA.prospects.find(x => x.brand_id === id);
+  try {
+    const res = await api('/api/dashboard-update', { method: 'POST', body: JSON.stringify({ type: 'prospect', brand_id: id, data }) });
+    Object.assign(p, data, { outreach_updated: res.outreach_updated });
+    if (res.addedPartner) { toast(`${p.brand_name} signed and added to Current Brands`); load(); return; }
+    toast('Saved');
+    renderPipeline(); renderAzSeg(); renderProspects();
+  } catch (err) { if (err.message !== 'unauthorized') toast(err.message, true); }
+}
+
+/* ───────────── Init ───────────── */
+$('topbar-date').textContent = new Date().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') document.querySelectorAll('.modal-bg.open').forEach(m => m.classList.remove('open')); });
+const startPage = location.hash.slice(1);
+if (PAGE_TITLES[startPage]) showPage(startPage);
+load();
+</script>
+</body>
+</html>
