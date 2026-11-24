@@ -9,11 +9,13 @@ websites, and captures their DTC product catalog and UPCs into Google Sheets.
 |---|---|---|
 | `api/setup-sheet.js` | Creates tabs, adds missing headers, seeds starter Sources. Safe to re-run. | Manual, once |
 | `api/discover-brands.js` | Runs up to 2 due sources (not run in 7 days), logs sightings, dedupes into Brands | Daily 11:00 UTC |
-| `api/enrich-brands.js` | Finds the site if missing, reads homepage: category, socials, logo, platform, signals | Every 2 hrs (:20) |
-| `api/scan-products.js` | Pulls the product catalog + UPCs into Products, writes product_count and upc_coverage | Every 2 hrs (:40) |
+| `api/enrich-brands.js` | Finds the site if missing, reads homepage: category, socials, logo, platform, signals | Hourly (:20), 12 brands |
+| `api/scan-products.js` | Pulls the product catalog + UPCs into Products, writes product_count and upc_coverage | Hourly (:40), 4 brands |
 | `medaltus_brands_index.html` | Internal dashboard: Current Brands, Retired Brands, Future Prospects (served at `/`) | — |
 | `api/dashboard-data.js`, `api/brand-products.js`, `api/dashboard-update.js` | Dashboard read/write endpoints (password protected) | — |
-| `api/amazon-check.js` | Looks up UPCs + brand name on Amazon (SP-API), pulls offers/Buy Box, classifies each brand | Every 2 hrs (:50) |
+| `api/import-crm.js` | One-time import of the old CRM export from the CRM Import tab | Manual |
+| `api/audit-scan.js`, `api/audit-data.js`, `api/audit-update.js`, `audit_template.js` | Gap audit builder (see below) | Manual, from the dashboard |
+| `api/amazon-check.js` | Looks up UPCs + brand name on Amazon (SP-API), pulls offers/Buy Box, classifies each brand | Hourly (:50), 5 brands |
 | `api/_lib/*` | Shared helpers (Sheets client, Claude, site parsing, product/UPC extraction, schema) | — |
 
 ## Environment variables (Vercel → Settings → Environment Variables)
@@ -31,6 +33,7 @@ websites, and captures their DTC product catalog and UPCs into Google Sheets.
 | `SP_REFRESH_TOKEN` | Refresh token for any authorized Medaltus seller account |
 | `SP_SELLER_ID` | Optional. That account's seller ID; flags brands a Medaltus account already sells |
 | `SP_MARKETPLACE_ID` | Optional. Defaults to `ATVPDKIKX0DER` (US) |
+| `AUDIT_MODEL` | Optional. Model for audit research and copy; defaults to `claude-opus-5-5` |
 | `DASHBOARD_PASSWORD` | Optional. Leave unset for an open dashboard; set it to require a sign-in password |
 
 No leading or trailing spaces. Redeploy after adding or changing any variable.
@@ -123,3 +126,39 @@ Brand fonts and logo: copy these files from an existing brand dashboard repo int
 `GT Walsheim Pro Bold.ttf`, `GT Walsheim Pro Medium.ttf`, `GT Walsheim Pro Light.ttf`,
 `Monotype - PlantinMTPro-Italic.otf`, `Medaltus_Typeface Logo_dark bground_RGB.svg`.
 Without them the dashboard falls back to DM Sans / Georgia and a text logo.
+
+## Importing the old CRM (Airtable) export
+
+1. Run `/api/setup-sheet` so the `CRM Import` tab and the new Partner Brands columns exist.
+2. In the `CRM Import` tab: File → Import → Upload `crm_import.csv` → "Replace current sheet".
+3. Run `/api/import-crm`. Customers go to Partner Brands (Current), Terminated to Partner Brands
+   (Retired), and everyone else to Brands as prospects with their outreach status. Re-running is safe:
+   existing rows are matched by name and only blank cells are filled.
+
+## Gap audit builder
+
+Open the dashboard → **Audit Builder** (or click **Build audit** on a prospect). Run `/api/setup-sheet` once
+after deploying to create the three new tabs: **Audit Data**, **Audit Findings**, **Audit Builds**.
+
+| File | What it does |
+|---|---|
+| `api/audit-scan.js` | Runs one brand's scan in three stages: `amazon` (SP-API: UPCs, sellers, Buy Box, images, bullets, prices), `web` (Claude + web search: Walmart, Target+, TikTok Shop, followers, ratings/reviews/video/A+, competitors, keywords), `findings` (ranks findings; Claude polishes wording, numbers checked against the data) |
+| `api/audit-data.js` | Latest scan rows, findings, and saved build for one brand |
+| `api/audit-update.js` | Verify / edit / exclude data rows, add data points, save build choices, log exports |
+| `api/_lib/audit.js` | Price-comparison rules, 10-point listing rubric, findings library, model recommendation |
+| `audit_template.js` | The two-page PDF template used by both the preview and the export |
+
+**Model:** web research and copy use `AUDIT_MODEL` if set, otherwise `claude-opus-5-5`.
+
+**Accuracy rules**
+- A price comparison is excluded from findings if the UPC is shared by several site variants, the sizes differ by 15%+,
+  or the product names don't match. Gift cards and merch are ignored.
+- AI-written wording is only kept if every number in it appears in the source data.
+- Export is blocked until every data point printed in the PDF is verified, no channel is Unknown, and findings have
+  been recalculated after any data edits. Opportunity estimates require a written basis, printed in the footer.
+
+**Filled in by hand (for now):** competitor monthly Amazon sales and keyword ranks (blank rows labeled for Helium 10),
+and "Does the brand sell its own Amazon listings?" whenever Amazon blocks the seller-name lookup.
+
+**Export:** Preview and export → Export PDF opens the print dialog. Save as PDF, Letter, margins None,
+Background graphics on.
