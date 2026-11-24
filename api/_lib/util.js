@@ -12,6 +12,13 @@ export function isAuthorized(req) {
   return header === `Bearer ${secret}` || req.query?.key === secret;
 }
 
+/** Dashboard is open while DASHBOARD_PASSWORD is unset. Set it in Vercel to turn the sign-in screen back on. */
+export function isDashboardAuthorized(req) {
+  const pw = (process.env.DASHBOARD_PASSWORD || '').trim();
+  if (!pw) return true;
+  return (req.headers?.['x-dashboard-key'] || '') === pw;
+}
+
 export function normalizeName(name) {
   return String(name || '')
     .toLowerCase()
