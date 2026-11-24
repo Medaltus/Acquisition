@@ -1,5 +1,9 @@
-// Amazon Selling Partner API (US). LWA-only auth (AWS signing is no longer required by SP-API).
-// Env: SP_CLIENT_ID, SP_CLIENT_SECRET, SP_REFRESH_TOKEN, optional SP_MARKETPLACE_ID
+/**
+ * api/_lib/spapi.js
+ *
+ * Amazon Selling Partner API (US). LWA-only auth (AWS signing is no longer required by SP-API).
+ * Env: SP_CLIENT_ID, SP_CLIENT_SECRET, SP_REFRESH_TOKEN, optional SP_MARKETPLACE_ID
+ */
 import { sleep, cleanGtin } from './util.js';
 
 const ENDPOINT = 'https://sellingpartnerapi-na.amazon.com';
