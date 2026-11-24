@@ -157,6 +157,13 @@ input.field[type=search]{min-width:220px;}
 tr.row{cursor:pointer;}
 tr.row:hover td{background:rgba(36,233,163,0.05);}
 tr.row.open td{background:rgba(36,233,163,0.08);}
+.hs-stage{display:flex;align-items:center;gap:8px;}
+.outreach-locked{font-size:11.5px;color:var(--navy);border:1px dashed var(--border);border-radius:var(--radius-sm);padding:5px 8px;white-space:nowrap;}
+.hs-link{display:inline-block;font-size:9.5px;font-weight:700;letter-spacing:.03em;color:#ff7a59;background:rgba(255,122,89,.12);border-radius:10px;padding:2px 7px;text-decoration:none;}
+.hs-link:hover{background:rgba(255,122,89,.22);}
+.hs-note{font-size:11.5px;color:var(--muted);background:var(--bg);border-radius:var(--radius-sm);padding:8px 10px;margin-bottom:10px;}
+fieldset.form-grid{border:none;padding:0;margin:0;min-width:0;}
+fieldset[disabled] .input{background:var(--bg);color:var(--muted);}
 .outreach-select{border:1px solid var(--border);background:var(--white);border-radius:var(--radius-sm);padding:5px 8px;font-size:11.5px;color:var(--navy);cursor:pointer;max-width:150px;}
 .az-meta{font-size:10.5px;color:var(--muted);margin-top:4px;}
 .prod-count{font-family:var(--font-header);font-size:13px;}
@@ -209,6 +216,74 @@ textarea.input{resize:vertical;min-height:64px;line-height:1.5;}
 .more-row{display:flex;justify-content:center;padding:14px;}
 
 /* ── Audit builder ── */
+/* Review data: rail + list + inspector */
+.rv-grid{display:grid;grid-template-columns:220px minmax(0,1.15fr) minmax(340px,1fr);gap:16px;align-items:start;}
+.rv-rail{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:8px;display:flex;flex-direction:column;gap:2px;position:sticky;top:12px;}
+.rv-sec{display:flex;justify-content:space-between;align-items:center;gap:8px;min-height:40px;padding:0 10px;border:none;background:none;border-radius:var(--radius-sm);font-size:12.5px;color:var(--navy);cursor:pointer;text-align:left;}
+.rv-sec:hover{background:var(--bg);}
+.rv-sec.on{background:var(--navy);color:#fff;}
+.rv-add{margin-top:6px;border:1px dashed var(--border);background:none;border-radius:var(--radius-sm);min-height:36px;font-size:11.5px;color:var(--muted);cursor:pointer;}
+.rv-list{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;}
+.rv-list-hd{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(--border);font-size:12.5px;}
+.rv-row{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr) 84px;gap:10px;align-items:center;width:100%;min-height:44px;padding:6px 14px;border:none;border-top:1px solid var(--border2);background:none;text-align:left;font-size:12px;color:var(--navy);cursor:pointer;}
+.rv-row:first-of-type{border-top:none;}
+.rv-row:hover{background:var(--bg);}
+.rv-row.sel{background:rgba(36,233,163,.12);box-shadow:inset 3px 0 0 var(--green);}
+.rv-row.excluded{opacity:.5;}
+.rv-row .st,.ev-row .st{justify-self:start;}
+.rv-lbl{font-family:var(--font-header);}
+.rv-val{color:var(--navy);overflow:hidden;text-overflow:ellipsis;}
+.in-audit{display:inline-block;margin-left:6px;font-size:9px;font-weight:700;color:var(--warn);background:rgba(200,125,47,.12);border-radius:8px;padding:1px 6px;vertical-align:middle;}
+.rv-insp{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:18px;display:flex;flex-direction:column;gap:12px;position:sticky;top:12px;}
+.rv-insp h3{font-family:var(--font-subheader);font-weight:400;font-size:18px;line-height:1.3;}
+.insp-meta,.insp-links{display:flex;flex-wrap:wrap;gap:6px;align-items:center;}
+.insp-big{font-size:14px;color:var(--navy);word-break:break-word;}
+.insp-big .sub{display:block;font-size:11.5px;color:var(--muted);margin-top:4px;}
+.insp-tbl{width:100%;border-collapse:collapse;font-size:12px;margin-top:4px;}
+.insp-tbl th{text-align:left;font-size:10px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);padding:6px 6px;border-bottom:1px solid var(--border);}
+.insp-tbl td{padding:7px 6px;border-bottom:1px solid var(--border2);vertical-align:middle;}
+.insp-src{background:var(--bg);border-radius:var(--radius-sm);padding:10px 12px;font-size:11.5px;line-height:1.55;}
+.insp-acts{display:flex;flex-wrap:wrap;gap:6px;align-items:center;border-top:1px solid var(--border2);padding-top:12px;}
+.mono{font-family:var(--mono);font-size:11.5px;}
+.st{display:inline-block;font-size:10px;font-weight:700;padding:3px 9px;border-radius:999px;white-space:nowrap;}
+.st-ok{background:var(--green-dim);color:var(--green-ink);} .st-warn{background:rgba(200,125,47,.14);color:var(--warn);}
+.st-bad{background:rgba(219,55,45,.10);color:var(--danger);} .st-na{background:var(--bg2);color:var(--muted);}
+.rv-sec.on .st{background:rgba(255,255,255,.16);color:#fff;}
+/* Build tab claims */
+.claims-hd{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;margin-bottom:10px;}
+.claims-hd h3{font-family:var(--font-subheader);font-weight:400;font-size:19px;}
+.claims-hd .hint{font-size:11.5px;color:var(--muted);margin-top:2px;}
+.claim{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:12px;overflow:hidden;}
+.claim-hd{display:grid;grid-template-columns:120px minmax(0,1fr) auto;gap:18px;align-items:center;padding:16px 20px;border-bottom:1px solid var(--border2);}
+.claim-big{font-family:var(--font-subheader);font-size:34px;line-height:1;color:var(--navy);word-break:break-word;}
+.claim-text{font-family:var(--font-header);font-size:14.5px;color:var(--navy);margin-bottom:3px;}
+.claim-acts{display:flex;flex-direction:column;align-items:flex-end;gap:6px;}
+.claim-ev{padding:4px 20px 10px;}
+.ev-row{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1.2fr) 84px 230px;gap:12px;align-items:center;padding:8px 0;border-top:1px solid var(--border2);font-size:12px;}
+.ev-row:first-child{border-top:none;}
+.ev-lbl{font-family:var(--font-header);}
+.ev-links{display:flex;gap:8px;align-items:center;justify-content:flex-end;}
+/* Scorecard popup */
+.brand-btn{background:none;border:none;padding:0;cursor:pointer;text-align:left;text-decoration:underline;text-decoration-color:rgba(0,31,96,.3);text-underline-offset:3px;}
+.brand-btn:hover{text-decoration-color:var(--navy);}
+.sc-chip{display:inline-block;margin-left:6px;font-size:9px;font-weight:700;color:var(--green-ink);background:var(--green-dim);border-radius:8px;padding:1px 6px;vertical-align:middle;}
+.sc-wide{max-width:1180px;max-height:92vh;overflow-y:auto;background:var(--bg);padding:22px;}
+.sc-hd{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:12px;margin-bottom:14px;}
+.sc-hd h2{font-family:var(--font-subheader);font-weight:400;font-size:24px;color:var(--navy);}
+.sc-hd-r{display:flex;flex-wrap:wrap;gap:6px;align-items:center;}
+.sc-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px;margin-bottom:12px;}
+.sc-card h3{font-family:var(--font-subheader);font-weight:400;font-size:17px;margin-bottom:10px;}
+.sc-tiles{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;}
+.sc-tile{border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px;display:flex;flex-direction:column;gap:6px;align-items:flex-start;}
+.sc-tbl{width:100%;border-collapse:collapse;font-size:12px;}
+.sc-tbl th{text-align:left;font-size:10px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);padding:7px 8px;border-bottom:1px solid var(--border);}
+.sc-tbl td{padding:8px;border-bottom:1px solid var(--border2);vertical-align:middle;}
+.cellv{display:inline-block;min-width:56px;text-align:center;padding:4px 8px;border-radius:6px;font-weight:600;font-size:11.5px;}
+.cellv.g{background:var(--green-dim);color:var(--green-ink);} .cellv.y{background:rgba(200,125,47,.14);color:var(--warn);} .cellv.q{background:var(--bg2);color:var(--muted);}
+.sc-2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;}
+.sc-2 .sc-card{margin-bottom:0;}
+@media (max-width:1100px){.rv-grid{grid-template-columns:1fr;}.rv-rail,.rv-insp{position:static;}.sc-tiles{grid-template-columns:repeat(2,minmax(0,1fr));}.sc-2{grid-template-columns:1fr;}.claim-hd{grid-template-columns:1fr;}.claim-acts{align-items:flex-start;}}
+
 .aud-top{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-bottom:16px;}
 .aud-top .field{min-width:260px;}
 .aud-status{font-size:11.5px;color:var(--muted);}
@@ -494,6 +569,10 @@ textarea.input{resize:vertical;min-height:64px;line-height:1.5;}
   </form>
 </div>
 
+<div class="modal-bg" id="sc-modal" onclick="if(event.target===this)closeModal('sc-modal')">
+  <div class="modal sc-wide" id="sc-body" role="dialog" aria-label="Brand scorecard"></div>
+</div>
+
 <div class="toast" id="toast"></div>
 <script src="/audit_template.js"></script>
 
@@ -637,9 +716,10 @@ function renderCurrent() {
     </tr>`).join('')}</tbody></table>`;
 }
 function contactCell(r) {
-  if (!r.primary_contact && !r.contact_email) return '<span class="muted">—</span>';
+  const hs = safeUrl(r.hubspot_url) ? `<a class="hs-link" href="${esc(safeUrl(r.hubspot_url))}" target="_blank" rel="noopener">HubSpot</a>` : '';
+  if (!r.primary_contact && !r.contact_email) return hs || '<span class="muted">—</span>';
   const email = String(r.contact_email || '').trim();
-  return `${esc(r.primary_contact)}${email ? `<div class="small"><a class="brand-site" href="mailto:${esc(email)}">${esc(email)}</a></div>` : ''}`;
+  return `${esc(r.primary_contact)} ${hs}${email ? `<div class="small"><a class="brand-site" href="mailto:${esc(email)}">${esc(email)}</a></div>` : ''}`;
 }
 function splitChannels(s) {
   const parts = String(s || '').split(/[,|]/).map(x => x.trim()).filter(Boolean);
@@ -839,6 +919,11 @@ function amazonCell(p) {
 function outreachSelect(p) {
   const cur = stageOf(p);
   const opts = [...DATA.stages, ...DATA.closedStages];
+  if (p.hubspot_company_id) {
+    const u = safeUrl(p.hubspot_url);
+    return `<div class="hs-stage"><span class="outreach-locked" title="${esc(p.hubspot_stage || 'Synced from HubSpot')}">${esc(cur)}</span>
+      ${u ? `<a class="hs-link" href="${esc(u)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">HubSpot</a>` : '<span class="hs-link">HubSpot</span>'}</div>`;
+  }
   return `<select class="outreach-select" aria-label="Outreach status for ${esc(p.brand_name)}" onclick="event.stopPropagation()" onchange="setOutreach('${esc(p.brand_id)}', this.value)">
     ${opts.map(o => `<option${o === cur ? ' selected' : ''}>${esc(o)}</option>`).join('')}</select>`;
 }
@@ -857,7 +942,9 @@ function renderProspects() {
       <th>Brand</th><th>Category</th><th>Found at</th><th>Amazon</th><th>Products</th><th>Outreach</th><th>Updated</th>
     </tr></thead><tbody>${page.map(p => `
     <tr class="row${UI.open === p.brand_id ? ' open' : ''}" onclick="toggleDetail('${esc(p.brand_id)}')" tabindex="0" onkeydown="if(event.key==='Enter')toggleDetail('${esc(p.brand_id)}')">
-      <td><div class="brand-cell">${brandMark(p.brand_name, p.logo_url)}<div><div class="brand-name">${esc(p.brand_name)}</div>${siteLink(p.website_url)}</div></div></td>
+      <td><div class="brand-cell">${brandMark(p.brand_name, p.logo_url)}<div>${p.scan_completed_at
+        ? `<button class="brand-name brand-btn" title="Open scorecard" onclick="event.stopPropagation();openScorecard('${esc(p.brand_id)}')">${esc(p.brand_name)}</button><span class="sc-chip">Scorecard</span>`
+        : `<div class="brand-name">${esc(p.brand_name)}</div>`}${siteLink(p.website_url)}</div></div></td>
       <td>${esc(p.category) ? `<span class="chip">${esc(p.category)}</span>` : '<span class="muted">—</span>'}</td>
       <td style="max-width:220px">${splitList(p.sources).map(s => `<span class="chip">${esc(s)}</span>`).join('')}</td>
       <td>${amazonCell(p)}</td>
@@ -918,7 +1005,8 @@ function detailHtml(p) {
       </div>
       <form onsubmit="saveOutreach(event,'${id}')">
         <div class="detail-hd">Outreach</div>
-        <div class="form-grid">
+        ${p.hubspot_company_id ? `<div class="hs-note">Synced from HubSpot${p.hubspot_stage ? ` (${esc(p.hubspot_stage)})` : ''}. Change the stage and contacts in HubSpot; they update here within the hour.${safeUrl(p.hubspot_url) ? ` <a href="${esc(safeUrl(p.hubspot_url))}" target="_blank" rel="noopener">Open in HubSpot</a>` : ''}</div>` : ''}
+        <fieldset class="form-grid" ${p.hubspot_company_id ? 'disabled' : ''}>
           <label>Status<select class="input" name="outreach_status">${[...DATA.stages, ...DATA.closedStages].map(o => `<option${o === stageOf(p) ? ' selected' : ''}>${esc(o)}</option>`).join('')}</select></label>
           <label>Owner<input class="input" name="outreach_owner" value="${esc(p.outreach_owner)}"></label>
           <label>Contact name<input class="input" name="contact_name" value="${esc(p.contact_name)}"></label>
@@ -926,9 +1014,11 @@ function detailHtml(p) {
           <label>Email<input class="input" type="email" name="contact_email" value="${esc(p.contact_email)}"></label>
           <label>LinkedIn<input class="input" name="contact_linkedin" value="${esc(p.contact_linkedin)}"></label>
           <label class="full">Next step<input class="input" name="next_step" value="${esc(p.next_step)}"></label>
-          <label class="full">Notes<textarea class="input" name="outreach_notes">${esc(p.outreach_notes)}</textarea></label>
+        </fieldset>
+        <div class="form-grid" style="margin-top:8px">
+          <label class="full">Notes${p.hubspot_company_id ? ' (dashboard only)' : ''}<textarea class="input" name="outreach_notes">${esc(p.outreach_notes)}</textarea></label>
         </div>
-        <div class="form-actions"><span class="small muted">${p.outreach_updated ? 'Last updated ' + esc(relTime(p.outreach_updated)) : ''}</span>${p.website_url ? `<button class="btn btn-ghost btn-sm" type="button" onclick="buildAudit('${id}')">Build audit</button>` : ''}<button class="btn btn-primary btn-sm" type="submit">Save outreach</button></div>
+        <div class="form-actions"><span class="small muted">${p.outreach_updated ? 'Last updated ' + esc(relTime(p.outreach_updated)) : ''}</span>${p.website_url ? `<button class="btn btn-ghost btn-sm" type="button" onclick="buildAudit('${id}')">Build audit</button>` : ''}<button class="btn btn-primary btn-sm" type="submit">${p.hubspot_company_id ? 'Save notes' : 'Save outreach'}</button></div>
       </form>
     </div>
     <div class="products-hd">
@@ -1008,6 +1098,84 @@ async function postOutreach(id, data) {
     renderPipeline(); renderAzSeg(); renderProspects();
   } catch (err) { if (err.message !== 'unauthorized') toast(err.message, true); }
 }
+
+/* ───── Prospect scorecard popup (after an audit scan has run) ───── */
+const SC_CHECKS = [
+  ['title_length', 'Title length', v => Number(v) <= 75, 'Up to 75 characters'],
+  ['bullets', 'Bullet points', v => Number(v) >= 5, '5'],
+  ['images', 'Images', v => Number(v) >= 7, '7 or more'],
+  ['rating', 'Star rating', v => Number(v) >= 4.3, '4.3 or more'],
+  ['reviews', 'Ratings count', v => Number(v) >= 100, '100 or more'],
+  ['video', 'Video', v => /^yes$/i.test(v), 'Yes'],
+  ['aplus', 'A+ content', v => /^yes$/i.test(v), 'Yes'],
+];
+const SC_STATUS = { 'Brand-run': 'st-ok', 'Sold by others': 'st-warn', 'Listed, not selling': 'st-warn', Absent: 'st-na', Unknown: 'st-bad' };
+async function openScorecard(id) {
+  const p = DATA.prospects.find(x => x.brand_id === id);
+  $('sc-body').innerHTML = `<div class="loading">Loading ${esc(p?.brand_name || '')} scorecard…</div>`;
+  $('sc-modal').classList.add('open');
+  try {
+    const d = await api('/api/audit-data?brand_id=' + encodeURIComponent(id));
+    $('sc-body').innerHTML = scorecardHtml(d);
+  } catch (e) { if (e.message !== 'unauthorized') $('sc-body').innerHTML = `<div class="empty"><strong>Couldn’t load the scorecard</strong>${esc(e.message)}</div>`; }
+}
+function scorecardHtml(d) {
+  const rows = d.rows || [];
+  const get = f => rows.find(r => r.field === f);
+  const val = f => String(get(f)?.value ?? '').trim();
+  const brand = d.brand.brand_name, q = encodeURIComponent(brand);
+  const close = `<button class="btn btn-ghost btn-sm" onclick="closeModal('sc-modal')">Close</button>`;
+  if (!d.scan_id) return `<div class="sc-hd"><h2>${esc(brand)}</h2>${close}</div><div class="empty"><strong>No scan yet</strong><button class="btn btn-primary btn-sm" onclick="closeModal('sc-modal');buildAudit('${esc(d.brand.brand_id)}')">Run a scan in the Audit Builder</button></div>`;
+  const verified = rows.filter(r => r.verified === 'Y').length, missing = rows.filter(r => r.method === 'needed' && !String(r.value).trim()).length;
+  const check = { walmart: `https://www.walmart.com/search?q=${q}`, target_plus: `https://www.target.com/s?searchTerm=${q}`, tiktok_shop: `https://www.tiktok.com/search?q=${q}`, amazon: `https://www.amazon.com/s?k=${q}`, shopify: safeUrl(d.brand.website_url) };
+
+  const tiles = CHANNELS.map(([k, label]) => {
+    const st = val(`channel.${k}.status`) || 'Unknown';
+    return `<div class="sc-tile"><span class="small muted">${esc(label)}</span><span class="st ${SC_STATUS[st] || 'st-na'}">${esc(st)}</span>
+      <span class="small">${esc(val(`channel.${k}.detail`)).slice(0, 90)}</span>${check[k] ? `<a class="small" href="${esc(check[k])}" target="_blank" rel="noopener">Check</a>` : ''}</div>`;
+  }).join('');
+
+  const listings = rows.filter(r => /^control\.[A-Z0-9]{10}\.sellers$/.test(r.field)).map(r => {
+    const asin = r.field.split('.')[1], j = parseJ(r.value) || {};
+    const sellers = j.sellers || [], prices = sellers.map(s => Number(s.price)).filter(n => n > 0);
+    const others = sellers.filter(s => !s.isBrand).length, hasBrand = sellers.some(s => s.isBrand);
+    const bb = sellers.filter(s => s.buyBox);
+    const lo = Math.min(...prices), hi = Math.max(...prices);
+    return `<tr><td>${esc(j.product || r.label)} <span class="mono muted">${esc(asin)}</span></td>
+      <td><span class="cellv ${others ? 'y' : 'g'}">${hasBrand ? (others ? `You + ${others}` : 'You only') : `${sellers.length} seller${sellers.length === 1 ? '' : 's'}`}</span></td>
+      <td>${bb.length > 1 ? '<span class="st st-warn">Shared</span>' : bb[0]?.isBrand ? 'You' : bb[0] ? 'Other seller' : '—'}</td>
+      <td>${prices.length ? (lo === hi ? fmtMoney(lo) : `${fmtMoney(lo)} to ${fmtMoney(hi)}`) : '—'}</td>
+      <td>${sellers.some(s => !s.fba) ? `${sellers.filter(s => !s.fba).length} FBM` : 'All FBA'}</td>
+      <td><a href="https://www.amazon.com/dp/${esc(asin)}" target="_blank" rel="noopener">Open</a></td></tr>`;
+  }).join('');
+  const noOffer = (parseJ(val('control.no_offer_asins')) || []).length;
+  const miss = parseJ(val('amazon.missing_products'));
+
+  const heroes = [...new Set(rows.filter(r => /^score\.[A-Z0-9]{10}\.name$/.test(r.field)).map(r => r.field.split('.')[1]))];
+  const matrix = heroes.length ? `<div class="table-wrap"><table class="sc-tbl"><thead><tr><th>Check</th>${heroes.map(a => `<th>${esc(shortName(val(`score.${a}.name`)))}<br><a class="mono" href="https://www.amazon.com/dp/${esc(a)}" target="_blank" rel="noopener">${esc(a)}</a></th>`).join('')}<th>Target</th></tr></thead><tbody>
+    ${SC_CHECKS.map(([k, label, good, target]) => `<tr><td>${label}</td>${heroes.map(a => { const v = val(`score.${a}.${k}`); return `<td>${v ? `<span class="cellv ${good(v) ? 'g' : 'y'}">${esc(v)}</span>` : '<span class="cellv q">Check</span>'}</td>`; }).join('')}<td class="muted small">${target}</td></tr>`).join('')}
+    </tbody></table></div>` : '<div class="small muted">No hero listings in this scan.</div>';
+
+  const kws = [1, 2, 3, 4, 5].map(i => ({ k: val(`visibility.kw.${i}.keyword`), r: val(`visibility.kw.${i}.rank`) })).filter(x => x.k);
+  const comps = [1, 2, 3].map(i => ({ n: val(`competitor.${i}.name`), ch: val(`competitor.${i}.channels`), rv: val(`competitor.${i}.amazon_reviews`), s: val(`competitor.${i}.est_monthly_revenue`) })).filter(x => x.n);
+  const rank = parseJ(val('amazon.best_rank'));
+  const num = v => v && !isNaN(Number(v)) ? Number(v).toLocaleString('en-US') : v;
+
+  return `<div class="sc-hd"><div><div class="small muted">Scanned ${esc(fmtDate(d.brand.scan_completed_at) || '')}</div><h2>${esc(brand)} at a glance</h2></div>
+      <div class="sc-hd-r"><span class="st st-ok">${verified} verified</span><span class="st st-warn">${rows.length - verified - missing} to check</span>${missing ? `<span class="st st-bad">${missing} need Helium 10</span>` : ''}
+      <button class="btn btn-primary btn-sm" onclick="closeModal('sc-modal');buildAudit('${esc(d.brand.brand_id)}')">Open in Audit Builder</button>${close}</div></div>
+    <div class="sc-card"><h3>Where they sell</h3><div class="sc-tiles">${tiles}</div></div>
+    <div class="sc-card"><h3>Amazon listings and who sells them</h3>
+      ${listings ? `<div class="table-wrap"><table class="sc-tbl"><thead><tr><th>Listing</th><th>Sellers</th><th>Buy Box</th><th>Price range</th><th>Fulfillment</th><th></th></tr></thead><tbody>${listings}</tbody></table></div>` : '<div class="small muted">No active listings.</div>'}
+      <div class="small muted" style="margin-top:8px">${[noOffer ? `${noOffer} listing${noOffer === 1 ? '' : 's'} with nobody selling` : '', miss?.missing ? `${miss.missing} of ${miss.checked} site products not on Amazon` : '', rank ? `best rank #${Number(rank.rank).toLocaleString('en-US')} in ${esc(rank.category)}` : ''].filter(Boolean).join(' · ')}</div></div>
+    <div class="sc-card"><h3>Hero listing scorecard</h3>${matrix}</div>
+    <div class="sc-2">
+      <div class="sc-card"><h3>Search keywords</h3>${kws.length ? `<table class="sc-tbl"><thead><tr><th>Keyword</th><th>Their rank</th><th></th></tr></thead><tbody>${kws.map(x => `<tr><td>${esc(x.k)}</td><td>${x.r ? esc(x.r) : '<span class="cellv q">Needs Helium 10</span>'}</td><td><a href="https://www.amazon.com/s?k=${encodeURIComponent(x.k)}" target="_blank" rel="noopener">Search</a></td></tr>`).join('')}</tbody></table>` : '<div class="small muted">No keywords yet.</div>'}</div>
+      <div class="sc-card"><h3>Closest competitors</h3>${comps.length ? `<table class="sc-tbl"><thead><tr><th>Competitor</th><th>Ratings</th><th>Channels</th><th>Monthly sales</th></tr></thead><tbody>${comps.map(x => `<tr><td>${esc(x.n)}</td><td>${esc(num(x.rv)) || '—'}</td><td class="small">${esc(x.ch)}</td><td>${x.s ? '$' + esc(num(x.s)) : '<span class="cellv q">Needs Helium 10</span>'}</td></tr>`).join('')}</tbody></table>` : '<div class="small muted">No competitors yet.</div>'}
+        <div class="small muted" style="margin-top:8px">${[val('social.tiktok_followers') ? `TikTok ${num(val('social.tiktok_followers'))}` : '', val('social.instagram_followers') ? `Instagram ${num(val('social.instagram_followers'))}` : ''].filter(Boolean).join(' · ')}</div></div>
+    </div>`;
+}
+function shortName(t) { const s = String(t || ''); return s.length > 34 ? s.slice(0, 32) + '…' : s; }
 
 /* ───────────── Audit builder ───────────── */
 const AUD = { brandId: '', data: null, sel: null, tab: 'data', scanning: false, dirtyData: false, saveTimer: null, logoData: '', edit: null };
@@ -1143,11 +1311,10 @@ async function recalcFindings() {
 /* Layout */
 function setAudTab(t) { AUD.tab = t; renderAudit(); }
 function jumpToRow(field) {
+  const r = audRows().find(x => x.field === field);
+  if (r) { AUD.secSel = SECTION_OF(r); AUD.rowSel = r._row; AUD.edit = null; }
   setAudTab('data');
-  const el = $('drow-' + field.replace(/[^A-Za-z0-9_-]/g, '_'));
-  if (!el) return;
-  el.scrollIntoView({ block: 'center' });
-  el.style.background = 'rgba(36,233,163,.14)'; setTimeout(() => { el.style.background = ''; }, 1600);
+  document.querySelector('.main').scrollTop = 0;
 }
 function renderAudit() {
   const d = AUD.data; if (!d) return;
@@ -1195,8 +1362,8 @@ function fmtRowValue(r) {
   return esc(v);
 }
 /* Missing-on-Amazon products: summary line + a click-to-open list with links to each product on the brand's site */
-function missingProductsHtml(j) {
-  const open = AUD.missingOpen;
+function missingProductsHtml(j, forceOpen = false) {
+  const open = forceOpen || AUD.missingOpen;
   const summary = `${j.missing} of ${j.checked} products aren’t on Amazon`;
   if (!j.missing) return summary;
   let list = '';
@@ -1213,6 +1380,7 @@ function missingProductsHtml(j) {
         <td class="nowrap"><a class="small" href="https://www.amazon.com/s?k=${encodeURIComponent(i.upc)}" target="_blank" rel="noopener">Search Amazon</a></td></tr>`;
     }).join('')}</tbody></table></div>`;
   }
+  if (forceOpen) return `<div class="insp-big">${summary}</div>${list}`;
   return `<button class="missing-toggle" onclick="AUD.missingOpen=!AUD.missingOpen;renderDataTab()" aria-expanded="${open ? 'true' : 'false'}">
     ${summary}<span class="missing-caret">${open ? 'Hide products' : `Show ${j.missing} product${j.missing === 1 ? '' : 's'}`}</span></button>${list}`;
 }
@@ -1234,25 +1402,131 @@ function editorFor(r) {
   if (/\.(video|aplus)$/.test(r.field)) return `<select class="input" id="ed-val">${['', 'Yes', 'No'].map(o => `<option value="${o}"${o === r.value ? ' selected' : ''}>${o || 'Unknown'}</option>`).join('')}</select>`;
   return `<input class="input" id="ed-val" value="${esc(r.value)}">`;
 }
+/* ───── Review data tab: section rail + compact list + inspector ───── */
+const SECTION_OF = r => r.section || 'Manual notes';
+function rowStatus(r) {
+  if (r.verified === 'Excluded') return ['Excluded', 'st-na'];
+  if (r.verified === 'Y') return ['Verified', 'st-ok'];
+  if (r.method === 'needed' && !String(r.value).trim()) return ['Missing', 'st-bad'];
+  return ['To check', 'st-warn'];
+}
+function shortValue(r) {
+  const v = r.value, j = isJsonVal(v) ? parseJ(v) : null;
+  if (!String(v).trim()) return '<span class="muted">Not found</span>';
+  if (/\.sellers$/.test(r.field) && j) {
+    const brand = (j.sellers || []).some(s => s.isBrand);
+    const bb = (j.sellers || []).filter(s => s.buyBox);
+    const others = (j.sellers || []).filter(s => !s.isBrand).length;
+    const who = brand ? (others ? `You + ${others}` : 'You only') : `${j.count} seller${j.count === 1 ? '' : 's'}`;
+    const box = bb.length > 1 ? 'Buy Box shared' : bb[0]?.isBrand ? 'you hold Buy Box' : bb[0] ? 'other seller holds Buy Box' : '';
+    return esc([who, box].filter(Boolean).join(', '));
+  }
+  if (r.field.startsWith('pricing.') && j) return `${fmtMoney(j.bb_price)} vs ${fmtMoney(j.site_price)} <b>${fmtGap(j.gap)}</b>`;
+  if (r.field === 'amazon.missing_products' && j) return `${j.missing} of ${j.checked} not on Amazon`;
+  if (r.field === 'amazon.best_rank' && j) return `#${Number(j.rank).toLocaleString('en-US')} in ${esc(j.category)}`;
+  if (Array.isArray(j)) return j.length ? `${j.length} item${j.length === 1 ? '' : 's'}` : '<span class="muted">None</span>';
+  const s = String(v);
+  return esc(s.length > 70 ? s.slice(0, 68) + '…' : s);
+}
+/** Links that let you check a row in one click. */
+function quickLinks(r) {
+  const out = [], brand = AUD.data.brand.brand_name, q = encodeURIComponent(brand);
+  const src = safeUrl(r.source_url);
+  const asin = (r.field.match(/^(?:control|pricing|score)\.([A-Z0-9]{10})\./) || [])[1];
+  if (asin) {
+    out.push(['Open listing', `https://www.amazon.com/dp/${asin}`]);
+    if (/\.sellers$/.test(r.field) || r.field.startsWith('pricing.')) out.push(['All offers', `https://www.amazon.com/gp/offer-listing/${asin}`]);
+  }
+  if (r.field === 'channel.walmart.status' || r.field === 'channel.walmart.detail') out.push(['Search Walmart', `https://www.walmart.com/search?q=${q}`]);
+  if (/^channel\.target_plus\./.test(r.field)) out.push(['Search Target', `https://www.target.com/s?searchTerm=${q}`]);
+  if (/^channel\.tiktok_shop\./.test(r.field)) out.push(['Search TikTok', `https://www.tiktok.com/search?q=${q}`]);
+  if (/^channel\.amazon\./.test(r.field) || r.field === 'amazon.asin_count') out.push(['Search Amazon', `https://www.amazon.com/s?k=${q}`]);
+  const kw = r.field.match(/^visibility\.kw\.(\d)\./);
+  if (kw) { const k = audRow(`visibility.kw.${kw[1]}.keyword`)?.value; if (k) out.push(['Search this keyword', `https://www.amazon.com/s?k=${encodeURIComponent(k)}`]); }
+  if (src && !out.some(([, u]) => u === src)) out.push(['Open source', src]);
+  return out;
+}
+function sellerRole(s) {
+  if (s.isBrand) return ['You (brand)', 'st-ok'];
+  if (s.name === 'Medaltus') return ['Medaltus', 'st-na'];
+  if (s.isBrand === false) return ['Reseller', 'st-warn'];
+  return ['Unknown', 'st-na'];
+}
+function inspectorValue(r) {
+  const j = isJsonVal(r.value) ? parseJ(r.value) : null;
+  if (/\.sellers$/.test(r.field) && j) {
+    return `<div class="insp-big">${esc(shortValue(r).replace(/<[^>]+>/g, ''))}</div>
+      <table class="insp-tbl"><thead><tr><th>Seller</th><th>Price</th><th>Ships</th><th>Role</th></tr></thead><tbody>
+      ${(j.sellers || []).map(s => { const [lbl, cls] = sellerRole(s); return `<tr>
+        <td><a class="mono" href="https://www.amazon.com/sp?seller=${encodeURIComponent(s.id)}" target="_blank" rel="noopener">${esc(s.name && !s.name.endsWith('(brand)') ? s.name : s.id)}</a></td>
+        <td>${s.price ? fmtMoney(s.price) : ''}</td><td>${s.fba ? 'FBA' : 'FBM'}</td>
+        <td><span class="st ${cls}">${lbl}${s.buyBox ? ' · Buy Box' : ''}</span></td></tr>`; }).join('')}
+      </tbody></table>`;
+  }
+  if (r.field === 'amazon.missing_products' && j) return missingProductsHtml(j, true);
+  if (r.field === 'control.no_offer_asins' && Array.isArray(j)) {
+    const names = String(r.notes || '').split(';').map(s => s.trim());
+    return `<div class="insp-big">${j.length} listing${j.length === 1 ? '' : 's'} with nobody selling</div>
+      <table class="insp-tbl"><tbody>${j.map((a, i) => `<tr><td>${esc(names[i] || '')}</td><td><a class="mono" href="https://www.amazon.com/dp/${esc(a)}" target="_blank" rel="noopener">${esc(a)}</a></td></tr>`).join('')}</tbody></table>`;
+  }
+  return `<div class="insp-big">${fmtRowValue(r)}</div>`;
+}
 function renderDataTab() {
   const rows = audRows(), used = usedRefs();
   const bySec = {};
-  rows.forEach(r => (bySec[r.section || 'Manual notes'] ||= []).push(r));
+  rows.forEach(r => (bySec[SECTION_OF(r)] ||= []).push(r));
   const secs = [...AUD_SECTIONS.filter(s => bySec[s]), ...Object.keys(bySec).filter(s => !AUD_SECTIONS.includes(s))];
+  if (!secs.length) { $('aud-tab').innerHTML = '<div class="card"><div class="empty"><strong>No data in this scan</strong>Run a new scan.</div></div>'; return; }
+  if (!secs.includes(AUD.secSel)) AUD.secSel = secs.find(s => bySec[s].some(r => !r.verified)) || secs[0];
+  const list = bySec[AUD.secSel];
+  let cur = list.find(r => r._row === AUD.rowSel);
+  if (!cur) { cur = list.find(r => !r.verified) || list[0]; AUD.rowSel = cur._row; }
+  const autoLeft = list.filter(r => r.method === 'auto' && !r.verified).length;
+  const [stLbl, stCls] = rowStatus(cur);
+  const m = METHOD[cur.method] || METHOD.auto;
+  const editing = AUD.edit === cur._row;
+  const canEdit = !isJsonVal(cur.value) || cur.field.startsWith('manual.');
+  const idx = list.indexOf(cur);
+
   $('aud-tab').innerHTML = `
-    ${AUD.dirtyData ? `<div class="card" style="padding:12px 16px;margin-bottom:14px;border-color:rgba(200,125,47,.4)"><span class="small">You changed data since findings were calculated. Recalculate so the findings use your edits.</span> <button class="btn btn-primary btn-sm" id="aud-recalc" onclick="recalcFindings()" style="margin-left:8px">Recalculate findings</button></div>` : ''}
-    <p class="small muted" style="margin-bottom:14px">Rows with a colored edge are used in the audit you’ve built (green once verified). AI research rows need a human check before they can go in the PDF.</p>
-    ${secs.map(sec => {
-      const list = bySec[sec];
-      const done = list.filter(r => r.verified).length;
-      const autoLeft = list.filter(r => r.method === 'auto' && !r.verified).length;
-      return `<div class="aud-sec"><div class="aud-sec-hd"><h3>${esc(sec)}</h3><div>
-          <span class="muted">${done} of ${list.length} checked</span>
-          ${autoLeft ? `<button class="btn-link" style="margin-left:10px" onclick="verifySection('${esc(sec)}')">Verify ${autoLeft} Amazon API / site row${autoLeft === 1 ? '' : 's'}</button>` : ''}
-        </div></div>
-        <div class="card">${list.map(r => dataRowHtml(r, used)).join('')}</div></div>`;
-    }).join('')}
-    <div class="aud-sec"><div class="aud-sec-hd"><h3>Add a data point</h3><span class="muted">For numbers you pulled from Helium 10 or checked by hand</span></div>
+    ${AUD.dirtyData ? `<div class="card" style="padding:12px 16px;margin-bottom:14px;border-color:rgba(200,125,47,.4)"><span class="small">You changed data since findings were calculated. Recalculate so the findings use your edits.</span> <button class="btn btn-ghost btn-sm" onclick="recalcFindings()">Recalculate findings</button></div>` : ''}
+    <div class="rv-grid">
+      <nav class="rv-rail" aria-label="Sections">
+        ${secs.map(s => {
+          const l = bySec[s], done = l.filter(r => r.verified).length, miss = l.filter(r => rowStatus(r)[0] === 'Missing').length;
+          const cls = done === l.length ? 'st-ok' : miss ? 'st-bad' : 'st-warn';
+          return `<button class="rv-sec${s === AUD.secSel ? ' on' : ''}" onclick="AUD.secSel='${esc(s)}';AUD.rowSel=null;AUD.edit=null;renderDataTab()">
+            <span>${esc(s)}</span><span class="st ${cls}">${miss ? miss + ' missing' : done + '/' + l.length}</span></button>`;
+        }).join('')}
+        <button class="rv-add" onclick="AUD.showAdd=!AUD.showAdd;renderDataTab()">Add a data point</button>
+      </nav>
+      <section class="rv-list">
+        <div class="rv-list-hd"><b>${esc(AUD.secSel)}</b>
+          ${autoLeft ? `<button class="btn-link" onclick="verifySection('${esc(AUD.secSel)}')">Verify all ${autoLeft} Amazon API / site row${autoLeft === 1 ? '' : 's'}</button>` : '<span class="small muted">J / K to move · V to verify · E to edit</span>'}</div>
+        ${list.map(r => { const [l, c] = rowStatus(r); return `<button class="rv-row${r._row === cur._row ? ' sel' : ''}${r.verified === 'Excluded' ? ' excluded' : ''}" onclick="AUD.rowSel=${r._row};AUD.edit=null;renderDataTab()">
+          <span class="rv-lbl">${esc(r.label)}${used.has(r.field) ? '<span class="in-audit">In audit</span>' : ''}</span>
+          <span class="rv-val">${shortValue(r)}</span><span class="st ${c}">${l}</span></button>`; }).join('')}
+      </section>
+      <aside class="rv-insp">
+        <div class="small muted">${esc(AUD.secSel)} · ${idx + 1} of ${list.length}${used.has(cur.field) ? ' · <b>printed in the audit</b>' : ''}</div>
+        <h3>${esc(cur.label)}</h3>
+        <div class="insp-meta"><span class="st ${stCls}">${stLbl}</span><span class="mtag ${m[0]}">${m[1]}</span>${cur.confidence && cur.confidence !== 'High' ? `<span class="small muted">${esc(cur.confidence)}</span>` : ''}</div>
+        ${quickLinks(cur).length ? `<div class="insp-links">${quickLinks(cur).map(([l, u]) => `<a class="btn btn-ghost btn-sm" href="${esc(u)}" target="_blank" rel="noopener">${esc(l)}</a>`).join('')}</div>` : ''}
+        ${inspectorValue(cur)}
+        ${editing ? `<div class="inline-edit">${editorFor(cur)}<button class="btn btn-primary btn-sm" onclick="saveRowEdit(${cur._row})">Save</button><button class="btn btn-ghost btn-sm" onclick="AUD.edit=null;renderDataTab()">Cancel</button></div>` : ''}
+        <div class="insp-src"><b>Where this came from</b><br>${esc(cur.source || 'Unknown source')}${cur.captured_at ? `, ${esc(fmtDate(cur.captured_at))}` : ''}.${cur.notes && cur.field !== 'amazon.missing_products' && cur.field !== 'control.no_offer_asins' ? `<br><span class="muted">${esc(cur.notes)}</span>` : ''}${cur.verified_by ? `<br><span class="muted">Checked: ${esc(cur.verified_by)}</span>` : ''}</div>
+        <div class="insp-acts">
+          ${cur.verified === 'Y' ? `<button class="btn btn-ghost btn-sm" onclick="verifyRow(${cur._row}, '')">Mark unchecked</button>`
+            : `<button class="btn btn-primary btn-sm" ${cur.verified === 'Excluded' ? 'disabled' : ''} onclick="verifyAndNext(${cur._row})">Verify and next</button>`}
+          ${canEdit && !editing ? `<button class="btn btn-ghost btn-sm" onclick="AUD.edit=${cur._row};renderDataTab()">Edit</button>` : ''}
+          <button class="btn btn-ghost btn-sm" onclick="verifyRow(${cur._row}, '${cur.verified === 'Excluded' ? '' : 'Excluded'}')">${cur.verified === 'Excluded' ? 'Include' : 'Exclude'}</button>
+          <span style="flex:1"></span>
+          <button class="btn-link" ${idx ? '' : 'disabled'} onclick="moveRow(-1)">Previous</button>
+          <button class="btn-link" ${idx < list.length - 1 ? '' : 'disabled'} onclick="moveRow(1)">Next</button>
+        </div>
+      </aside>
+    </div>
+    ${AUD.showAdd ? `<div class="aud-sec" style="margin-top:16px"><div class="aud-sec-hd"><h3>Add a data point</h3><span class="muted">For numbers you pulled from Helium 10 or checked by hand</span></div>
       <form class="card" style="padding:14px" onsubmit="addDataPoint(event)">
         <div class="form-grid" style="grid-template-columns:1.2fr 1fr 1fr 1fr">
           <label>What it is<input class="input" name="label" required placeholder="Solace Skin monthly Amazon sales"></label>
@@ -1261,25 +1535,30 @@ function renderDataTab() {
           <label>Link<input class="input" name="source_url" placeholder="https://"></label>
         </div>
         <div class="form-actions"><button class="btn btn-ghost btn-sm" type="submit">Add data point</button></div>
-      </form></div>`;
+      </form></div>` : ''}`;
 }
-function dataRowHtml(r, used) {
-  const m = METHOD[r.method] || METHOD.auto;
-  const isUsed = used.has(r.field);
-  const editing = AUD.edit === r._row;
-  const url = safeUrl(r.source_url);
-  const canEdit = !isJsonVal(r.value) || r.field.startsWith('manual.');
-  return `<div id="drow-${esc(r.field.replace(/[^A-Za-z0-9_-]/g, '_'))}" class="drow${isUsed ? ' used' : ''}${isUsed && r.verified === 'Y' ? ' ok' : ''}${r.verified === 'Excluded' ? ' excluded' : ''}">
-    <div class="lbl">${esc(r.label)}${r.confidence && r.confidence !== 'High' ? `<div class="small muted">${esc(r.confidence)}</div>` : ''}</div>
-    <div class="val">${fmtRowValue(r)}${r.notes && r.field !== 'amazon.missing_products' ? `<span class="sub">${esc(r.notes)}</span>` : ''}
-      ${editing ? `<div class="inline-edit">${editorFor(r)}<button class="btn btn-primary btn-sm" onclick="saveRowEdit(${r._row})">Save</button><button class="btn btn-ghost btn-sm" onclick="AUD.edit=null;renderDataTab()">Cancel</button></div>` : ''}</div>
-    <div class="src"><span class="mtag ${m[0]}">${m[1]}</span><br>${esc(r.source)}${url ? ` · <a href="${esc(url)}" target="_blank" rel="noopener">open</a>` : ''}</div>
-    <div class="acts">
-      <label class="chk"><input type="checkbox" ${r.verified === 'Y' ? 'checked' : ''} ${r.verified === 'Excluded' ? 'disabled' : ''} onchange="verifyRow(${r._row}, this.checked ? 'Y' : '')"> Verified</label>
-      <div>${canEdit && !editing ? `<button class="btn-link" onclick="AUD.edit=${r._row};renderDataTab()">Edit</button> · ` : ''}<button class="btn-link" onclick="verifyRow(${r._row}, '${r.verified === 'Excluded' ? '' : 'Excluded'}')">${r.verified === 'Excluded' ? 'Include' : 'Exclude'}</button></div>
-    </div>
-  </div>`;
+function sectionRows() { return audRows().filter(r => SECTION_OF(r) === AUD.secSel); }
+function moveRow(step) {
+  const l = sectionRows(), i = l.findIndex(r => r._row === AUD.rowSel);
+  const n = l[i + step]; if (!n) return;
+  AUD.rowSel = n._row; AUD.edit = null; renderDataTab();
 }
+async function verifyAndNext(row) {
+  await verifyRow(row, 'Y');
+  const l = sectionRows(), i = l.findIndex(r => r._row === row);
+  const next = l.slice(i + 1).find(r => !r.verified) || l.find(r => !r.verified);
+  if (next) { AUD.rowSel = next._row; renderDataTab(); }
+}
+document.addEventListener('keydown', e => {
+  if (!AUD.data || AUD.tab !== 'data' || !$('page-audit')?.classList.contains('active')) return;
+  if (/^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName) || e.metaKey || e.ctrlKey || e.altKey) return;
+  const k = e.key.toLowerCase();
+  if (k === 'j') { e.preventDefault(); moveRow(1); }
+  else if (k === 'k') { e.preventDefault(); moveRow(-1); }
+  else if (k === 'v' && AUD.rowSel) { e.preventDefault(); verifyAndNext(AUD.rowSel); }
+  else if (k === 'e' && AUD.rowSel) { e.preventDefault(); AUD.edit = AUD.rowSel; renderDataTab(); }
+});
+
 async function postVerify(updates) {
   await api('/api/audit-update', { method: 'POST', body: JSON.stringify({ type: 'verify', brand_id: AUD.brandId, updates }) });
 }
@@ -1324,6 +1603,54 @@ function calloutRefs() {
   const c = competitorList().find(x => String(x.i) === String(i)); if (!c) return [];
   return [`competitor.${i}.name`, c.revenue ? `competitor.${i}.est_monthly_revenue` : `competitor.${i}.channels`];
 }
+/* ───── Build tab, top: every claim the PDF will make, with its evidence ───── */
+function auditClaims() {
+  const s = AUD.sel, out = [];
+  const add = (where, f) => { const c = copyOf(f); if (c) out.push({ where, big: c.big, claim: c.claim, detail: c.detail, refs: c.data_refs || [], id: f }); };
+  if (s.headline) { add('Page 1 headline', s.headline); if (s.headline_line) out[out.length - 1].claim = s.headline_line; }
+  s.cards.forEach((id, i) => add(`Page 2, card ${i + 1}`, id));
+  const chRefs = CHANNELS.map(([k]) => `channel.${k}.status`).filter(f => audRow(f));
+  if (chRefs.length) out.push({ where: 'Page 1 channel grid', big: `${chRefs.length}`, claim: 'channels shown with their status.', detail: '', refs: chRefs });
+  if (s.include.callout && s.callout.competitor) {
+    const c = competitorList().find(x => String(x.i) === String(s.callout.competitor));
+    if (c) out.push({ where: 'Page 2 competitor callout', big: c.revenue ? '$' + Number(c.revenue).toLocaleString('en-US') : c.name, claim: c.revenue ? `a month on Amazon for ${c.name}.` : 'named as your closest competitor.', detail: s.callout.sub || '', refs: calloutRefs() });
+  }
+  return out;
+}
+function claimsHtml() {
+  const claims = auditClaims();
+  if (!claims.length) return '';
+  const verifiedClaims = claims.filter(c => c.refs.every(f => audRow(f)?.verified === 'Y')).length;
+  return `<div class="claims-hd"><div><h3>What the audit will say</h3><div class="hint">Every printed claim with the data behind it. Check the evidence, then verify the claim.</div></div>
+      <div class="small muted">${verifiedClaims} of ${claims.length} claims verified</div></div>
+    ${claims.map((c, ci) => {
+      const rows = c.refs.map(f => audRow(f)).filter(Boolean);
+      const left = rows.filter(r => r.verified !== 'Y' && r.verified !== 'Excluded').length;
+      return `<section class="claim">
+        <div class="claim-hd">
+          <div class="claim-big">${esc(c.big)}</div>
+          <div><div class="claim-text">${esc(c.claim)}</div><div class="small muted">${esc(c.where)}${c.detail ? ' · ' + esc(c.detail) : ''}</div></div>
+          <div class="claim-acts">${left ? `<span class="st st-warn">${left} to check</span><button class="btn btn-ghost btn-sm" onclick="verifyClaim(${ci})">Verify all evidence</button>` : '<span class="st st-ok">Verified</span>'}</div>
+        </div>
+        <div class="claim-ev">
+          ${rows.map(r => { const [l, cls] = rowStatus(r); const link = quickLinks(r)[0]; return `<div class="ev-row">
+            <span class="ev-lbl">${esc(r.label)}</span><span>${shortValue(r)}</span><span class="st ${cls}">${l}</span>
+            <span class="ev-links">${link ? `<a class="btn btn-ghost btn-sm" href="${esc(link[1])}" target="_blank" rel="noopener">${esc(link[0])}</a>` : ''}<button class="btn-link" onclick="jumpToRow('${esc(r.field)}')">Review</button></span></div>`; }).join('') || '<div class="small muted" style="padding:10px 0">No linked data for this claim.</div>'}
+        </div>
+      </section>`;
+    }).join('')}
+    <div class="claims-hd" style="margin-top:22px"><div><h3>Choose what goes in the audit</h3><div class="hint">Pick the headline and cards, edit wording, and set the sections.</div></div></div>`;
+}
+async function verifyClaim(i) {
+  const c = auditClaims()[i]; if (!c) return;
+  const rows = c.refs.map(f => audRow(f)).filter(r => r && r.verified !== 'Y' && r.verified !== 'Excluded');
+  try {
+    await postVerify(rows.map(r => ({ _row: r._row, verified: 'Y' })));
+    rows.forEach(r => { r.verified = 'Y'; });
+    toast(`${rows.length} data point${rows.length === 1 ? '' : 's'} verified`); renderAudit();
+  } catch (e) { if (e.message !== 'unauthorized') toast(e.message, true); }
+}
+
 function renderBuildTab() {
   const s = AUD.sel, d = AUD.data, f = d.findings;
   const logoSrc = s.logo_mode === 'upload' ? AUD.logoData : s.logo_mode === 'site' ? safeUrl(d.brand.logo_url) : '';
@@ -1345,6 +1672,7 @@ function renderBuildTab() {
     </div>`;
   };
   $('aud-tab').innerHTML = `
+  ${claimsHtml()}
   ${!f.length ? `<div class="card" style="padding:14px 16px;margin-bottom:14px"><span class="small">No findings fired for this scan. Check the data tab: blank AI rows or a seller check marked Unknown can hold findings back.</span></div>` : ''}
   <div class="build-grid">
     <div class="panel">
