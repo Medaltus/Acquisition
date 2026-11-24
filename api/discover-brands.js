@@ -5,7 +5,7 @@ import { TABS, STATUS } from './_lib/schema.js';
 import { readTab, appendRows, updateRows, logRun } from './_lib/sheets.js';
 import { askClaude, parseJson } from './_lib/claude.js';
 import {
-  isAuthorized, nowIso, normalizeName, normalizeDomain, slugify, appendUnique, fetchText, htmlToText,
+  isAuthorized, nowIso, normalizeName, normalizeDomain, slugify, appendUnique, fetchText, fetchJson, htmlToText, sleep,
 } from './_lib/util.js';
 
 const REFRESH_DAYS = 7;
@@ -18,8 +18,31 @@ Only include consumer product BRANDS in those categories. Exclude retailers, mar
 Respond with ONLY a JSON array, no prose and no markdown. Each item: {"brand_name": string, "website_url": string, "note": string}.
 website_url is the brand's own official site if you know it with confidence, otherwise "". note is short context (funding round, job title, etc.) or "".`;
 
+/** Shopify retailers expose every product's vendor in /products.json, so the full brand list needs no AI. */
+async function shopifyVendors(domainOrUrl, retailerName = '') {
+  const origin = /^https?:\/\//i.test(domainOrUrl) ? new URL(domainOrUrl).origin : `https://${domainOrUrl.replace(/\/.*$/, '')}`;
+  const vendors = new Set();
+  for (let page = 1; page <= 60; page++) {
+    const data = await fetchJson(`${origin}/products.json?limit=250&page=${page}`);
+    if (!data || !Array.isArray(data.products)) {
+      if (page === 1) throw new Error(`${origin}/products.json is not available (not a Shopify store, or blocked)`);
+      break;
+    }
+    if (!data.products.length) break;
+    data.products.forEach(p => { if (p.vendor && p.vendor.trim()) vendors.add(p.vendor.trim()); });
+    await sleep(300);
+  }
+  // Drop the retailer's own house/gift-card/rewards "vendors" (e.g. "Credo Rewards", "Soko Glam")
+  const self = normalizeName(retailerName).slice(0, 5);
+  return [...vendors]
+    .filter(name => !(self && normalizeName(name).startsWith(self)))
+    .map(name => ({ brand_name: name, website_url: '', note: '' }));
+}
+
 async function brandsFromSource(src) {
   const type = (src.source_type || 'search').toLowerCase().trim();
+
+  if (type === 'shopify_vendors') return shopifyVendors(String(src.source_value || '').trim(), src.source_name);
 
   if (type === 'paste') {
     return String(src.paste_text || '')
@@ -51,7 +74,11 @@ async function brandsFromSource(src) {
     useSearch: true,
     maxSearches: 8,
   });
-  return parseJson(reply) || [];
+  const parsed = parseJson(reply);
+  if (!Array.isArray(parsed) || !parsed.length) {
+    throw new Error(`No brands parsed from search reply: ${String(reply).replace(/\s+/g, ' ').slice(0, 400) || '(empty reply)'}`);
+  }
+  return parsed;
 }
 
 export default async function handler(req, res) {
@@ -90,7 +117,8 @@ export default async function handler(req, res) {
       if (Date.now() > deadline) break;
       let found = [];
       try {
-        found = (await brandsFromSource(src)).filter(b => b && b.brand_name).slice(0, MAX_BRANDS_PER_SOURCE);
+        const cap = String(src.source_type).trim().toLowerCase() === 'shopify_vendors' ? 2000 : MAX_BRANDS_PER_SOURCE;
+        found = (await brandsFromSource(src)).filter(b => b && b.brand_name).slice(0, cap);
       } catch (e) {
         errors.push(`${src.source_name}: ${e.message}`);
         continue;
