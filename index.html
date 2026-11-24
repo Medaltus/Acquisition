@@ -249,6 +249,19 @@ textarea.input{resize:vertical;min-height:64px;line-height:1.5;}
 .st-ok{background:var(--green-dim);color:var(--green-ink);} .st-warn{background:rgba(200,125,47,.14);color:var(--warn);}
 .st-bad{background:rgba(219,55,45,.10);color:var(--danger);} .st-na{background:var(--bg2);color:var(--muted);}
 .rv-sec.on .st{background:rgba(255,255,255,.16);color:#fff;}
+
+.rv-group{border-top:1px solid var(--border2);}
+.rv-group:first-of-type{border-top:none;}
+.rv-group-hd{display:grid;grid-template-columns:16px minmax(0,1fr) auto;gap:8px;align-items:center;width:100%;min-height:52px;padding:8px 14px;border:none;background:var(--bg);text-align:left;cursor:pointer;color:var(--navy);font-size:12.5px;}
+.rv-group-hd:hover{background:var(--bg2);}
+.rv-group.open .rv-group-hd{background:var(--white);border-bottom:1px solid var(--border2);}
+.rv-caret{font-size:11px;color:var(--muted);}
+.rv-group-name{display:flex;flex-wrap:wrap;align-items:center;gap:4px 8px;min-width:0;}
+.rv-chips{display:flex;flex-wrap:wrap;gap:4px;width:100%;}
+.rv-chips .chip{font-size:10px;margin:0;}
+.rv-group-hd .st{justify-self:end;}
+.rv-group-acts{display:flex;align-items:center;gap:10px;padding:8px 14px 8px 38px;}
+.rv-row.nested{padding-left:38px;}
 /* Build tab claims */
 .claims-hd{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;margin-bottom:10px;}
 .claims-hd h3{font-family:var(--font-subheader);font-weight:400;font-size:19px;}
@@ -1204,7 +1217,7 @@ function populateAuditBrands() {
 function buildAudit(id) { showPage('audit'); openAudit(id); }
 
 async function openAudit(id) {
-  AUD.brandId = id; AUD.data = null; AUD.sel = null; AUD.dirtyData = false; AUD.edit = null; AUD.missingOpen = false; AUD.missingFallback = null;
+  AUD.brandId = id; AUD.data = null; AUD.sel = null; AUD.dirtyData = false; AUD.edit = null; AUD.missingOpen = false; AUD.missingFallback = null; AUD.openGroups = new Set(); AUD.closedByUser = new Set();
   populateAuditBrands();
   $('aud-run').disabled = !id;
   $('aud-steps').hidden = true;
@@ -1471,6 +1484,66 @@ function inspectorValue(r) {
   }
   return `<div class="insp-big">${fmtRowValue(r)}</div>`;
 }
+/* Rows for one product (same ASIN) fold into an accordion; everything else stays a flat row */
+const asinOf = r => (r.field.match(/^(?:score|control|pricing)\.([A-Z0-9]{10})\./) || [])[1] || '';
+function rowBtn(r, cur, used, nested = false) {
+  const [l, c] = rowStatus(r);
+  const label = nested ? r.label.replace(/\s*\([A-Z0-9]{10}\)\s*$/, '') : r.label;
+  return `<button class="rv-row${nested ? ' nested' : ''}${r._row === cur._row ? ' sel' : ''}${r.verified === 'Excluded' ? ' excluded' : ''}" onclick="AUD.rowSel=${r._row};AUD.edit=null;renderDataTab()">
+    <span class="rv-lbl">${esc(label)}${used.has(r.field) ? '<span class="in-audit">In audit</span>' : ''}</span>
+    <span class="rv-val">${shortValue(r)}</span><span class="st ${c}">${l}</span></button>`;
+}
+function productSummaryChips(asin) {
+  const v = k => String(audRow(`score.${asin}.${k}`)?.value || '').trim();
+  return [v('title_length') && `${v('title_length')} char title`, v('bullets') && `${v('bullets')} bullets`, v('images') && `${v('images')} images`,
+    v('rating') && `${v('rating')} stars`, v('reviews') && `${Number(v('reviews')).toLocaleString('en-US')} ratings`]
+    .filter(Boolean).map(t => `<span class="chip">${esc(t)}</span>`).join('');
+}
+function listHtml(list, cur, used) {
+  const groups = new Map();
+  list.forEach(r => { const a = asinOf(r); if (a) (groups.get(a) || groups.set(a, []).get(a)).push(r); });
+  const grouped = new Set([...groups].filter(([, rs]) => rs.length > 1).map(([a]) => a));
+  if (!grouped.size) return list.map(r => rowBtn(r, cur, used)).join('');
+  AUD.openGroups ||= new Set();
+  const curAsin = asinOf(cur);
+  if (grouped.has(curAsin) && !AUD.closedByUser?.has(curAsin)) AUD.openGroups.add(curAsin);
+  let html = '';
+  const done = new Set();
+  for (const r of list) {
+    const a = asinOf(r);
+    if (!grouped.has(a)) { html += rowBtn(r, cur, used); continue; }
+    if (done.has(a)) continue;
+    done.add(a);
+    const rs = groups.get(a), open = AUD.openGroups.has(a);
+    const name = audRow(`score.${a}.site_name`)?.value || audRow(`score.${a}.name`)?.value || audRow(`control.${a}.sellers`)?.label || a;
+    const checked = rs.filter(x => x.verified).length, missing = rs.filter(x => rowStatus(x)[0] === 'Missing').length;
+    const autoLeft = rs.filter(x => x.method === 'auto' && !x.verified).length;
+    const st = checked === rs.length ? ['All checked', 'st-ok'] : missing ? [`${missing} missing`, 'st-bad'] : [`${checked} of ${rs.length} checked`, 'st-warn'];
+    html += `<div class="rv-group${open ? ' open' : ''}">
+      <button class="rv-group-hd" aria-expanded="${open}" onclick="toggleGroup('${a}')">
+        <span class="rv-caret" aria-hidden="true">${open ? '▾' : '▸'}</span>
+        <span class="rv-group-name"><b>${esc(name)}</b> <span class="mono muted">${a}</span><span class="rv-chips">${productSummaryChips(a)}</span></span>
+        <span class="st ${st[1]}">${st[0]}</span>
+      </button>
+      ${open ? `<div class="rv-group-body">
+        <div class="rv-group-acts"><a class="btn btn-ghost btn-sm" href="https://www.amazon.com/dp/${a}" target="_blank" rel="noopener">Open listing</a>
+          ${autoLeft ? `<button class="btn-link" onclick="verifyGroup('${a}')">Verify ${autoLeft} Amazon API row${autoLeft === 1 ? '' : 's'}</button>` : ''}</div>
+        ${rs.map(x => rowBtn(x, cur, used, true)).join('')}</div>` : ''}
+    </div>`;
+  }
+  return html;
+}
+function toggleGroup(a) {
+  AUD.openGroups ||= new Set(); AUD.closedByUser ||= new Set();
+  if (AUD.openGroups.has(a)) { AUD.openGroups.delete(a); AUD.closedByUser.add(a); }
+  else { AUD.openGroups.add(a); AUD.closedByUser.delete(a); const first = sectionRows().find(r => asinOf(r) === a && !r.verified) || sectionRows().find(r => asinOf(r) === a); if (first) AUD.rowSel = first._row; }
+  renderDataTab();
+}
+async function verifyGroup(a) {
+  const rows = sectionRows().filter(r => asinOf(r) === a && r.method === 'auto' && !r.verified);
+  try { await postVerify(rows.map(r => ({ _row: r._row, verified: 'Y' }))); rows.forEach(r => { r.verified = 'Y'; }); toast(`${rows.length} rows verified`); renderDataTab(); }
+  catch (e) { if (e.message !== 'unauthorized') toast(e.message, true); }
+}
 function renderDataTab() {
   const rows = audRows(), used = usedRefs();
   const bySec = {};
@@ -1503,9 +1576,7 @@ function renderDataTab() {
       <section class="rv-list">
         <div class="rv-list-hd"><b>${esc(AUD.secSel)}</b>
           ${autoLeft ? `<button class="btn-link" onclick="verifySection('${esc(AUD.secSel)}')">Verify all ${autoLeft} Amazon API / site row${autoLeft === 1 ? '' : 's'}</button>` : '<span class="small muted">J / K to move · V to verify · E to edit</span>'}</div>
-        ${list.map(r => { const [l, c] = rowStatus(r); return `<button class="rv-row${r._row === cur._row ? ' sel' : ''}${r.verified === 'Excluded' ? ' excluded' : ''}" onclick="AUD.rowSel=${r._row};AUD.edit=null;renderDataTab()">
-          <span class="rv-lbl">${esc(r.label)}${used.has(r.field) ? '<span class="in-audit">In audit</span>' : ''}</span>
-          <span class="rv-val">${shortValue(r)}</span><span class="st ${c}">${l}</span></button>`; }).join('')}
+        ${listHtml(list, cur, used)}
       </section>
       <aside class="rv-insp">
         <div class="small muted">${esc(AUD.secSel)} · ${idx + 1} of ${list.length}${used.has(cur.field) ? ' · <b>printed in the audit</b>' : ''}</div>
@@ -1541,6 +1612,7 @@ function sectionRows() { return audRows().filter(r => SECTION_OF(r) === AUD.secS
 function moveRow(step) {
   const l = sectionRows(), i = l.findIndex(r => r._row === AUD.rowSel);
   const n = l[i + step]; if (!n) return;
+  AUD.closedByUser?.delete(asinOf(n));
   AUD.rowSel = n._row; AUD.edit = null; renderDataTab();
 }
 async function verifyAndNext(row) {
