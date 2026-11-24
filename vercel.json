@@ -23,6 +23,18 @@
     },
     "api/dashboard-update.js": {
       "maxDuration": 60
+    },
+    "api/audit-scan.js": {
+      "maxDuration": 300
+    },
+    "api/audit-data.js": {
+      "maxDuration": 60
+    },
+    "api/audit-update.js": {
+      "maxDuration": 60
+    },
+    "api/import-crm.js": {
+      "maxDuration": 120
     }
   },
   "crons": [
@@ -32,15 +44,15 @@
     },
     {
       "path": "/api/enrich-brands",
-      "schedule": "20 */2 * * *"
+      "schedule": "20 * * * *"
     },
     {
       "path": "/api/scan-products",
-      "schedule": "40 */2 * * *"
+      "schedule": "40 * * * *"
     },
     {
       "path": "/api/amazon-check",
-      "schedule": "50 */2 * * *"
+      "schedule": "50 * * * *"
     }
   ],
   "rewrites": [
