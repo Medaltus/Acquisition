@@ -1,5 +1,9 @@
-// Dashboard: all data for Current Brands, Retired Brands, and Future Prospects in one call.
-// Auth: x-dashboard-key header must equal DASHBOARD_PASSWORD.
+/**
+ * api/dashboard-data.js
+ *
+ * Dashboard: all data for Current Brands, Retired Brands, and Future Prospects in one call.
+ * Auth: x-dashboard-key header must equal DASHBOARD_PASSWORD.
+ */
 import { TABS, STATUS, OUTREACH_STAGES, OUTREACH_CLOSED } from './_lib/schema.js';
 import { readTab } from './_lib/sheets.js';
 import { isDashboardAuthorized } from './_lib/util.js';
@@ -14,6 +18,7 @@ const PROSPECT_FIELDS = [
 ];
 const HIDDEN = [STATUS.DUPLICATE];
 
+const isRetired = p => /^retired$/i.test(String(p.status || '').trim()) || Boolean(String(p.end_date || '').trim());
 const pick = (row, fields) => Object.fromEntries(fields.map(f => [f, row[f] ?? '']));
 
 export default async function handler(req, res) {
@@ -58,8 +63,8 @@ export default async function handler(req, res) {
       sheetUrl: sheetId ? `https://docs.google.com/spreadsheets/d/${sheetId}/edit` : '',
       stages: OUTREACH_STAGES,
       closedStages: OUTREACH_CLOSED,
-      current: partnerRows.filter(p => !p.end_date),
-      retired: partnerRows.filter(p => p.end_date),
+      current: partnerRows.filter(p => !isRetired(p)),
+      retired: partnerRows.filter(p => isRetired(p)),
       prospects,
     });
   } catch (err) {
