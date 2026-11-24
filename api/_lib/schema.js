@@ -60,18 +60,20 @@ export const STATUS = {
 
 export const CATEGORIES = ['skincare', 'haircare', 'makeup', 'nail', 'wellness', 'other'];
 
-// source_type: "search" = Claude web search with the instruction in source_value
+// source_type: "shopify_vendors" = retailer runs on Shopify; source_value is its domain. Reads every
+//                                   product's vendor from /products.json (complete list, no AI cost)
+//              "search" = Claude web search with the instruction in source_value
 //              "url"    = fetch this directory/exhibitor page and extract brands
 //              "paste"  = brand names pasted into paste_text, one per line (for sites that block bots)
 export const SEED_SOURCES = [
-  { source_name: 'Credo Beauty', source_type: 'search', signal_label: 'Sold at Credo',
-    source_value: 'List the brands carried by Credo Beauty (credobeauty.com), using its brand directory.' },
-  { source_name: 'The Detox Market', source_type: 'search', signal_label: 'Sold at The Detox Market',
-    source_value: 'List the brands carried by The Detox Market (thedetoxmarket.com), using its brand directory.' },
+  { source_name: 'Credo Beauty', source_type: 'shopify_vendors', signal_label: 'Sold at Credo',
+    source_value: 'credobeauty.com' },
+  { source_name: 'The Detox Market', source_type: 'shopify_vendors', signal_label: 'Sold at The Detox Market',
+    source_value: 'thedetoxmarket.com' },
   { source_name: 'Olive Young Global', source_type: 'search', signal_label: 'Sold at Olive Young Global',
     source_value: 'List Korean beauty brands sold on Olive Young Global (global.oliveyoung.com).' },
-  { source_name: 'Soko Glam', source_type: 'search', signal_label: 'Sold at Soko Glam',
-    source_value: 'List the brands carried by Soko Glam (sokoglam.com), using its brand directory.' },
+  { source_name: 'Soko Glam', source_type: 'shopify_vendors', signal_label: 'Sold at Soko Glam',
+    source_value: 'sokoglam.com' },
   { source_name: 'Indie Beauty Expo', source_type: 'search', signal_label: 'IBE exhibitor',
     source_value: 'List exhibiting brands from the most recent Indie Beauty Expo exhibitor list.' },
   { source_name: 'Recent Funding', source_type: 'search', signal_label: 'Recently raised funding',
@@ -81,3 +83,6 @@ export const SEED_SOURCES = [
   { source_name: 'Faire Beauty Wholesale', source_type: 'search', signal_label: 'Wholesales on Faire',
     source_value: 'List independent beauty and skincare brands that sell wholesale on Faire (faire.com).' },
 ].map(s => ({ paste_text: '', enabled: 'Y', last_run: '', brands_found: '', notes: '', ...s }));
+
+// Seed rows from the first version that should be upgraded in place by /api/setup-sheet
+export const SOURCE_UPGRADES = SEED_SOURCES.filter(s => s.source_type === 'shopify_vendors');
