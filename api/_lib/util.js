@@ -1,3 +1,6 @@
+/**
+ * api/_lib/util.js
+ */
 export const USER_AGENT =
   'Mozilla/5.0 (compatible; MedaltusBrandScanner/1.0; +https://www.medaltus.com)';
 
