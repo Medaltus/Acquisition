@@ -1,6 +1,9 @@
-// Single source of truth for tab names, column headers, statuses, and starter sources.
-// All reads/writes go by header NAME, so column order in the sheet doesn't matter.
-
+/**
+ * api/_lib/schema.js
+ *
+ * Single source of truth for tab names, column headers, statuses, and starter sources.
+ * All reads/writes go by header NAME, so column order in the sheet doesn't matter.
+ */
 export const TABS = {
   SOURCES: 'Sources',
   RAW: 'Raw Discoveries',
@@ -9,6 +12,7 @@ export const TABS = {
   EXCLUSIONS: 'Exclusions',
   RUN_LOG: 'Run Log',
   PARTNERS: 'Partner Brands',
+  CRM_IMPORT: 'CRM Import',
 };
 
 export const HEADERS = {
@@ -50,10 +54,18 @@ export const HEADERS = {
   ],
   [TABS.EXCLUSIONS]: ['brand_name', 'domain', 'reason'],
   [TABS.RUN_LOG]: ['timestamp', 'job', 'processed', 'added', 'updated', 'errors', 'notes'],
-  // One row per brand Medaltus has partnered with. Blank end_date = current; filled = retired.
+  // One row per brand Medaltus has partnered with. status = Current or Retired
+  // (a filled end_date also counts as Retired).
   [TABS.PARTNERS]: [
     'brand_name', 'website_url', 'sign_date', 'end_date', 'partnership_model', 'brand_manager',
     'channels', 'dashboard_url', 'retired_reason', 'notes',
+    'status', 'category', 'where_met', 'primary_contact', 'contact_email', 'last_correspondence',
+    'pricing', 'agreement_files',
+  ],
+  // Paste or import the CRM export here, then run /api/import-crm
+  [TABS.CRM_IMPORT]: [
+    'brand_name', 'category', 'stage', 'services', 'date_signed', 'where_met', 'notes',
+    'primary_contact', 'contact_email', 'last_correspondence', 'pricing', 'agreement_files',
   ],
 };
 
