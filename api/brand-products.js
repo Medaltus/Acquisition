@@ -1,4 +1,8 @@
-// Dashboard: product list for one brand. GET /api/brand-products?brand_id=<id>
+/**
+ * api/brand-products.js
+ *
+ * Dashboard: product list for one brand. GET /api/brand-products?brand_id=<id>
+ */
 import { TABS } from './_lib/schema.js';
 import { readTab } from './_lib/sheets.js';
 import { isDashboardAuthorized } from './_lib/util.js';
