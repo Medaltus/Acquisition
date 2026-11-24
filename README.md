@@ -11,6 +11,8 @@ websites, and captures their DTC product catalog and UPCs into Google Sheets.
 | `api/discover-brands.js` | Runs up to 2 due sources (not run in 7 days), logs sightings, dedupes into Brands | Daily 11:00 UTC |
 | `api/enrich-brands.js` | Finds the site if missing, reads homepage: category, socials, logo, platform, signals | Every 2 hrs (:20) |
 | `api/scan-products.js` | Pulls the product catalog + UPCs into Products, writes product_count and upc_coverage | Every 2 hrs (:40) |
+| `medaltus_brands_index.html` | Internal dashboard: Current Brands, Retired Brands, Future Prospects (served at `/`) | — |
+| `api/dashboard-data.js`, `api/brand-products.js`, `api/dashboard-update.js` | Dashboard read/write endpoints (password protected) | — |
 | `api/amazon-check.js` | Looks up UPCs + brand name on Amazon (SP-API), pulls offers/Buy Box, classifies each brand | Every 2 hrs (:50) |
 | `api/_lib/*` | Shared helpers (Sheets client, Claude, site parsing, product/UPC extraction, schema) | — |
 
@@ -29,6 +31,7 @@ websites, and captures their DTC product catalog and UPCs into Google Sheets.
 | `SP_REFRESH_TOKEN` | Refresh token for any authorized Medaltus seller account |
 | `SP_SELLER_ID` | Optional. That account's seller ID; flags brands a Medaltus account already sells |
 | `SP_MARKETPLACE_ID` | Optional. Defaults to `ATVPDKIKX0DER` (US) |
+| `DASHBOARD_PASSWORD` | Optional. Leave unset for an open dashboard; set it to require a sign-in password |
 
 No leading or trailing spaces. Redeploy after adding or changing any variable.
 
@@ -105,3 +108,18 @@ catalog search (uses `amazon_brand_name` if filled), pulls offers for up to 40 A
 
 SP-API can't name sellers, so reseller vs. brand-run is a heuristic; check amazon_notes.
 The SP-API app needs the Product Listing (catalog) and Pricing roles.
+
+## Dashboard
+
+Open the site root (`https://<deployment>/`). It's open while `DASHBOARD_PASSWORD` is unset; set that env var to require a password.
+
+- **Current Brands / Retired Brands** read the `Partner Brands` tab. A blank `end_date` means current;
+  filling it (or using **Retire** on the dashboard) moves the brand to Retired. **Reinstate** clears it.
+- **Future Prospects** reads the `Brands` tab. Outreach status, owner, contact, next step, and notes are
+  saved back to Brands. Setting a prospect to **Signed** adds it to Partner Brands with today's sign date.
+- Every brand in Partner Brands (current or retired) is automatically skipped by discover-brands.
+
+Brand fonts and logo: copy these files from an existing brand dashboard repo into this repo's root:
+`GT Walsheim Pro Bold.ttf`, `GT Walsheim Pro Medium.ttf`, `GT Walsheim Pro Light.ttf`,
+`Monotype - PlantinMTPro-Italic.otf`, `Medaltus_Typeface Logo_dark bground_RGB.svg`.
+Without them the dashboard falls back to DM Sans / Georgia and a text logo.
