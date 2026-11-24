@@ -1,5 +1,8 @@
-// Deterministic homepage parsing: platform, social handles, logo, marketplace links.
-
+/**
+ * api/_lib/site.js
+ *
+ * Deterministic homepage parsing: platform, social handles, logo, marketplace links.
+ */
 export function detectPlatform(html) {
   const h = String(html || '').toLowerCase();
   if (h.includes('cdn.shopify.com') || h.includes('shopify.theme') || h.includes('myshopify.com')) return 'Shopify';
