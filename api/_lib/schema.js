@@ -8,6 +8,7 @@ export const TABS = {
   PRODUCTS: 'Products',
   EXCLUSIONS: 'Exclusions',
   RUN_LOG: 'Run Log',
+  PARTNERS: 'Partner Brands',
 };
 
 export const HEADERS = {
@@ -33,6 +34,8 @@ export const HEADERS = {
     // Amazon check (written by amazon-check.js)
     'amazon_status', 'amazon_asin_count', 'amazon_upc_matches', 'amazon_max_sellers',
     'amazon_price_gap', 'amazon_checked_at', 'amazon_notes',
+    // Outreach (written by the dashboard)
+    'outreach_status', 'outreach_owner', 'outreach_updated', 'next_step', 'outreach_notes',
     // System (dashboard)
     'logo_url', 'scan_status', 'scan_requested_at', 'scan_completed_at', 'snapshot_count',
     'audit_status', 'pdf_url',
@@ -47,7 +50,17 @@ export const HEADERS = {
   ],
   [TABS.EXCLUSIONS]: ['brand_name', 'domain', 'reason'],
   [TABS.RUN_LOG]: ['timestamp', 'job', 'processed', 'added', 'updated', 'errors', 'notes'],
+  // One row per brand Medaltus has partnered with. Blank end_date = current; filled = retired.
+  [TABS.PARTNERS]: [
+    'brand_name', 'website_url', 'sign_date', 'end_date', 'partnership_model', 'brand_manager',
+    'channels', 'dashboard_url', 'retired_reason', 'notes',
+  ],
 };
+
+export const OUTREACH_STAGES = [
+  'Not Contacted', 'Researching', 'Audit Ready', 'Contacted', 'In Conversation', 'Proposal Sent', 'Signed',
+];
+export const OUTREACH_CLOSED = ['Not Interested', 'Disqualified'];
 
 export const STATUS = {
   NEW: 'New',                       // has a website, waiting for enrichment
