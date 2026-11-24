@@ -1,5 +1,9 @@
-// Minimal Google Sheets client using a service account (no npm dependencies).
-// Env: GOOGLE_CLIENT_EMAIL, GOOGLE_PRIVATE_KEY, BRAND_SCANNER_SHEET_ID
+/**
+ * api/_lib/sheets.js
+ *
+ * Minimal Google Sheets client using a service account (no npm dependencies).
+ * Env: GOOGLE_CLIENT_EMAIL, GOOGLE_PRIVATE_KEY, BRAND_SCANNER_SHEET_ID
+ */
 import crypto from 'node:crypto';
 import { HEADERS, TABS } from './schema.js';
 
