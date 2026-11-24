@@ -1,6 +1,10 @@
-// One-time (safe to re-run): creates any missing tabs, adds any missing column headers,
-// and seeds the Sources tab with starter sources if it's empty.
-// Run: https://<your-deployment>/api/setup-sheet?key=<CRON_SECRET>
+/**
+ * api/setup-sheet.js
+ *
+ * One-time (safe to re-run): creates any missing tabs, adds any missing column headers,
+ * and seeds the Sources tab with starter sources if it's empty.
+ * Run: https://<your-deployment>/api/setup-sheet?key=<CRON_SECRET>
+ */
 import { TABS, HEADERS, SEED_SOURCES, SOURCE_UPGRADES } from './_lib/schema.js';
 import { listTabs, addTab, readTab, writeHeaderCells, appendRows, updateRows } from './_lib/sheets.js';
 import { isAuthorized } from './_lib/util.js';
