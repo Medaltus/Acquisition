@@ -507,20 +507,31 @@ function renderCurrent() {
     : s === 'newest' ? (b._d || 0) - (a._d || 0)
     : (a._d || Infinity) - (b._d || Infinity));
 
+  const hasModel = rows.some(r => r.partnership_model), hasMgr = rows.some(r => r.brand_manager), hasDash = rows.some(r => safeUrl(r.dashboard_url));
   $('current-table').innerHTML = `<table class="data-table plain"><thead><tr>
       <th class="sortable" onclick="setCurrentSort('name')">Brand</th>
+      <th>Category</th>
       <th class="sortable" onclick="setCurrentSort(UI.currentSort==='sign_date'?'newest':'sign_date')">Partner since</th>
-      <th>Partnership length</th><th>Model</th><th>Brand manager</th><th>Channels</th><th>Dashboard</th><th></th>
+      <th>Partnership length</th><th>Services</th>
+      ${hasModel ? '<th>Model</th>' : ''}${hasMgr ? '<th>Brand manager</th>' : ''}
+      <th>Primary contact</th>${hasDash ? '<th>Dashboard</th>' : ''}<th></th>
     </tr></thead><tbody>${rows.map(r => `<tr>
       <td><div class="brand-cell">${brandMark(r.brand_name)}<div><div class="brand-name">${esc(r.brand_name)}</div>${siteLink(r.website_url)}</div></div></td>
+      <td>${splitChannels(r.category)}</td>
       <td class="nowrap">${r._d ? fmtDate(r.sign_date) : '<span class="muted">Add sign date</span>'}</td>
       <td>${r._d ? `<div class="tenure"><span>${fmtTenure(r._m)}</span><div class="tenure-track"><div class="tenure-fill" style="width:${Math.max(3, Math.round(r._m / maxM * 100))}%"></div></div></div>` : '<span class="muted">—</span>'}</td>
-      <td>${esc(r.partnership_model) || '<span class="muted">—</span>'}</td>
-      <td>${esc(r.brand_manager) || '<span class="muted">—</span>'}</td>
-      <td>${splitChannels(r.channels)}</td>
-      <td>${safeUrl(r.dashboard_url) ? `<a class="btn btn-ghost btn-sm" href="${esc(safeUrl(r.dashboard_url))}" target="_blank" rel="noopener">Open</a>` : '<span class="muted">—</span>'}</td>
+      <td style="max-width:220px">${splitChannels(r.channels)}</td>
+      ${hasModel ? `<td>${esc(r.partnership_model) || '<span class="muted">—</span>'}</td>` : ''}
+      ${hasMgr ? `<td>${esc(r.brand_manager) || '<span class="muted">—</span>'}</td>` : ''}
+      <td>${contactCell(r)}</td>
+      ${hasDash ? `<td>${safeUrl(r.dashboard_url) ? `<a class="btn btn-ghost btn-sm" href="${esc(safeUrl(r.dashboard_url))}" target="_blank" rel="noopener">Open</a>` : '<span class="muted">—</span>'}</td>` : ''}
       <td class="nowrap"><button class="btn-link" onclick="openRetire('${esc(r.brand_name).replace(/'/g, '&#39;')}')">Retire</button></td>
     </tr>`).join('')}</tbody></table>`;
+}
+function contactCell(r) {
+  if (!r.primary_contact && !r.contact_email) return '<span class="muted">—</span>';
+  const email = String(r.contact_email || '').trim();
+  return `${esc(r.primary_contact)}${email ? `<div class="small"><a class="brand-site" href="mailto:${esc(email)}">${esc(email)}</a></div>` : ''}`;
 }
 function splitChannels(s) {
   const parts = String(s || '').split(/[,|]/).map(x => x.trim()).filter(Boolean);
@@ -530,7 +541,7 @@ function splitChannels(s) {
 /* ───────────── Retired brands ───────────── */
 function renderRetired() {
   const rows = DATA.retired.map(p => { const a = parseDate(p.sign_date), b = parseDate(p.end_date); return { ...p, _a: a, _b: b, _m: a && b ? monthsBetween(a, b) : null }; })
-    .sort((x, y) => (y._b || 0) - (x._b || 0));
+    .sort((x, y) => (y._b || 0) - (x._b || 0) || x.brand_name.localeCompare(y.brand_name));
   const withLen = rows.filter(r => r._m != null);
   const avg = withLen.length ? withLen.reduce((s, r) => s + r._m, 0) / withLen.length : null;
   const reasons = {};
@@ -544,13 +555,14 @@ function renderRetired() {
 
   if (!rows.length) { $('retired-table').innerHTML = `<div class="empty"><strong>No retired brands</strong>Retire a brand from Current Brands and it moves here.</div>`; return; }
   $('retired-table').innerHTML = `<table class="data-table plain"><thead><tr>
-      <th>Brand</th><th>Partner since</th><th>Ended</th><th>Partnership length</th><th>Model</th><th>Reason</th><th>Notes</th><th></th>
+      <th>Brand</th><th>Category</th><th>Partner since</th><th>Ended</th><th>Partnership length</th><th>Services</th><th>Reason</th><th>Notes</th><th></th>
     </tr></thead><tbody>${rows.map(r => `<tr>
       <td><div class="brand-cell">${brandMark(r.brand_name)}<div><div class="brand-name">${esc(r.brand_name)}</div>${siteLink(r.website_url)}</div></div></td>
+      <td>${splitChannels(r.category)}</td>
       <td class="nowrap">${fmtDate(r.sign_date) || '<span class="muted">—</span>'}</td>
-      <td class="nowrap">${fmtDate(r.end_date)}</td>
+      <td class="nowrap">${fmtDate(r.end_date) || '<span class="muted">—</span>'}</td>
       <td>${r._m != null ? fmtTenure(r._m) : '<span class="muted">—</span>'}</td>
-      <td>${esc(r.partnership_model) || '<span class="muted">—</span>'}</td>
+      <td style="max-width:200px">${splitChannels(r.channels)}</td>
       <td>${esc(r.retired_reason) || '<span class="muted">—</span>'}</td>
       <td class="small" style="max-width:260px">${esc(r.notes)}</td>
       <td class="nowrap"><button class="btn-link" onclick="reinstate('${esc(r.brand_name).replace(/'/g, '&#39;')}')">Reinstate</button></td>
@@ -586,7 +598,7 @@ async function saveRetire(e) {
 }
 async function reinstate(name) {
   if (!confirm(`Move ${name} back to Current Brands?`)) return;
-  try { await api('/api/dashboard-update', { method: 'POST', body: JSON.stringify({ type: 'partner', action: 'update', brand_name: name, data: { end_date: '', retired_reason: '' } }) });
+  try { await api('/api/dashboard-update', { method: 'POST', body: JSON.stringify({ type: 'partner', action: 'update', brand_name: name, data: { end_date: '', retired_reason: '', status: 'Current' } }) });
     toast(`${name} reinstated`); load();
   } catch (err) { if (err.message !== 'unauthorized') toast(err.message, true); }
 }
