@@ -206,6 +206,71 @@ textarea.input{resize:vertical;min-height:64px;line-height:1.5;}
 .loading{padding:60px 24px;text-align:center;color:var(--muted);}
 .more-row{display:flex;justify-content:center;padding:14px;}
 
+/* ── Audit builder ── */
+.aud-top{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-bottom:16px;}
+.aud-top .field{min-width:260px;}
+.aud-status{font-size:11.5px;color:var(--muted);}
+.aud-steps{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;}
+.aud-step{display:flex;align-items:center;gap:8px;background:var(--white);border:1px solid var(--border);border-radius:999px;padding:6px 14px 6px 8px;font-size:11.5px;color:var(--muted);}
+.aud-step i{width:18px;height:18px;border-radius:50%;background:var(--bg2);display:inline-flex;align-items:center;justify-content:center;font-style:normal;font-size:10px;color:var(--muted);}
+.aud-step.run i{background:var(--navy);color:#fff;animation:audpulse 1.2s ease-in-out infinite;}
+.aud-step.done{color:var(--navy);} .aud-step.done i{background:var(--green);color:var(--navy);}
+.aud-step.err{color:var(--danger);border-color:rgba(219,55,45,.3);} .aud-step.err i{background:var(--danger);color:#fff;}
+@keyframes audpulse{50%{opacity:.45;}}
+.tabs{display:flex;gap:2px;border-bottom:1px solid var(--border);margin-bottom:18px;}
+.tabs button{border:none;background:none;padding:10px 16px;font-size:12.5px;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;font-family:var(--font-header);}
+.tabs button.active{color:var(--navy);border-bottom-color:var(--green);}
+.tabs .tcount{font-size:10px;margin-left:5px;background:var(--bg2);border-radius:999px;padding:1px 7px;}
+.aud-sec{margin-bottom:18px;}
+.aud-sec-hd{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px;}
+.aud-sec-hd h3{font-family:var(--font-subheader);font-weight:400;font-size:17px;}
+.aud-sec-hd .muted{font-size:11px;}
+.drow{display:grid;grid-template-columns:minmax(160px,1.1fr) minmax(200px,2fr) 150px 150px;gap:12px;align-items:start;padding:11px 14px;border-top:1px solid var(--border2);font-size:12px;}
+.drow:first-child{border-top:none;}
+.drow.used{box-shadow:inset 3px 0 0 var(--warn);}
+.drow.used.ok{box-shadow:inset 3px 0 0 var(--green);}
+.drow.excluded{opacity:.5;}
+.drow .lbl{color:var(--navy);font-family:var(--font-header);}
+.drow .val{color:var(--navy);word-break:break-word;}
+.drow .val .sub{display:block;color:var(--muted);font-size:11px;margin-top:3px;}
+.drow .src{font-size:11px;color:var(--muted);}
+.drow .src a{color:var(--muted);}
+.drow .acts{display:flex;flex-direction:column;gap:5px;align-items:flex-start;}
+.chk{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;color:var(--navy);cursor:pointer;}
+.mtag{display:inline-block;font-size:9.5px;font-weight:700;letter-spacing:.03em;padding:2px 7px;border-radius:999px;margin-bottom:4px;}
+.m-auto{background:var(--navy-dim);color:var(--navy);} .m-ai{background:rgba(200,125,47,.14);color:var(--warn);}
+.m-needed{background:rgba(219,55,45,.10);color:var(--danger);} .m-manual{background:var(--green-dim);color:var(--green-ink);}
+.inline-edit{display:flex;gap:6px;margin-top:6px;}
+.inline-edit .input{padding:5px 8px;font-size:11.5px;}
+.build-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;}
+.panel{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px;}
+.panel h3{font-family:var(--font-subheader);font-weight:400;font-size:17px;margin-bottom:4px;}
+.panel .hint{font-size:11.5px;color:var(--muted);margin-bottom:12px;}
+.pick{display:grid;grid-template-columns:22px 70px 1fr;gap:10px;align-items:start;padding:10px 0;border-top:1px solid var(--border2);}
+.pick > label{cursor:pointer;}
+.pick:first-of-type{border-top:none;}
+.pick input{margin-top:3px;}
+.pick .pbig{font-family:var(--font-subheader);font-size:20px;line-height:1.1;color:var(--navy);}
+.pick .pclaim{font-family:var(--font-header);font-size:12.5px;color:var(--navy);}
+.pick .pmeta{font-size:10.5px;color:var(--muted);margin-top:3px;}
+.pick .pmeta b{font-family:var(--font);font-weight:400;}
+.copyedit{grid-column:2/-1;display:grid;grid-template-columns:90px 1fr;gap:6px 8px;margin-top:6px;}
+.copyedit label{font-size:10.5px;color:var(--muted);align-self:center;}
+.logo-box{display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+.logo-prev{width:150px;height:60px;border:1px dashed var(--border);border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;background:#FAF6F2;overflow:hidden;font-size:11px;color:var(--muted);}
+.logo-prev img{max-width:100%;max-height:100%;object-fit:contain;padding:6px;}
+.opp-row{display:grid;grid-template-columns:1.2fr 1fr 1fr 28px;gap:6px;margin-bottom:6px;}
+.preview-wrap{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:16px;align-items:start;}
+.preview-frame{background:#E9E6E2;border-radius:var(--radius);border:1px solid var(--border);overflow:hidden;}
+.preview-frame iframe{border:none;display:block;transform-origin:0 0;}
+.blockers{list-style:none;font-size:12px;}
+.blockers li{padding:8px 0;border-top:1px solid var(--border2);display:flex;gap:8px;align-items:flex-start;}
+.blockers li:first-child{border-top:none;}
+.blockers .x{color:var(--danger);font-weight:700;}
+.ok-note{color:var(--green-ink);font-size:12px;}
+.sticky-actions{position:sticky;bottom:0;background:linear-gradient(transparent,var(--bg) 30%);padding:16px 0 4px;display:flex;justify-content:flex-end;gap:10px;align-items:center;}
+@media (max-width:1100px){.build-grid,.preview-wrap{grid-template-columns:1fr;}.drow{grid-template-columns:1fr 1fr;}}
+
 @media (max-width:1100px){
   .pipeline{grid-template-columns:repeat(4,minmax(0,1fr));}
   .stage{border-bottom:1px solid var(--border2);}
@@ -261,6 +326,9 @@ textarea.input{resize:vertical;min-height:64px;line-height:1.5;}
     <div class="nav-section">Growth</div>
     <button class="nav-btn" data-page="prospects" onclick="showPage('prospects')">
       <svg viewBox="0 0 16 16"><circle cx="7" cy="7" r="5"/><path d="M10.7 10.7L14.5 14.5"/></svg>Future Prospects<span class="nav-badge" id="nb-prospects">–</span>
+    </button>
+    <button class="nav-btn" data-page="audit" onclick="showPage('audit')">
+      <svg viewBox="0 0 16 16"><path d="M4 1.5h5.5L13 5v9.5H4z"/><path d="M9.5 1.5V5H13M6.5 8.5h4M6.5 11h4"/></svg>Audit Builder
     </button>
   </nav>
   <div class="sb-foot">
@@ -338,6 +406,22 @@ textarea.input{resize:vertical;min-height:64px;line-height:1.5;}
     </div>
     <div class="card"><div class="table-wrap" id="prospect-table"><div class="loading">Loading prospects…</div></div></div>
   </section>
+  <!-- ══ AUDIT BUILDER ══ -->
+  <section class="page" id="page-audit">
+    <div class="page-hd">
+      <div>
+        <div class="page-title">Audit Builder</div>
+        <div class="page-sub">Run a scan, check every data point that goes in the PDF, pick the findings, and export the two-page gap audit.</div>
+      </div>
+    </div>
+    <div class="aud-top">
+      <select class="field" id="aud-brand" onchange="openAudit(this.value)"><option value="">Choose a brand…</option></select>
+      <button class="btn btn-primary" id="aud-run" onclick="runAuditScan()" disabled>Run scan</button>
+      <span class="aud-status" id="aud-status"></span>
+    </div>
+    <div class="aud-steps" id="aud-steps" hidden></div>
+    <div id="aud-body"><div class="card"><div class="empty"><strong>Choose a brand to start</strong>Pick a prospect above, or open one from Future Prospects and click Build audit.</div></div></div>
+  </section>
 </main>
 </div>
 
@@ -390,13 +474,14 @@ textarea.input{resize:vertical;min-height:64px;line-height:1.5;}
 </div>
 
 <div class="toast" id="toast"></div>
+<script src="/audit_template.js"></script>
 
 <script>
 /* ───────────── State ───────────── */
 const KEY_STORE = 'medaltus_portfolio_key';
 let DATA = null;
 const UI = { stage: '', az: '', shown: 60, open: null, productCache: {}, missingOnly: {}, currentSort: 'sign_date' };
-const PAGE_TITLES = { current: 'Current Brands', retired: 'Retired Brands', prospects: 'Future Prospects' };
+const PAGE_TITLES = { current: 'Current Brands', retired: 'Retired Brands', prospects: 'Future Prospects', audit: 'Audit Builder' };
 
 const AZ = [
   { key: 'Not on Amazon', cls: 'az-not', label: 'Not on Amazon', rank: 0 },
@@ -462,6 +547,7 @@ async function load(manual = false) {
     if (DATA.sheetUrl) { $('sheet-link').href = DATA.sheetUrl; $('sheet-link').hidden = false; }
     buildProspectFilters();
     renderAll();
+    populateAuditBrands();
     if (manual) toast('Refreshed');
   } catch (e) {
     if (e.message !== 'unauthorized') {
@@ -764,7 +850,7 @@ function detailHtml(p) {
           <label class="full">Next step<input class="input" name="next_step" value="${esc(p.next_step)}"></label>
           <label class="full">Notes<textarea class="input" name="outreach_notes">${esc(p.outreach_notes)}</textarea></label>
         </div>
-        <div class="form-actions"><span class="small muted">${p.outreach_updated ? 'Last updated ' + esc(relTime(p.outreach_updated)) : ''}</span><button class="btn btn-primary btn-sm" type="submit">Save outreach</button></div>
+        <div class="form-actions"><span class="small muted">${p.outreach_updated ? 'Last updated ' + esc(relTime(p.outreach_updated)) : ''}</span>${p.website_url ? `<button class="btn btn-ghost btn-sm" type="button" onclick="buildAudit('${id}')">Build audit</button>` : ''}<button class="btn btn-primary btn-sm" type="submit">Save outreach</button></div>
       </form>
     </div>
     <div class="products-hd">
@@ -829,6 +915,544 @@ async function postOutreach(id, data) {
     toast('Saved');
     renderPipeline(); renderAzSeg(); renderProspects();
   } catch (err) { if (err.message !== 'unauthorized') toast(err.message, true); }
+}
+
+/* ───────────── Audit builder ───────────── */
+const AUD = { brandId: '', data: null, sel: null, tab: 'data', scanning: false, dirtyData: false, saveTimer: null, logoData: '', edit: null };
+const AUD_SECTIONS = ['Channel presence', 'Pricing', 'Listing control', 'Listing scorecard', 'Search visibility', 'Competitors', 'Growth signals', 'Manual notes'];
+const AUD_STAGES = [['amazon', 'Amazon data'], ['web', 'Web research'], ['findings', 'Findings']];
+const CHANNELS = [['shopify', 'Your site'], ['amazon', 'Amazon'], ['walmart', 'Walmart'], ['tiktok_shop', 'TikTok Shop'], ['target_plus', 'Target+']];
+const STATUS_OPTS = ['Brand-run', 'Sold by others', 'Listed, not selling', 'Absent', 'Unknown'];
+const METHOD = { auto: ['m-auto', 'Amazon API / site'], ai: ['m-ai', 'AI research'], needed: ['m-needed', 'Needs your input'], manual: ['m-manual', 'Entered by you'] };
+const CTA_STORE = 'medaltus_audit_cta';
+
+const audRows = () => AUD.data?.rows || [];
+const audRow = f => audRows().find(r => r.field === f);
+const parseJ = v => { try { return JSON.parse(v); } catch { return null; } };
+const isJsonVal = v => /^[\[{]/.test(String(v || '').trim());
+const fmtMoney = n => Number.isFinite(Number(n)) ? '$' + Number(n).toFixed(2).replace(/\.00$/, '') : '';
+const fmtGap = g => `${g > 0 ? '+' : g < 0 ? '−' : ''}${Math.abs(Math.round(g * 100))}%`;
+
+function populateAuditBrands() {
+  const sel = $('aud-brand'); if (!sel || !DATA) return;
+  const list = DATA.prospects.filter(p => p.website_url && p.discovery_status !== 'Not a Fit')
+    .sort((a, b) => a.brand_name.localeCompare(b.brand_name));
+  sel.innerHTML = '<option value="">Choose a brand…</option>' + list.map(p =>
+    `<option value="${esc(p.brand_id)}"${p.brand_id === AUD.brandId ? ' selected' : ''}>${esc(p.brand_name)}${p.amazon_status ? ' · ' + esc(azInfo(p.amazon_status).label) : ''}</option>`).join('');
+}
+
+function buildAudit(id) { showPage('audit'); openAudit(id); }
+
+async function openAudit(id) {
+  AUD.brandId = id; AUD.data = null; AUD.sel = null; AUD.dirtyData = false; AUD.edit = null;
+  populateAuditBrands();
+  $('aud-run').disabled = !id;
+  $('aud-steps').hidden = true;
+  if (!id) { $('aud-body').innerHTML = `<div class="card"><div class="empty"><strong>Choose a brand to start</strong>Pick a prospect above, or open one from Future Prospects and click Build audit.</div></div>`; return; }
+  $('aud-body').innerHTML = '<div class="loading">Loading audit…</div>';
+  await loadAudit();
+}
+
+async function loadAudit() {
+  try {
+    const d = await api('/api/audit-data?brand_id=' + encodeURIComponent(AUD.brandId));
+    AUD.data = d;
+    AUD.logoData = d.build?.logo_data || '';
+    AUD.sel = initSelections(d);
+    $('aud-run').textContent = d.scan_id ? 'Run a new scan' : 'Run scan';
+    renderAuditStatus();
+    renderAudit();
+  } catch (e) {
+    if (e.message !== 'unauthorized') $('aud-body').innerHTML = `<div class="card"><div class="empty"><strong>Couldn’t load this audit</strong>${esc(e.message)}</div></div>`;
+  }
+}
+
+function renderAuditStatus() {
+  const b = AUD.data?.brand; if (!b) return;
+  const bits = [];
+  if (b.scan_status && b.scan_status !== 'Ready') bits.push(b.scan_status);
+  if (b.scan_completed_at) bits.push('Last scan ' + relTime(b.scan_completed_at));
+  if (b.audit_status) bits.push(b.audit_status);
+  $('aud-status').textContent = bits.join(' · ');
+}
+
+function initSelections(d) {
+  const s = { ...(d.build?.selections || {}) };
+  const sug = s.suggested || {};
+  const f = d.findings || [];
+  if (!s.headline || !f.some(x => x.finding_id === s.headline)) s.headline = sug.headline || f[0]?.finding_id || '';
+  s.cards = (s.cards || sug.cards || []).filter(id => f.some(x => x.finding_id === id)).slice(0, 3);
+  s.overrides = s.overrides || {};
+  s.include = { callout: true, opportunity: false, partnership: true, steps: true, ...(s.include || {}) };
+  s.model = s.model || sug.model || '1';
+  s.steps = s.steps && s.steps.length ? s.steps : stepsFromCards(s.cards, f);
+  s.opportunity = s.opportunity || { rows: [{ channel: 'Amazon', low: '', high: '' }], basis: '' };
+  s.callout = s.callout || { competitor: '', sub: '' };
+  s.prepared_for = s.prepared_for ?? [d.brand.contact_name, d.brand.brand_name].filter(Boolean).join(', ');
+  s.cta_url = s.cta_url || localStorage.getItem(CTA_STORE) || 'mailto:hello@medaltus.com';
+  s.logo_mode = s.logo_mode || (d.brand.logo_url ? 'site' : 'none');
+  return s;
+}
+function stepsFromCards(cards, findings) {
+  return cards.map(id => findings.find(f => f.finding_id === id)?.next_step).filter(Boolean).slice(0, 3);
+}
+
+/* Scan */
+async function runAuditScan() {
+  if (AUD.scanning || !AUD.brandId) return;
+  if (AUD.data?.scan_id && !confirm('Run a new scan? It replaces the current data, verifications, and selections for this brand.')) return;
+  AUD.scanning = true; $('aud-run').disabled = true;
+  const state = Object.fromEntries(AUD_STAGES.map(([k]) => [k, '']));
+  const draw = (msg = '') => {
+    $('aud-steps').hidden = false;
+    $('aud-steps').innerHTML = AUD_STAGES.map(([k, label], i) =>
+      `<div class="aud-step ${state[k]}"><i>${state[k] === 'done' ? '✓' : state[k] === 'err' ? '!' : i + 1}</i>${esc(label)}</div>`).join('') +
+      (msg ? `<span class="aud-status" style="align-self:center">${esc(msg)}</span>` : '');
+  };
+  let scanId = '';
+  try {
+    for (const [stage, label] of AUD_STAGES) {
+      state[stage] = 'run'; draw(stage === 'web' ? 'Web research usually takes 1–3 minutes' : '');
+      const r = await api('/api/audit-scan', { method: 'POST', body: JSON.stringify({ brand_id: AUD.brandId, stage, scan_id: scanId }) });
+      scanId = r.scan_id; state[stage] = 'done';
+      if (r.notes?.length) toast(r.notes[0], true);
+      draw(r.summary || '');
+    }
+    toast('Scan finished. Review the data next.');
+    AUD.tab = 'data';
+    await loadAudit();
+  } catch (e) {
+    const failed = AUD_STAGES.find(([k]) => state[k] === 'run');
+    if (failed) state[failed[0]] = 'err';
+    draw(e.message === 'unauthorized' ? '' : `${e.message}. Run the scan again to retry.`);
+  } finally {
+    AUD.scanning = false; $('aud-run').disabled = false;
+  }
+}
+
+async function recalcFindings() {
+  if (!AUD.data?.scan_id) return;
+  const btn = $('aud-recalc'); if (btn) { btn.disabled = true; btn.textContent = 'Recalculating…'; }
+  try {
+    await api('/api/audit-scan', { method: 'POST', body: JSON.stringify({ brand_id: AUD.brandId, stage: 'findings', scan_id: AUD.data.scan_id }) });
+    AUD.dirtyData = false;
+    const keep = AUD.sel;
+    await loadAudit();
+    // Keep the user's layout choices; drop picks whose findings no longer fire
+    const ids = new Set(AUD.data.findings.map(f => f.finding_id));
+    AUD.sel = { ...AUD.sel, ...keep, headline: ids.has(keep.headline) ? keep.headline : AUD.sel.headline, cards: keep.cards.filter(id => ids.has(id)) };
+    renderAudit(); scheduleSave();
+    toast('Findings recalculated');
+  } catch (e) { if (e.message !== 'unauthorized') toast(e.message, true); }
+  finally { if (btn) { btn.disabled = false; btn.textContent = 'Recalculate findings'; } }
+}
+
+/* Layout */
+function setAudTab(t) { AUD.tab = t; renderAudit(); }
+function jumpToRow(field) {
+  setAudTab('data');
+  const el = $('drow-' + field.replace(/[^A-Za-z0-9_-]/g, '_'));
+  if (!el) return;
+  el.scrollIntoView({ block: 'center' });
+  el.style.background = 'rgba(36,233,163,.14)'; setTimeout(() => { el.style.background = ''; }, 1600);
+}
+function renderAudit() {
+  const d = AUD.data; if (!d) return;
+  if (!d.scan_id) {
+    $('aud-body').innerHTML = `<div class="card"><div class="empty"><strong>No scan yet for ${esc(d.brand.brand_name)}</strong>Click Run scan. It pulls Amazon data, researches the other channels and competitors, and ranks the findings.</div></div>`;
+    return;
+  }
+  const blockers = auditBlockers();
+  const needs = audRows().filter(r => !r.verified).length;
+  $('aud-body').innerHTML = `
+    <div class="tabs">
+      <button class="${AUD.tab === 'data' ? 'active' : ''}" onclick="setAudTab('data')">Review data<span class="tcount">${needs} to check</span></button>
+      <button class="${AUD.tab === 'build' ? 'active' : ''}" onclick="setAudTab('build')">Build the audit<span class="tcount">${d.findings.length} findings</span></button>
+      <button class="${AUD.tab === 'preview' ? 'active' : ''}" onclick="setAudTab('preview')">Preview and export<span class="tcount">${blockers.length ? blockers.length + ' to fix' : 'Ready'}</span></button>
+    </div>
+    <div id="aud-tab"></div>`;
+  if (AUD.tab === 'data') renderDataTab();
+  else if (AUD.tab === 'build') renderBuildTab();
+  else renderPreviewTab();
+}
+
+/* Data tab */
+function usedRefs() {
+  const s = AUD.sel, f = AUD.data.findings;
+  const refs = new Set();
+  [s.headline, ...s.cards].forEach(id => (f.find(x => x.finding_id === id)?.data_refs || []).forEach(r => refs.add(r)));
+  CHANNELS.forEach(([k]) => { refs.add(`channel.${k}.status`); if (audRow(`channel.${k}.detail`)?.value) refs.add(`channel.${k}.detail`); });
+  if (s.include.callout && s.callout.competitor) calloutRefs().forEach(r => refs.add(r));
+  return refs;
+}
+function fmtRowValue(r) {
+  const v = r.value, j = isJsonVal(v) ? parseJ(v) : null;
+  if (!String(v).trim()) return '<span class="muted">Not found</span>';
+  if (r.field.startsWith('pricing.') && j) {
+    return `${fmtMoney(j.bb_price)} on Amazon vs ${fmtMoney(j.site_price)} on site <b>${fmtGap(j.gap)}</b>` +
+      `<span class="sub">${j.bb_seller ? 'Buy Box: ' + esc(j.bb_seller) + '. ' : ''}${j.valid ? 'Used in findings.' : 'Not used: ' + esc(j.reason)}</span>`;
+  }
+  if (/\.sellers$/.test(r.field) && j) {
+    return `${j.count} seller${j.count === 1 ? '' : 's'}<span class="sub">${(j.sellers || []).map(s =>
+      `${esc(s.name || s.id)}${s.buyBox ? ' (Buy Box)' : ''}${s.isBrand ? ' — brand' : ''}${s.price ? ' ' + fmtMoney(s.price) : ''}${s.fba ? ' FBA' : ' FBM'}`).join('<br>')}</span>`;
+  }
+  if (r.field === 'amazon.missing_products' && j) return `${j.missing} of ${j.checked} product codes not on Amazon` + (j.examples?.length ? `<span class="sub">${esc(j.examples.join('; '))}</span>` : '');
+  if (r.field === 'amazon.best_rank' && j) return `#${Number(j.rank).toLocaleString('en-US')} in ${esc(j.category)}<span class="sub">${esc(j.product)}</span>`;
+  if (Array.isArray(j)) return j.length ? esc(j.join(', ')) : '<span class="muted">None</span>';
+  return esc(v);
+}
+function editorFor(r) {
+  if (/^channel\..*\.status$/.test(r.field)) return `<select class="input" id="ed-val">${STATUS_OPTS.map(o => `<option${o === r.value ? ' selected' : ''}>${o}</option>`).join('')}</select>`;
+  if (r.field === 'control.brand_seller') return `<select class="input" id="ed-val">${['Yes', 'No', 'Unknown'].map(o => `<option${o === r.value ? ' selected' : ''}>${o}</option>`).join('')}</select>`;
+  if (/\.(video|aplus)$/.test(r.field)) return `<select class="input" id="ed-val">${['', 'Yes', 'No'].map(o => `<option value="${o}"${o === r.value ? ' selected' : ''}>${o || 'Unknown'}</option>`).join('')}</select>`;
+  return `<input class="input" id="ed-val" value="${esc(r.value)}">`;
+}
+function renderDataTab() {
+  const rows = audRows(), used = usedRefs();
+  const bySec = {};
+  rows.forEach(r => (bySec[r.section || 'Manual notes'] ||= []).push(r));
+  const secs = [...AUD_SECTIONS.filter(s => bySec[s]), ...Object.keys(bySec).filter(s => !AUD_SECTIONS.includes(s))];
+  $('aud-tab').innerHTML = `
+    ${AUD.dirtyData ? `<div class="card" style="padding:12px 16px;margin-bottom:14px;border-color:rgba(200,125,47,.4)"><span class="small">You changed data since findings were calculated. Recalculate so the findings use your edits.</span> <button class="btn btn-primary btn-sm" id="aud-recalc" onclick="recalcFindings()" style="margin-left:8px">Recalculate findings</button></div>` : ''}
+    <p class="small muted" style="margin-bottom:14px">Rows with a colored edge are used in the audit you’ve built (green once verified). AI research rows need a human check before they can go in the PDF.</p>
+    ${secs.map(sec => {
+      const list = bySec[sec];
+      const done = list.filter(r => r.verified).length;
+      const autoLeft = list.filter(r => r.method === 'auto' && !r.verified).length;
+      return `<div class="aud-sec"><div class="aud-sec-hd"><h3>${esc(sec)}</h3><div>
+          <span class="muted">${done} of ${list.length} checked</span>
+          ${autoLeft ? `<button class="btn-link" style="margin-left:10px" onclick="verifySection('${esc(sec)}')">Verify ${autoLeft} Amazon API / site row${autoLeft === 1 ? '' : 's'}</button>` : ''}
+        </div></div>
+        <div class="card">${list.map(r => dataRowHtml(r, used)).join('')}</div></div>`;
+    }).join('')}
+    <div class="aud-sec"><div class="aud-sec-hd"><h3>Add a data point</h3><span class="muted">For numbers you pulled from Helium 10 or checked by hand</span></div>
+      <form class="card" style="padding:14px" onsubmit="addDataPoint(event)">
+        <div class="form-grid" style="grid-template-columns:1.2fr 1fr 1fr 1fr">
+          <label>What it is<input class="input" name="label" required placeholder="Solace Skin monthly Amazon sales"></label>
+          <label>Value<input class="input" name="value" required></label>
+          <label>Source<input class="input" name="source" placeholder="Helium 10 X-Ray"></label>
+          <label>Link<input class="input" name="source_url" placeholder="https://"></label>
+        </div>
+        <div class="form-actions"><button class="btn btn-ghost btn-sm" type="submit">Add data point</button></div>
+      </form></div>`;
+}
+function dataRowHtml(r, used) {
+  const m = METHOD[r.method] || METHOD.auto;
+  const isUsed = used.has(r.field);
+  const editing = AUD.edit === r._row;
+  const url = safeUrl(r.source_url);
+  const canEdit = !isJsonVal(r.value) || r.field.startsWith('manual.');
+  return `<div id="drow-${esc(r.field.replace(/[^A-Za-z0-9_-]/g, '_'))}" class="drow${isUsed ? ' used' : ''}${isUsed && r.verified === 'Y' ? ' ok' : ''}${r.verified === 'Excluded' ? ' excluded' : ''}">
+    <div class="lbl">${esc(r.label)}${r.confidence && r.confidence !== 'High' ? `<div class="small muted">${esc(r.confidence)}</div>` : ''}</div>
+    <div class="val">${fmtRowValue(r)}${r.notes ? `<span class="sub">${esc(r.notes)}</span>` : ''}
+      ${editing ? `<div class="inline-edit">${editorFor(r)}<button class="btn btn-primary btn-sm" onclick="saveRowEdit(${r._row})">Save</button><button class="btn btn-ghost btn-sm" onclick="AUD.edit=null;renderDataTab()">Cancel</button></div>` : ''}</div>
+    <div class="src"><span class="mtag ${m[0]}">${m[1]}</span><br>${esc(r.source)}${url ? ` · <a href="${esc(url)}" target="_blank" rel="noopener">open</a>` : ''}</div>
+    <div class="acts">
+      <label class="chk"><input type="checkbox" ${r.verified === 'Y' ? 'checked' : ''} ${r.verified === 'Excluded' ? 'disabled' : ''} onchange="verifyRow(${r._row}, this.checked ? 'Y' : '')"> Verified</label>
+      <div>${canEdit && !editing ? `<button class="btn-link" onclick="AUD.edit=${r._row};renderDataTab()">Edit</button> · ` : ''}<button class="btn-link" onclick="verifyRow(${r._row}, '${r.verified === 'Excluded' ? '' : 'Excluded'}')">${r.verified === 'Excluded' ? 'Include' : 'Exclude'}</button></div>
+    </div>
+  </div>`;
+}
+async function postVerify(updates) {
+  await api('/api/audit-update', { method: 'POST', body: JSON.stringify({ type: 'verify', brand_id: AUD.brandId, updates }) });
+}
+async function verifyRow(row, verified) {
+  const r = audRows().find(x => x._row === row); if (!r) return;
+  try {
+    await postVerify([{ _row: row, verified }]);
+    if (verified === 'Excluded' || r.verified === 'Excluded') AUD.dirtyData = true;
+    r.verified = verified; renderDataTab();
+  } catch (e) { if (e.message !== 'unauthorized') toast(e.message, true); }
+}
+async function verifySection(sec) {
+  const list = audRows().filter(r => (r.section || 'Manual notes') === sec && r.method === 'auto' && !r.verified);
+  try { await postVerify(list.map(r => ({ _row: r._row, verified: 'Y' }))); list.forEach(r => { r.verified = 'Y'; }); renderDataTab(); toast(`${list.length} rows verified`); }
+  catch (e) { if (e.message !== 'unauthorized') toast(e.message, true); }
+}
+async function saveRowEdit(row) {
+  const r = audRows().find(x => x._row === row); const v = $('ed-val').value;
+  try {
+    await postVerify([{ _row: row, value: v, verified: 'Y' }]);
+    if (v !== r.value) { r.notes = [r.notes, `Edited from "${r.value}"`].filter(Boolean).join(' | '); r.value = v; r.method = 'manual'; r.confidence = 'High'; AUD.dirtyData = true; }
+    r.verified = 'Y'; AUD.edit = null; renderDataTab();
+  } catch (e) { if (e.message !== 'unauthorized') toast(e.message, true); }
+}
+async function addDataPoint(e) {
+  e.preventDefault();
+  const row = Object.fromEntries(new FormData(e.target).entries());
+  try { await api('/api/audit-update', { method: 'POST', body: JSON.stringify({ type: 'add', brand_id: AUD.brandId, scan_id: AUD.data.scan_id, row }) });
+    toast('Data point added'); await loadAudit(); }
+  catch (err) { if (err.message !== 'unauthorized') toast(err.message, true); }
+}
+
+/* Build tab */
+const findingById = id => AUD.data.findings.find(f => f.finding_id === id);
+function copyOf(id) { const f = findingById(id); if (!f) return null; const o = AUD.sel.overrides[id] || {}; return { ...f, big: o.big ?? f.big_number, claim: o.claim ?? f.claim, detail: o.detail ?? f.detail, fix: o.fix ?? f.fix }; }
+function competitorList() {
+  return [1, 2, 3].map(i => ({ i, name: audRow(`competitor.${i}.name`)?.value || '', channels: audRow(`competitor.${i}.channels`)?.value || '',
+    revenue: audRow(`competitor.${i}.est_monthly_revenue`)?.value || '' })).filter(c => c.name);
+}
+function calloutRefs() {
+  const i = AUD.sel.callout.competitor; if (!i) return [];
+  const c = competitorList().find(x => String(x.i) === String(i)); if (!c) return [];
+  return [`competitor.${i}.name`, c.revenue ? `competitor.${i}.est_monthly_revenue` : `competitor.${i}.channels`];
+}
+function renderBuildTab() {
+  const s = AUD.sel, d = AUD.data, f = d.findings;
+  const logoSrc = s.logo_mode === 'upload' ? AUD.logoData : s.logo_mode === 'site' ? safeUrl(d.brand.logo_url) : '';
+  const comps = competitorList();
+  const pick = (type, x) => {
+    const c = copyOf(x.finding_id), on = type === 'radio' ? s.headline === x.finding_id : s.cards.includes(x.finding_id);
+    const idx = s.cards.indexOf(x.finding_id);
+    const uid = `pk-${type}-${x.finding_id}`;
+    return `<div class="pick"><input id="${uid}" type="${type}" name="${type === 'radio' ? 'aud-head' : 'aud-card'}" ${on ? 'checked' : ''}
+        onchange="${type === 'radio' ? `setHeadline('${x.finding_id}')` : `toggleCard('${x.finding_id}', this.checked)`}">
+      <label class="pbig" for="${uid}">${esc(c.big)}</label>
+      <label for="${uid}"><div class="pclaim">${esc(c.claim)}</div><div class="pmeta">${esc(d.categories[x.category] || x.category)} · score ${esc(x.score)}${type === 'checkbox' && on ? ` · <b>card ${idx + 1}</b>` : ''}${x.copy_source.startsWith('ai') ? ' · AI wording (numbers checked)' : ''}</div></label>
+      ${type === 'checkbox' && on ? `<div class="copyedit">
+        <label>Big number</label><input class="input" value="${esc(c.big)}" oninput="setOverride('${x.finding_id}','big',this.value)">
+        <label>Claim</label><input class="input" value="${esc(c.claim)}" oninput="setOverride('${x.finding_id}','claim',this.value)">
+        <label>Detail</label><input class="input" value="${esc(c.detail)}" oninput="setOverride('${x.finding_id}','detail',this.value)">
+        <label>What we’d do</label><input class="input" value="${esc(c.fix)}" oninput="setOverride('${x.finding_id}','fix',this.value)">
+      </div>` : ''}
+    </div>`;
+  };
+  $('aud-tab').innerHTML = `
+  ${!f.length ? `<div class="card" style="padding:14px 16px;margin-bottom:14px"><span class="small">No findings fired for this scan. Check the data tab: blank AI rows or a seller check marked Unknown can hold findings back.</span></div>` : ''}
+  <div class="build-grid">
+    <div class="panel">
+      <h3>The headline</h3><div class="hint">The single biggest finding, shown large on page 1.</div>
+      ${f.map(x => pick('radio', x)).join('') || '<div class="muted small">No findings yet.</div>'}
+      ${s.headline ? `<div class="form-grid" style="grid-template-columns:1fr;margin-top:10px">
+        <label>Line under the number<input class="input" value="${esc(s.headline_line ?? copyOf(s.headline)?.claim ?? '')}" oninput="AUD.sel.headline_line=this.value;scheduleSave()"></label>
+        <label>Supporting sentence<input class="input" value="${esc(s.headline_sub ?? copyOf(s.headline)?.detail ?? '')}" oninput="AUD.sel.headline_sub=this.value;scheduleSave()"></label>
+      </div>` : ''}
+    </div>
+    <div class="panel">
+      <h3>Three cards for page 2</h3><div class="hint">Pick up to three, in the order they should appear. Edit the wording if you need to.</div>
+      ${f.map(x => pick('checkbox', x)).join('') || '<div class="muted small">No findings yet.</div>'}
+    </div>
+    <div class="panel">
+      <h3>Prospect details</h3><div class="hint">Shown at the top of page 1.</div>
+      <div class="form-grid" style="grid-template-columns:1fr">
+        <label>Prepared for<input class="input" value="${esc(s.prepared_for)}" oninput="AUD.sel.prepared_for=this.value;scheduleSave()"></label>
+      </div>
+      <div class="logo-box" style="margin-top:12px">
+        <div class="logo-prev">${logoSrc ? `<img src="${esc(logoSrc)}" alt="">` : 'No logo'}</div>
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <label class="btn btn-ghost btn-sm" style="cursor:pointer">Upload logo<input type="file" accept="image/*" hidden onchange="uploadLogo(this.files[0])"></label>
+          ${d.brand.logo_url ? `<button class="btn-link" onclick="setLogoMode('site')">Use logo from their site</button>` : ''}
+          <button class="btn-link" onclick="setLogoMode('none')">No logo</button>
+        </div>
+      </div>
+    </div>
+    <div class="panel">
+      <h3>Sections</h3><div class="hint">Turn page 2 sections on or off.</div>
+      ${[['callout', 'Competitor callout'], ['opportunity', 'Opportunity estimates'], ['partnership', 'Recommended partnership'], ['steps', 'Next steps']].map(([k, l]) =>
+        `<label class="chk" style="margin:0 16px 8px 0"><input type="checkbox" ${s.include[k] ? 'checked' : ''} onchange="AUD.sel.include.${k}=this.checked;renderBuildTab();scheduleSave()"> ${l}</label>`).join('')}
+    </div>
+    ${s.include.callout ? `<div class="panel">
+      <h3>Competitor callout</h3><div class="hint">Shows a dollar figure only if you’ve added that competitor’s Helium 10 sales estimate in the data tab.</div>
+      <div class="form-grid" style="grid-template-columns:1fr">
+        <label>Competitor<select class="input" onchange="AUD.sel.callout.competitor=this.value;scheduleSave();renderBuildTab()">
+          <option value="">Choose…</option>${comps.map(c => `<option value="${c.i}"${String(c.i) === String(s.callout.competitor) ? ' selected' : ''}>${esc(c.name)}${c.revenue ? ' · $' + Number(c.revenue).toLocaleString('en-US') + '/mo' : ''}</option>`).join('')}</select></label>
+        <label>Supporting sentence<input class="input" value="${esc(s.callout.sub)}" placeholder="A similar catalog, on three channels to your one." oninput="AUD.sel.callout.sub=this.value;scheduleSave()"></label>
+      </div></div>` : ''}
+    ${s.include.opportunity ? `<div class="panel">
+      <h3>Opportunity, per month</h3><div class="hint">Labeled as estimates in the PDF. The basis is printed in the footer, so say where the numbers come from.</div>
+      ${s.opportunity.rows.map((r, i) => `<div class="opp-row">
+        <select class="input" onchange="setOpp(${i},'channel',this.value)">${['Amazon', 'TikTok Shop', 'Walmart', 'Target+'].map(c => `<option${c === r.channel ? ' selected' : ''}>${c}</option>`).join('')}</select>
+        <input class="input" type="number" min="0" step="1000" placeholder="Low $" value="${esc(r.low)}" oninput="setOpp(${i},'low',this.value)">
+        <input class="input" type="number" min="0" step="1000" placeholder="High $" value="${esc(r.high)}" oninput="setOpp(${i},'high',this.value)">
+        <button class="btn-link" onclick="AUD.sel.opportunity.rows.splice(${i},1);renderBuildTab();scheduleSave()" aria-label="Remove row">✕</button></div>`).join('')}
+      ${s.opportunity.rows.length < 4 ? `<button class="btn-link" onclick="AUD.sel.opportunity.rows.push({channel:'TikTok Shop',low:'',high:''});renderBuildTab();scheduleSave()">Add a channel</button>` : ''}
+      <label style="display:flex;flex-direction:column;gap:3px;font-size:10.5px;color:var(--muted);margin-top:10px">Basis for the estimates
+        <input class="input" value="${esc(s.opportunity.basis)}" placeholder="Helium 10 estimates for 3 competitors with similar catalogs" oninput="AUD.sel.opportunity.basis=this.value;scheduleSave()"></label>
+    </div>` : ''}
+    ${s.include.partnership ? `<div class="panel">
+      <h3>Recommended partnership</h3><div class="hint">Suggested: Model ${esc(s.suggested?.model || AUD.sel.model)}, based on who sells their Amazon listings today.</div>
+      ${Object.entries(d.models).map(([k, m]) => `<div class="pick" style="grid-template-columns:22px 1fr"><input id="pk-model-${k}" type="radio" name="aud-model" ${s.model === k ? 'checked' : ''} onchange="AUD.sel.model='${k}';AUD.sel.model_sub='';renderBuildTab();scheduleSave()">
+        <label for="pk-model-${k}"><div class="pclaim">Model ${k}: ${esc(m.line)} ${esc(m.italic)}</div><div class="pmeta">${esc(m.sub)}</div></label></div>`).join('')}
+      <label style="display:flex;flex-direction:column;gap:3px;font-size:10.5px;color:var(--muted);margin-top:8px">Line under it
+        <input class="input" value="${esc(s.model_sub || d.models[s.model].sub)}" oninput="AUD.sel.model_sub=this.value;scheduleSave()"></label>
+    </div>` : ''}
+    ${s.include.steps ? `<div class="panel">
+      <h3>Next steps</h3><div class="hint">Defaults to one step per card. <button class="btn-link" onclick="AUD.sel.steps=stepsFromCards(AUD.sel.cards,AUD.data.findings);renderBuildTab();scheduleSave()">Reset from cards</button></div>
+      ${[0, 1, 2].map(i => `<input class="input" style="margin-bottom:6px" value="${esc(s.steps[i] || '')}" placeholder="Step ${i + 1}" oninput="AUD.sel.steps[${i}]=this.value;scheduleSave()">`).join('')}
+      <label style="display:flex;flex-direction:column;gap:3px;font-size:10.5px;color:var(--muted);margin-top:8px">Walkthrough button link
+        <input class="input" value="${esc(s.cta_url)}" placeholder="https://calendly.com/…" oninput="AUD.sel.cta_url=this.value;localStorage.setItem(CTA_STORE,this.value);scheduleSave()"></label>
+    </div>` : ''}
+  </div>
+  <div class="sticky-actions"><span class="small muted" id="aud-saved"></span><button class="btn btn-primary" onclick="setAudTab('preview')">Preview the PDF</button></div>`;
+}
+function setHeadline(id) { AUD.sel.headline = id; AUD.sel.headline_line = undefined; AUD.sel.headline_sub = undefined; renderBuildTab(); scheduleSave(); }
+function toggleCard(id, on) {
+  const s = AUD.sel;
+  if (on && s.cards.length >= 3) { toast('Three cards max. Uncheck one first.', true); renderBuildTab(); return; }
+  s.cards = on ? [...s.cards, id] : s.cards.filter(x => x !== id);
+  s.steps = stepsFromCards(s.cards, AUD.data.findings);
+  renderBuildTab(); scheduleSave();
+}
+function setOverride(id, k, v) { (AUD.sel.overrides[id] ||= {})[k] = v; scheduleSave(); }
+function setOpp(i, k, v) { AUD.sel.opportunity.rows[i][k] = v; scheduleSave(); }
+function setLogoMode(m) { AUD.sel.logo_mode = m; renderBuildTab(); scheduleSave(); }
+function uploadLogo(file) {
+  if (!file) return;
+  const img = new Image(), reader = new FileReader();
+  reader.onload = () => { img.src = reader.result; };
+  img.onload = () => {
+    // Shrink to fit a Sheets cell (≤ ~48k characters)
+    let w = Math.min(480, img.width), out = '';
+    for (let tries = 0; tries < 6; tries++) {
+      const c = document.createElement('canvas'); c.width = w; c.height = Math.round(img.height * w / img.width);
+      c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+      out = c.toDataURL('image/png');
+      if (out.length > 46000) out = c.toDataURL('image/webp', 0.85);
+      if (out.length <= 46000) break;
+      w = Math.round(w * 0.75);
+    }
+    if (out.length > 46000) { toast('That image is too large. Try a simpler logo file.', true); return; }
+    AUD.logoData = out; AUD.sel.logo_mode = 'upload'; renderBuildTab(); scheduleSave(true);
+  };
+  reader.readAsDataURL(file);
+}
+function scheduleSave(withLogo = false) {
+  clearTimeout(AUD.saveTimer);
+  const el = $('aud-saved'); if (el) el.textContent = 'Saving…';
+  AUD.saveTimer = setTimeout(() => saveBuild(withLogo), 900);
+}
+async function saveBuild(withLogo) {
+  try {
+    const payload = { type: 'build', brand_id: AUD.brandId, scan_id: AUD.data.scan_id, status: 'In progress', selections: AUD.sel };
+    if (withLogo || AUD.sel.logo_mode === 'upload') payload.logo_data = AUD.logoData;
+    await api('/api/audit-update', { method: 'POST', body: JSON.stringify(payload) });
+    const el = $('aud-saved'); if (el) el.textContent = 'Saved';
+  } catch (e) { if (e.message !== 'unauthorized') toast(e.message, true); }
+}
+
+/* Preview + export */
+function auditBlockers() {
+  const s = AUD.sel, out = [];
+  if (!s) return out;
+  const seen = new Set();
+  const need = (field, what) => {
+    if (seen.has(field)) return; seen.add(field);
+    const r = audRow(field);
+    if (!r) return out.push({ msg: `${what}: no data. Add it or turn the section off.` });
+    if (r.verified === 'Excluded') return out.push({ msg: `${what} uses data you excluded. Recalculate findings or pick another.`, field });
+    if (r.verified !== 'Y') out.push({ msg: `Verify “${r.label}”`, field });
+  };
+  if (AUD.dirtyData) out.push({ msg: 'Data changed since findings were calculated. Recalculate findings on the Review data tab.' });
+  if (!s.headline) out.push({ msg: 'Choose a headline finding.' });
+  if (!s.cards.length) out.push({ msg: 'Choose at least one card for page 2.' });
+  const refs = new Set();
+  [s.headline, ...s.cards].forEach(id => (findingById(id)?.data_refs || []).forEach(r => refs.add(r)));
+  refs.forEach(f => need(f, 'A chosen finding'));
+  CHANNELS.forEach(([k, label]) => {
+    const r = audRow(`channel.${k}.status`);
+    seen.add(`channel.${k}.status`);
+    const det = audRow(`channel.${k}.detail`);
+    if (det && det.value.trim()) need(det.field, `${label} detail`);
+    if (!r) out.push({ msg: `${label} status is missing. Add it on the Review data tab.` });
+    else if (r.value === 'Unknown') out.push({ msg: `${label} status is Unknown. Edit it to the real status.`, field: r.field });
+    else if (r.verified !== 'Y') out.push({ msg: `Verify ${label} channel status`, field: r.field });
+  });
+  if (s.include.callout) {
+    if (!s.callout.competitor) out.push({ msg: 'Choose a competitor for the callout, or turn it off.' });
+    else calloutRefs().forEach(f => need(f, 'Competitor callout'));
+  }
+  if (s.include.opportunity) {
+    const rows = s.opportunity.rows;
+    if (!rows.length) out.push({ msg: 'Add at least one opportunity estimate, or turn the section off.' });
+    rows.forEach(r => { if (!(Number(r.low) > 0) || !(Number(r.high) >= Number(r.low))) out.push({ msg: `${r.channel} estimate needs a low and a high (high ≥ low).` }); });
+    if (!String(s.opportunity.basis || '').trim()) out.push({ msg: 'Say what the opportunity estimates are based on.' });
+  }
+  return out;
+}
+function auditModel() {
+  const d = AUD.data, s = AUD.sel, b = d.brand;
+  const h = copyOf(s.headline);
+  const comp = competitorList().find(c => String(c.i) === String(s.callout.competitor));
+  const myChannels = CHANNELS.filter(([k]) => /brand-run/i.test(audRow(`channel.${k}.status`)?.value || '')).length;
+  const compCount = comp ? comp.channels.split(/[,|]/).map(x => x.trim()).filter(Boolean).length : 0;
+  const words = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven'];
+  const model = d.models[s.model] || d.models['1'];
+  const date = new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+  const sitePlatform = DATA?.prospects.find(p => p.brand_id === b.brand_id)?.platform;
+  const notes = [];
+  if (s.include.opportunity) notes.push(`Sales figures are estimates based on ${String(s.opportunity.basis).replace(/\.$/, '')}.`);
+  if (s.include.callout && comp?.revenue) notes.push('Competitor sales are Helium 10 estimates.');
+  return {
+    assetBase: location.origin, brandName: b.brand_name, preparedFor: s.prepared_for || b.brand_name, dateLabel: date,
+    logoSrc: s.logo_mode === 'upload' ? AUD.logoData : s.logo_mode === 'site' ? safeUrl(b.logo_url) : '',
+    headline: h ? { big: h.big, line: s.headline_line ?? h.claim, sub: s.headline_sub ?? h.detail } : null,
+    channels: CHANNELS.map(([k, label]) => ({
+      name: k === 'shopify' && sitePlatform === 'Shopify' ? 'Shopify' : label,
+      status: audRow(`channel.${k}.status`)?.value || 'Unknown', detail: audRow(`channel.${k}.detail`)?.value || '',
+    })),
+    cards: s.cards.map(copyOf).filter(Boolean).map(c => ({ category: c.category, big: c.big, claim: c.claim, detail: c.detail, fix: c.fix })),
+    callout: s.include.callout && comp ? {
+      name: comp.name, amount: Number(comp.revenue) || null,
+      title: `${comp.name} sells on ${compCount === 1 ? 'one channel' : (words[compCount] || compCount) + ' channels'} to your ${words[myChannels] || myChannels}.`,
+      sub: s.callout.sub || (comp.revenue ? `On ${words[compCount] || compCount} channel${compCount === 1 ? '' : 's'} to your ${words[myChannels] || myChannels}.` : ''),
+    } : null,
+    opportunity: s.include.opportunity ? { rows: s.opportunity.rows.filter(r => Number(r.high) > 0) } : null,
+    partnership: s.include.partnership ? { line: model.line, italic: model.italic, sub: s.model_sub || model.sub } : null,
+    steps: s.include.steps ? s.steps.filter(x => String(x || '').trim()).slice(0, 3) : [],
+    cta: { text: 'Let’s walk through it together.', button: 'Book a 20-minute walkthrough', url: s.cta_url },
+    footnote: notes.join(' '), contactEmail: 'hello@medaltus.com',
+  };
+}
+function renderPreviewTab() {
+  const blockers = auditBlockers();
+  $('aud-tab').innerHTML = `<div class="preview-wrap">
+    <div class="preview-frame" id="pv-frame"><iframe id="pv-iframe" title="Audit preview" scrolling="no"></iframe></div>
+    <div class="panel" style="position:sticky;top:0">
+      <h3>${blockers.length ? 'Before you export' : 'Ready to export'}</h3>
+      ${blockers.length ? `<div class="hint">Every number in the PDF has to trace to a verified data point.</div><ul class="blockers">${blockers.map(b =>
+        `<li><span class="x">!</span><span>${esc(b.msg)}${b.field ? ` <button class="btn-link" onclick="jumpToRow('${esc(b.field)}')">Review</button>` : ''}</span></li>`).join('')}</ul>`
+        : `<p class="ok-note">Every data point in this audit is verified.</p>`}
+      <div class="form-actions" style="justify-content:flex-start;margin-top:16px">
+        <button class="btn btn-primary" ${blockers.length ? 'disabled' : ''} onclick="exportAuditPdf()">Export PDF</button>
+        <button class="btn btn-ghost" onclick="setAudTab('build')">Edit</button>
+      </div>
+      <p class="small muted" style="margin-top:10px">Export opens your browser’s print dialog. Choose Save as PDF, paper size Letter, margins None, and turn on Background graphics.</p>
+    </div></div>`;
+  const iframe = $('pv-iframe'), frame = $('pv-frame');
+  iframe.srcdoc = renderAuditHtml(auditModel());
+  const fit = () => {
+    const scale = Math.min(1, (frame.clientWidth - 2) / 816);
+    const h = 1056 * 2 + 48;
+    iframe.style.width = '816px'; iframe.style.height = h + 'px';
+    iframe.style.transform = `scale(${scale})`;
+    iframe.style.marginLeft = Math.max(0, Math.floor((frame.clientWidth - 816 * scale) / 2)) + 'px';
+    frame.style.height = Math.ceil(h * scale) + 'px';
+  };
+  fit(); window.onresize = () => { if (AUD.tab === 'preview') fit(); };
+}
+async function exportAuditPdf() {
+  if (auditBlockers().length) return;
+  await saveBuild(AUD.sel.logo_mode === 'upload');
+  const m = auditModel();
+  const old = $('print-frame'); if (old) old.remove();
+  const f = document.createElement('iframe');
+  f.id = 'print-frame'; f.style.cssText = 'position:fixed;width:0;height:0;border:0;right:0;bottom:0;';
+  document.body.appendChild(f);
+  f.srcdoc = renderAuditHtml(m);
+  f.onload = async () => {
+    try { await f.contentDocument.fonts.ready; } catch { /* fonts optional */ }
+    await Promise.all([...f.contentDocument.images].map(img => img.complete ? 0 : new Promise(r => { img.onload = img.onerror = r; })));
+    const prevTitle = document.title;
+    document.title = `${m.brandName} - Medaltus Gap Audit`;
+    f.contentWindow.focus(); f.contentWindow.print();
+    document.title = prevTitle;
+    try {
+      await api('/api/audit-update', { method: 'POST', body: JSON.stringify({ type: 'exported', brand_id: AUD.brandId }) });
+      const p = DATA.prospects.find(x => x.brand_id === AUD.brandId);
+      if (p && ['', 'Not Contacted', 'Researching'].includes(p.outreach_status || '')) p.outreach_status = 'Audit Ready';
+      AUD.data.brand.audit_status = 'Exported'; renderAuditStatus();
+    } catch { /* export still worked */ }
+  };
 }
 
 /* ───────────── Init ───────────── */
