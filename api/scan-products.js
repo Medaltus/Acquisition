@@ -11,7 +11,7 @@ import { readTab, appendRows, updateRows, logRun } from './_lib/sheets.js';
 import { isAuthorized, nowIso } from './_lib/util.js';
 import { scanCatalog } from './_lib/products.js';
 
-const BRANDS_PER_RUN = 3;
+const BRANDS_PER_RUN = 4;
 const TIME_BUDGET_MS = 250000;
 
 export default async function handler(req, res) {
