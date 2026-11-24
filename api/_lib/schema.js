@@ -13,6 +13,9 @@ export const TABS = {
   RUN_LOG: 'Run Log',
   PARTNERS: 'Partner Brands',
   CRM_IMPORT: 'CRM Import',
+  AUDIT_DATA: 'Audit Data',
+  AUDIT_FINDINGS: 'Audit Findings',
+  AUDIT_BUILDS: 'Audit Builds',
 };
 
 export const HEADERS = {
@@ -67,7 +70,23 @@ export const HEADERS = {
     'brand_name', 'category', 'stage', 'services', 'date_signed', 'where_met', 'notes',
     'primary_contact', 'contact_email', 'last_correspondence', 'pricing', 'agreement_files',
   ],
+  // Gap audit: one row per data point per scan. The builder reads the latest scan_id for a brand.
+  [TABS.AUDIT_DATA]: [
+    'brand_id', 'scan_id', 'section', 'field', 'label', 'value', 'source', 'source_url',
+    'method', 'confidence', 'verified', 'verified_by', 'captured_at', 'notes',
+  ],
+  // One row per finding that fired in a scan, already ranked.
+  [TABS.AUDIT_FINDINGS]: [
+    'brand_id', 'scan_id', 'finding_id', 'category', 'rank', 'score', 'big_number', 'claim',
+    'detail', 'fix', 'next_step', 'model_fit', 'data_refs', 'copy_source', 'fired_at',
+  ],
+  // One row per brand: what the builder chose for the PDF.
+  [TABS.AUDIT_BUILDS]: [
+    'brand_id', 'scan_id', 'updated_at', 'status', 'selections', 'logo_data', 'exported_at', 'export_count',
+  ],
 };
+
+export const AUDIT_STAGES = ['amazon', 'web', 'findings'];
 
 export const OUTREACH_STAGES = [
   'Not Contacted', 'Researching', 'Audit Ready', 'Contacted', 'In Conversation', 'Proposal Sent', 'Signed',
