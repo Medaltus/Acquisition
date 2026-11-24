@@ -1,0 +1,13 @@
+{
+  "functions": {
+    "api/setup-sheet.js":     { "maxDuration": 60 },
+    "api/discover-brands.js": { "maxDuration": 300 },
+    "api/enrich-brands.js":   { "maxDuration": 300 },
+    "api/scan-products.js":   { "maxDuration": 300 }
+  },
+  "crons": [
+    { "path": "/api/discover-brands", "schedule": "0 11 * * *" },
+    { "path": "/api/enrich-brands",   "schedule": "20 */2 * * *" },
+    { "path": "/api/scan-products",   "schedule": "40 */2 * * *" }
+  ]
+}
