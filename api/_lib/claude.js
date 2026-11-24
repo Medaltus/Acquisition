@@ -1,4 +1,8 @@
-// Env: ANTHROPIC_API_KEY, optional ANTHROPIC_MODEL
+/**
+ * api/_lib/claude.js
+ *
+ * Env: ANTHROPIC_API_KEY, optional ANTHROPIC_MODEL
+ */
 const DEFAULT_MODEL = 'claude-sonnet-5-5';
 
 async function callOnce(body) {
