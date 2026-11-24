@@ -132,8 +132,22 @@ export async function addTab(title) {
   });
 }
 
+/** Make sure a tab's grid has at least `needed` columns (new tabs start with 26; full tabs can't grow on write). */
+async function ensureColumns(tab, needed) {
+  const meta = await gfetch('?fields=sheets.properties(sheetId,title,gridProperties.columnCount)');
+  const props = (meta.sheets || []).map(s => s.properties).find(p => p.title === tab);
+  if (!props) throw new Error(`Tab "${tab}" not found`);
+  const have = props.gridProperties?.columnCount || 0;
+  if (needed <= have) return;
+  await gfetch(':batchUpdate', {
+    method: 'POST',
+    body: JSON.stringify({ requests: [{ appendDimension: { sheetId: props.sheetId, dimension: 'COLUMNS', length: needed - have } }] }),
+  });
+}
+
 export async function writeHeaderCells(tab, startIndex, headers) {
   if (!headers.length) return;
+  await ensureColumns(tab, startIndex + headers.length);
   const a1 = `${colLetter(startIndex)}1`;
   await gfetch(`/values/${rangeOf(tab, a1)}?valueInputOption=RAW`, {
     method: 'PUT',
