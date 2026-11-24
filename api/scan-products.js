@@ -1,7 +1,11 @@
-// Every 2 hours. For "Enriched" brands: pulls the DTC product catalog and UPCs into "Products",
-// then writes product_count, upc_coverage, and status back to "Brands".
-// Manual: /api/scan-products?key=<CRON_SECRET>&brand_id=<id>
-// To rescan a brand: delete its rows in Products, set discovery_status back to "Enriched".
+/**
+ * api/scan-products.js
+ *
+ * Every 2 hours. For "Enriched" brands: pulls the DTC product catalog and UPCs into "Products",
+ * then writes product_count, upc_coverage, and status back to "Brands".
+ * Manual: /api/scan-products?key=<CRON_SECRET>&brand_id=<id>
+ * To rescan a brand: delete its rows in Products, set discovery_status back to "Enriched".
+ */
 import { TABS, STATUS } from './_lib/schema.js';
 import { readTab, appendRows, updateRows, logRun } from './_lib/sheets.js';
 import { isAuthorized, nowIso } from './_lib/util.js';
