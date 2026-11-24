@@ -113,6 +113,8 @@ table.data-table tbody td{padding:11px 12px;font-size:12px;color:var(--navy);ver
 .az-resell{background:rgba(200,125,47,.14);color:var(--warn);}
 .az-single{background:var(--navy-dim);color:var(--navy);}
 .az-nooffer{background:rgba(219,55,45,.10);color:var(--danger);}
+.price-low{background:rgba(200,125,47,.14);color:var(--warn);margin-left:5px;}
+.price-high{background:var(--bg2);color:var(--muted);margin-left:5px;}
 .az-pending{background:var(--bg2);color:var(--muted);}
 .chip{display:inline-block;font-size:10.5px;color:var(--navy);background:var(--bg2);border-radius:999px;padding:2px 8px;margin:0 4px 3px 0;white-space:nowrap;}
 
@@ -596,14 +598,26 @@ let DATA = null;
 const UI = { currentRows: [], retiredRows: [], stage: '', az: '', shown: 60, open: null, productCache: {}, missingOnly: {}, currentSort: 'sign_date' };
 const PAGE_TITLES = { current: 'Current Brands', retired: 'Retired Brands', prospects: 'Future Prospects', audit: 'Audit Builder' };
 
+// rank = order for "Sort: best fit" (best prospects first)
 const AZ = [
   { key: 'Not on Amazon', cls: 'az-not', label: 'Not on Amazon', rank: 0 },
-  { key: 'On Amazon: reseller signals', cls: 'az-resell', label: 'Reseller signals', rank: 1 },
-  { key: 'Listed, no active offers', cls: 'az-nooffer', label: 'No active offers', rank: 2 },
-  { key: 'On Amazon: single seller', cls: 'az-single', label: 'Single seller', rank: 3 },
-  { key: '', cls: 'az-pending', label: 'Not checked yet', rank: 4 },
+  { key: 'Resellers only', cls: 'az-resell', label: 'Resellers only', rank: 1 },
+  { key: 'Brand + resellers', cls: 'az-resell', label: 'Brand + resellers', rank: 2 },
+  { key: 'On Amazon: multiple sellers', cls: 'az-resell', label: 'Multiple sellers', rank: 3 },
+  { key: 'Listed, no active offers', cls: 'az-nooffer', label: 'Listed, nobody selling', rank: 4 },
+  { key: 'On Amazon: one seller', cls: 'az-single', label: 'One seller', rank: 5 },
+  { key: 'Brand only', cls: 'az-single', label: 'Brand only', rank: 6 },
+  { key: '', cls: 'az-pending', label: 'Not checked yet', rank: 7 },
 ];
-const azInfo = s => AZ.find(a => a.key === (s || '')) || AZ[4];
+const azInfo = s => AZ.find(a => a.key === (s || '')) || AZ[AZ.length - 1];
+/** Brands checked before the relabel still carry the old labels until their next hourly check: map them now. */
+function normalizeAz(p) {
+  const s = p.amazon_status || '';
+  if (s === 'On Amazon: reseller signals' || s === 'On Amazon: single seller') {
+    return Number(p.amazon_max_sellers) >= 2 ? 'On Amazon: multiple sellers' : 'On Amazon: one seller';
+  }
+  return s;
+}
 const STAGE_COLORS = ['#CCD3D5', '#B7C6E4', '#8EA4D2', '#6B7BA2', '#3E5C9A', '#0d3494', '#24E9A3'];
 
 /* ───────────── Helpers ───────────── */
@@ -652,6 +666,7 @@ async function load(manual = false) {
   $('signout-btn').hidden = !sessionStorage.getItem(KEY_STORE);
   try {
     DATA = await api('/api/dashboard-data');
+    DATA.prospects.forEach(p => { p.amazon_status = normalizeAz(p); });
     UI.productCache = {};
     $('nb-current').textContent = DATA.current.length;
     $('nb-retired').textContent = DATA.retired.length;
@@ -917,17 +932,23 @@ function productSummary(p) {
   }
   return `<div class="prod-count">${s.products} product${s.products === 1 ? '' : 's'}</div><div class="az-meta">${s.withUpc} with UPC${s.notOnAmazon ? `, ${s.notOnAmazon} missing on Amazon` : ''}</div>`;
 }
+/** Separate price tag: shown when Amazon's Buy Box is 10%+ above or below the brand's own site price. */
+function priceTag(gap) {
+  const n = parseFloat(String(gap || '').replace('−', '-'));
+  if (!Number.isFinite(n) || Math.abs(n) < 10) return '';
+  return n < 0 ? `<span class="pill price-low" title="Amazon Buy Box vs the brand's own website price">${Math.abs(n)}% below site</span>`
+    : `<span class="pill price-high" title="Amazon Buy Box vs the brand's own website price">${n}% above site</span>`;
+}
 function amazonCell(p) {
   const a = azInfo(p.amazon_status);
   let meta = '';
   if (p.amazon_status) {
     const bits = [];
     if (p.amazon_upc_matches && p.amazon_upc_matches !== '0 of 0') bits.push(`${p.amazon_upc_matches} UPCs found`);
-    if (Number(p.amazon_max_sellers) > 1) bits.push(`up to ${p.amazon_max_sellers} sellers`);
-    if (p.amazon_price_gap && p.amazon_price_gap !== '0%') bits.push(`${p.amazon_price_gap} vs site`);
+    if (Number(p.amazon_max_sellers) > 1) bits.push(`up to ${p.amazon_max_sellers} sellers on a listing`);
     meta = bits.length ? `<div class="az-meta">${esc(bits.join(', '))}</div>` : '';
   }
-  return `<span class="pill ${a.cls}">${esc(a.label)}</span>${meta}`;
+  return `<span class="pill ${a.cls}">${esc(a.label)}</span>${priceTag(p.amazon_price_gap)}${meta}`;
 }
 function outreachSelect(p) {
   const cur = stageOf(p);
