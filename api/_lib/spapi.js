@@ -151,4 +151,106 @@ export async function getOffers(asins) {
   return out;
 }
 
+/**
+ * Full offer detail for up to 20 ASINs per call (used by the gap audit).
+ * Returns Map(asin -> { offerCount, buyBoxPrice, offers: [{ sellerId, price, fba, buyBox, feedbackCount, feedbackPct }] }).
+ */
+export async function getOfferDetails(asins) {
+  const out = new Map();
+  for (let i = 0; i < asins.length; i += 20) {
+    const batch = asins.slice(i, i + 20);
+    const data = await sp('/batches/products/pricing/v0/itemOffers', {
+      method: 'POST', op: 'offers',
+      body: {
+        requests: batch.map(asin => ({
+          uri: `/products/pricing/v0/items/${asin}/offers`, method: 'GET',
+          MarketplaceId: MARKETPLACE_ID, ItemCondition: 'New', CustomerType: 'Consumer',
+        })),
+      },
+    });
+    for (const r of data.responses || []) {
+      const asin = r.body?.payload?.ASIN || String(r.request?.uri || '').match(/items\/([A-Z0-9]{10})\//)?.[1];
+      if (!asin) continue;
+      const p = r.body?.payload || {};
+      const bb = (p.Summary?.BuyBoxPrices || []).find(b => /new/i.test(b.condition)) || p.Summary?.BuyBoxPrices?.[0];
+      const offers = (p.Offers || []).map(o => ({
+        sellerId: o.SellerId || '',
+        price: Number(o.ListingPrice?.Amount) || null,
+        shipping: Number(o.Shipping?.Amount) || 0,
+        fba: !!o.IsFulfilledByAmazon,
+        buyBox: !!o.IsBuyBoxWinner,
+        feedbackCount: o.SellerFeedbackRating?.FeedbackCount ?? null,
+        feedbackPct: o.SellerFeedbackRating?.SellerPositiveFeedbackRating ?? null,
+      }));
+      out.set(asin, {
+        offerCount: p.Summary?.TotalOfferCount ?? offers.length,
+        buyBoxPrice: Number(bb?.ListingPrice?.Amount) || offers.find(o => o.buyBox)?.price || null,
+        offers,
+        error: r.status?.statusCode >= 400 ? (r.body?.errors?.[0]?.message || `status ${r.status.statusCode}`) : '',
+      });
+    }
+  }
+  return out;
+}
+
+/**
+ * Catalog detail for up to 20 ASINs per call: title, brand, rank, image count, bullets, description.
+ * Returns Map(asin -> detail).
+ */
+export async function getCatalogDetails(asins) {
+  const out = new Map();
+  for (let i = 0; i < asins.length; i += 20) {
+    const batch = asins.slice(i, i + 20);
+    const qs = new URLSearchParams({
+      identifiers: batch.join(','), identifiersType: 'ASIN', marketplaceIds: MARKETPLACE_ID,
+      includedData: 'summaries,images,attributes,salesRanks', pageSize: '20',
+    });
+    const data = await sp(`/catalog/2022-04-01/items?${qs}`);
+    for (const item of data.items || []) {
+      const base = summarize(item);
+      const imgSet = (item.images || []).find(s => s.marketplaceId === MARKETPLACE_ID) || item.images?.[0] || {};
+      const variants = new Set((imgSet.images || []).map(im => im.variant).filter(Boolean));
+      const attrs = item.attributes || {};
+      const bullets = (attrs.bullet_point || []).map(b => String(b.value || '').trim()).filter(Boolean);
+      const description = (attrs.product_description || []).map(d => String(d.value || '')).join(' ').trim();
+      const mainImage = (imgSet.images || []).filter(im => im.variant === 'MAIN').sort((a, b) => (b.width || 0) - (a.width || 0))[0]?.link || '';
+      out.set(item.asin, {
+        ...base,
+        imageCount: variants.size,
+        mainImage,
+        bulletCount: bullets.length,
+        hasDescription: description.length > 40,
+        titleLength: base.title.length,
+      });
+    }
+  }
+  return out;
+}
+
+/**
+ * Best-effort storefront names from Amazon's public seller pages. SP-API doesn't return names,
+ * and Amazon sometimes serves a robot check, so unknown names come back as ''.
+ */
+export async function getSellerNames(sellerIds) {
+  const names = new Map();
+  for (const id of [...new Set(sellerIds.filter(Boolean))]) {
+    try {
+      const res = await fetch(`https://www.amazon.com/sp?seller=${encodeURIComponent(id)}&marketplaceID=${MARKETPLACE_ID}`, {
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36',
+          Accept: 'text/html', 'Accept-Language': 'en-US,en;q=0.9',
+        },
+        signal: AbortSignal.timeout(10000),
+      });
+      const html = res.ok ? await res.text() : '';
+      const m = html.match(/id=["']seller-name["'][^>]*>([^<]{1,120})</i)
+        || html.match(/<h1[^>]*>\s*([^<]{1,120}?)\s*<\/h1>/i);
+      const name = m ? m[1].replace(/&amp;/g, '&').replace(/&#39;/g, "'").trim() : '';
+      names.set(id, /robot|captcha|sorry/i.test(name) ? '' : name);
+    } catch { names.set(id, ''); }
+    await sleep(700);
+  }
+  return names;
+}
+
 export { cleanGtin };
