@@ -1,8 +1,12 @@
-// Dashboard writes. POST JSON:
-//  { type: 'prospect', brand_id, data: { outreach_status, outreach_owner, next_step, outreach_notes } }
-//  { type: 'partner', action: 'add', data: { brand_name, website_url, sign_date, ... } }
-//  { type: 'partner', action: 'update', brand_name, data: { end_date, retired_reason, ... } }
-// Setting a prospect to "Signed" adds it to Partner Brands (sign_date = today) if it isn't there yet.
+/**
+ * api/dashboard-update.js
+ *
+ * Dashboard writes. POST JSON:
+ * { type: 'prospect', brand_id, data: { outreach_status, outreach_owner, next_step, outreach_notes } }
+ * { type: 'partner', action: 'add', data: { brand_name, website_url, sign_date, ... } }
+ * { type: 'partner', action: 'update', brand_name, data: { end_date, retired_reason, ... } }
+ * Setting a prospect to "Signed" adds it to Partner Brands (sign_date = today) if it isn't there yet.
+ */
 import { TABS, HEADERS, OUTREACH_STAGES, OUTREACH_CLOSED } from './_lib/schema.js';
 import { readTab, appendRows, updateRows } from './_lib/sheets.js';
 import { isDashboardAuthorized, normalizeName, nowIso } from './_lib/util.js';
@@ -37,7 +41,8 @@ export default async function handler(req, res) {
         const exists = partners.rows.some(p => normalizeName(p.brand_name) === normalizeName(b.brand_name));
         if (!exists) {
           await appendRows(TABS.PARTNERS, partners.headers, [{
-            brand_name: b.brand_name, website_url: b.website_url, sign_date: today(),
+            brand_name: b.brand_name, website_url: b.website_url, sign_date: today(), status: 'Current',
+            category: b.category, primary_contact: b.contact_name, contact_email: b.contact_email,
             notes: 'Signed from prospect pipeline',
           }]);
           addedPartner = true;
@@ -55,7 +60,7 @@ export default async function handler(req, res) {
         if (partners.rows.some(p => normalizeName(p.brand_name) === normalizeName(data.brand_name))) {
           return res.status(409).json({ error: `${data.brand_name} is already in Partner Brands` });
         }
-        await appendRows(TABS.PARTNERS, partners.headers, [data]);
+        await appendRows(TABS.PARTNERS, partners.headers, [{ status: 'Current', ...data }]);
         return res.status(200).json({ ok: true });
       }
 
@@ -63,6 +68,7 @@ export default async function handler(req, res) {
         const p = partners.rows.find(r => normalizeName(r.brand_name) === normalizeName(body.brand_name));
         if (!p) return res.status(404).json({ error: `${body.brand_name} not found in Partner Brands` });
         delete data.brand_name;
+        if ('end_date' in data) data.status = data.end_date ? 'Retired' : 'Current';
         await updateRows(TABS.PARTNERS, partners.headers, [{ row: p._row, data }]);
         return res.status(200).json({ ok: true });
       }
