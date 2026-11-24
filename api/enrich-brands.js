@@ -1,7 +1,11 @@
-// Every 2 hours. For brands with status "New" or "Needs URL":
-// finds the official site if missing, reads the homepage, and fills category, socials, logo,
-// platform, and signals. Never overwrites a cell that already has a value.
-// Manual: /api/enrich-brands?key=<CRON_SECRET>&brand_id=<id>
+/**
+ * api/enrich-brands.js
+ *
+ * Every 2 hours. For brands with status "New" or "Needs URL":
+ * finds the official site if missing, reads the homepage, and fills category, socials, logo,
+ * platform, and signals. Never overwrites a cell that already has a value.
+ * Manual: /api/enrich-brands?key=<CRON_SECRET>&brand_id=<id>
+ */
 import { TABS, STATUS, CATEGORIES } from './_lib/schema.js';
 import { readTab, updateRows, logRun } from './_lib/sheets.js';
 import { askClaude, parseJson } from './_lib/claude.js';
