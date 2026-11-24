@@ -13,8 +13,9 @@ const PROSPECT_FIELDS = [
   'tiktok_handle', 'lead_source', 'first_seen', 'sources', 'source_count', 'signals', 'platform',
   'product_count', 'upc_coverage', 'discovery_status', 'logo_url', 'amazon_status',
   'amazon_asin_count', 'amazon_upc_matches', 'amazon_max_sellers', 'amazon_price_gap',
-  'amazon_checked_at', 'amazon_notes', 'outreach_status', 'outreach_owner', 'outreach_updated',
+  'amazon_checked_at', 'amazon_notes', 'amazon_seller_id', 'amazon_brand_buybox', 'hubspot_company_id', 'hubspot_url', 'hubspot_owner', 'hubspot_stage', 'hubspot_synced_at', 'outreach_status', 'outreach_owner', 'outreach_updated',
   'next_step', 'outreach_notes', 'contact_name', 'contact_title', 'contact_email', 'contact_linkedin',
+  'scan_status', 'scan_completed_at', 'audit_status',
 ];
 const HIDDEN = [STATUS.DUPLICATE];
 
