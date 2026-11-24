@@ -16,6 +16,7 @@ export const TABS = {
   AUDIT_DATA: 'Audit Data',
   AUDIT_FINDINGS: 'Audit Findings',
   AUDIT_BUILDS: 'Audit Builds',
+  HUBSPOT_MAP: 'HubSpot Stage Map',
 };
 
 export const HEADERS = {
@@ -41,6 +42,10 @@ export const HEADERS = {
     // Amazon check (written by amazon-check.js)
     'amazon_status', 'amazon_asin_count', 'amazon_upc_matches', 'amazon_max_sellers',
     'amazon_price_gap', 'amazon_checked_at', 'amazon_notes',
+    // The brand's own Amazon seller ID(s), comma-separated. Everyone else on its listings is a reseller.
+    'amazon_seller_id', 'amazon_brand_buybox',
+    // HubSpot link (written by sync-hubspot.js). Linked brands' outreach fields are managed in HubSpot.
+    'hubspot_company_id', 'hubspot_url', 'hubspot_owner', 'hubspot_stage', 'hubspot_synced_at',
     // Outreach (written by the dashboard)
     'outreach_status', 'outreach_owner', 'outreach_updated', 'next_step', 'outreach_notes',
     // System (dashboard)
@@ -53,7 +58,7 @@ export const HEADERS = {
     'last_scraped',
     // Filled by the Amazon check
     'asin', 'match_method', 'amazon_title', 'amazon_brand', 'sales_rank', 'buy_box_price',
-    'buy_box_fba', 'offer_count', 'seller_count', 'price_gap', 'last_amazon_check',
+    'buy_box_fba', 'offer_count', 'seller_count', 'price_gap', 'last_amazon_check', 'buy_box_seller',
   ],
   [TABS.EXCLUSIONS]: ['brand_name', 'domain', 'reason'],
   [TABS.RUN_LOG]: ['timestamp', 'job', 'processed', 'added', 'updated', 'errors', 'notes'],
@@ -64,7 +69,10 @@ export const HEADERS = {
     'channels', 'dashboard_url', 'retired_reason', 'notes',
     'status', 'category', 'where_met', 'primary_contact', 'contact_email', 'last_correspondence',
     'pricing', 'agreement_files',
+    'hubspot_company_id', 'hubspot_url', 'hubspot_owner', 'hubspot_synced_at',
   ],
+  // HubSpot stage -> dashboard outreach stage. sync-hubspot adds new HubSpot values with a suggestion.
+  [TABS.HUBSPOT_MAP]: ['hubspot_field', 'hubspot_value', 'dashboard_stage', 'notes'],
   // Paste or import the CRM export here, then run /api/import-crm
   [TABS.CRM_IMPORT]: [
     'brand_name', 'category', 'stage', 'services', 'date_signed', 'where_met', 'notes',
@@ -109,8 +117,13 @@ export const STATUS = {
 export const AMAZON_STATUS = {
   NOT_ON_AMAZON: 'Not on Amazon',
   NO_OFFERS: 'Listed, no active offers',
-  RESELLERS: 'On Amazon: reseller signals',
-  SINGLE: 'On Amazon: single seller',
+  // Seller ID unknown: classified by seller count only
+  ONE: 'On Amazon: one seller',
+  MULTIPLE: 'On Amazon: multiple sellers',
+  // Brand's seller ID entered: we know exactly who is who
+  BRAND_ONLY: 'Brand only',
+  BRAND_RESELLERS: 'Brand + resellers',
+  RESELLERS_ONLY: 'Resellers only',
 };
 
 export const CATEGORIES = ['skincare', 'haircare', 'makeup', 'nail', 'wellness', 'other'];
