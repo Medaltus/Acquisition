@@ -8,15 +8,14 @@
  */
 import { TABS, STATUS, AMAZON_STATUS } from './_lib/schema.js';
 import { readTab, updateRows, logRun } from './_lib/sheets.js';
-import { isAuthorized, nowIso, appendUnique } from './_lib/util.js';
+import { isAuthorized, nowIso, appendUnique, parseSellerIds } from './_lib/util.js';
 import { lookupCodes, searchBrand, getOffers } from './_lib/spapi.js';
 
 const BRANDS_PER_RUN = 5;
 const MAX_UPCS_PER_BRAND = 100;
 const MAX_ASINS_FOR_OFFERS = 40;
 const RECHECK_DAYS = 30;
-const RESELLER_SELLER_THRESHOLD = 3;   // 3+ sellers on any listing
-const UNDERCUT_THRESHOLD = -0.10;      // Buy Box 10%+ below the brand's own site price
+const PRICE_FLAG = 0.10;               // note a Buy Box 10%+ above or below the brand's own site price
 const TIME_BUDGET_MS = 250000;
 
 const READY = [STATUS.PRODUCTS_SCANNED, STATUS.PRODUCTS_PARTIAL, STATUS.NO_PRODUCTS];
@@ -72,6 +71,9 @@ export default async function handler(req, res) {
         const offers = asins.length ? await getOffers(asins) : new Map();
 
         // 4) Write product-level matches
+        const brandIds = parseSellerIds(b.amazon_seller_id);
+        const medaltusId = (process.env.SP_SELLER_ID || '').trim();
+        const whoIs = id => !id ? '' : brandIds.includes(id) ? 'Brand' : id === medaltusId ? 'Medaltus' : id;
         const productUpdates = [], gaps = [];
         for (const r of rows) {
           const code = String(r.upc || '').replace(/\D/g, '');
@@ -90,6 +92,7 @@ export default async function handler(req, res) {
             asin: hit.asin, match_method: 'upc', amazon_title: hit.title, amazon_brand: hit.brand,
             sales_rank: hit.salesRank, buy_box_price: o.buyBoxPrice ?? '', buy_box_fba: o.buyBoxFba ?? '',
             offer_count: o.offerCount ?? '', seller_count: o.sellerCount ?? '', price_gap: pct(gap),
+            buy_box_seller: whoIs(o.buyBoxSellerId),
             last_amazon_check: stamp,
           } });
         }
@@ -103,13 +106,29 @@ export default async function handler(req, res) {
         let status;
         if (!asins.length) status = AMAZON_STATUS.NOT_ON_AMAZON;
         else if (!withOffers.length) status = AMAZON_STATUS.NO_OFFERS;
-        else if (maxSellers >= RESELLER_SELLER_THRESHOLD || (medianGap !== null && medianGap <= UNDERCUT_THRESHOLD)) status = AMAZON_STATUS.RESELLERS;
-        else status = AMAZON_STATUS.SINGLE;
+        else if (brandIds.length) {
+          // Seller ID known: who sells is certain. Price is reported separately (amazon_price_gap).
+          const brandSells = withOffers.some(o => o.sellerIds.some(id => brandIds.includes(id)));
+          const others = withOffers.some(o => o.sellerIds.some(id => !brandIds.includes(id) && id !== medaltusId));
+          status = brandSells ? (others ? AMAZON_STATUS.BRAND_RESELLERS : AMAZON_STATUS.BRAND_ONLY) : AMAZON_STATUS.RESELLERS_ONLY;
+        }
+        else status = maxSellers >= 2 ? AMAZON_STATUS.MULTIPLE : AMAZON_STATUS.ONE;
 
         if (!codes.length) notes.push('No UPCs: result based on brand-name search only');
         if (asins.length && !byCode.size) notes.push('Found by brand search only; verify listings belong to this brand');
-        if (medianGap !== null && medianGap <= UNDERCUT_THRESHOLD) notes.push(`Amazon priced ${pct(medianGap)} vs site`);
+        if (medianGap !== null && Math.abs(medianGap) >= PRICE_FLAG) notes.push(`Amazon priced ${pct(medianGap)} vs site`);
         if (offerList.some(o => o.medaltusSells)) notes.push('A Medaltus account already sells this brand');
+        let brandBuyBox = '';
+        if (brandIds.length && withOffers.length) {
+          const brandWins = withOffers.filter(o => brandIds.includes(o.buyBoxSellerId)).length;
+          const brandOn = withOffers.filter(o => o.sellerIds.some(id => brandIds.includes(id))).length;
+          const resellers = new Set(withOffers.flatMap(o => o.sellerIds).filter(id => !brandIds.includes(id) && id !== medaltusId));
+          brandBuyBox = `${brandWins} of ${withOffers.length}`;
+          notes.push(`Brand holds the Buy Box on ${brandWins} of ${withOffers.length} active listings and sells on ${brandOn}`);
+          if (resellers.size) notes.push(`${resellers.size} other seller${resellers.size === 1 ? '' : 's'} on the brand's listings`);
+        } else if (!brandIds.length && withOffers.length) {
+          notes.push("Brand's seller ID not set; reseller status is estimated from seller counts");
+        }
         const fbmCount = offerList.filter(o => o.buyBoxFba === 'FBM').length;
         if (fbmCount) notes.push(`${fbmCount} listing(s) with a merchant-fulfilled (FBM) Buy Box`);
 
@@ -124,6 +143,7 @@ export default async function handler(req, res) {
           amazon_price_gap: pct(medianGap),
           amazon_checked_at: stamp,
           amazon_notes: notes.join('; '),
+          amazon_brand_buybox: brandBuyBox,
         };
         if (listedAs && !b.amazon_brand_name) data.amazon_brand_name = listedAs;
         if (b.amazon_status === AMAZON_STATUS.NOT_ON_AMAZON && status !== AMAZON_STATUS.NOT_ON_AMAZON) {
