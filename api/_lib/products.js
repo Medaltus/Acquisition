@@ -1,6 +1,10 @@
-// Product catalog + UPC extraction from a brand's DTC site.
-// Waterfall: Shopify /products.json -> per-product .json -> page JSON-LD / embedded product JSON.
-// Non-Shopify: sitemap.xml -> product pages -> JSON-LD.
+/**
+ * api/_lib/products.js
+ *
+ * Product catalog + UPC extraction from a brand's DTC site.
+ * Waterfall: Shopify /products.json -> per-product .json -> page JSON-LD / embedded product JSON.
+ * Non-Shopify: sitemap.xml -> product pages -> JSON-LD.
+ */
 import { fetchJson, fetchText, mapLimit, cleanGtin, sleep } from './util.js';
 import { extractJsonLd, typeIs } from './site.js';
 
