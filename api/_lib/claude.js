@@ -21,10 +21,10 @@ async function callOnce(body) {
 }
 
 /** Ask Claude; optionally with web search. Returns the concatenated text of the final answer. */
-export async function askClaude({ system, prompt, useSearch = false, maxSearches = 6, maxTokens = 8000 }) {
+export async function askClaude({ system, prompt, useSearch = false, maxSearches = 6, maxTokens = 8000, model }) {
   if (!process.env.ANTHROPIC_API_KEY) throw new Error('Missing ANTHROPIC_API_KEY env var');
   const base = {
-    model: (process.env.ANTHROPIC_MODEL || DEFAULT_MODEL).trim(),
+    model: (model || process.env.ANTHROPIC_MODEL || DEFAULT_MODEL).trim(),
     max_tokens: maxTokens,
     system,
   };
