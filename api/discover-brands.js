@@ -1,6 +1,10 @@
-// Daily cron. Runs enabled sources that haven't run in REFRESH_DAYS, extracts brand names,
-// logs every sighting to "Raw Discoveries", and upserts deduped brands into "Brands".
-// Manual: /api/discover-brands?key=<CRON_SECRET>&source=<source_name>  (forces one source)
+/**
+ * api/discover-brands.js
+ *
+ * Daily cron. Runs enabled sources that haven't run in REFRESH_DAYS, extracts brand names,
+ * logs every sighting to "Raw Discoveries", and upserts deduped brands into "Brands".
+ * Manual: /api/discover-brands?key=<CRON_SECRET>&source=<source_name>  (forces one source)
+ */
 import { TABS, STATUS } from './_lib/schema.js';
 import { readTab, appendRows, updateRows, logRun } from './_lib/sheets.js';
 import { askClaude, parseJson } from './_lib/claude.js';
