@@ -1,7 +1,11 @@
-// Every 2 hours. For brands whose products have been scanned: looks up their UPCs on Amazon,
-// falls back to a brand-name catalog search, pulls offers/Buy Box, and classifies the brand.
-// Re-checks "Not on Amazon" brands every RECHECK_DAYS to catch a first listing appearing.
-// Manual: /api/amazon-check?key=<CRON_SECRET>&brand_id=<id>
+/**
+ * api/amazon-check.js
+ *
+ * Every 2 hours. For brands whose products have been scanned: looks up their UPCs on Amazon,
+ * falls back to a brand-name catalog search, pulls offers/Buy Box, and classifies the brand.
+ * Re-checks "Not on Amazon" brands every RECHECK_DAYS to catch a first listing appearing.
+ * Manual: /api/amazon-check?key=<CRON_SECRET>&brand_id=<id>
+ */
 import { TABS, STATUS, AMAZON_STATUS } from './_lib/schema.js';
 import { readTab, updateRows, logRun } from './_lib/sheets.js';
 import { isAuthorized, nowIso, appendUnique } from './_lib/util.js';
