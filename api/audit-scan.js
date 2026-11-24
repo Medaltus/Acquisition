@@ -9,7 +9,7 @@
  */
 import { TABS, AUDIT_STAGES } from './_lib/schema.js';
 import { readTab, appendRows, updateRows } from './_lib/sheets.js';
-import { isAuthorized, isDashboardAuthorized, nowIso, cleanGtin } from './_lib/util.js';
+import { isAuthorized, isDashboardAuthorized, nowIso, cleanGtin, parseSellerIds } from './_lib/util.js';
 import { lookupCodes, searchBrand, getOfferDetails, getCatalogDetails, getSellerNames } from './_lib/spapi.js';
 import { askClaude, parseJson } from './_lib/claude.js';
 import {
@@ -82,10 +82,15 @@ async function stageAmazon(ctx) {
   // Missing products (unique UPCs from the site with no Amazon listing)
   const siteCodes = [...upcVariants.keys()];
   const missingCodes = siteCodes.filter(c => !byCode.has(c));
-  const examples = missingCodes.slice(0, 5).map(c => beauty.find(p => cleanGtin(p.upc) === c)?.product_title).filter(Boolean);
+  // Every missing product with its site link, so the builder can list them for comparison
+  const items = missingCodes.map(c => {
+    const p = beauty.find(x => cleanGtin(x.upc) === c) || {};
+    return { title: p.product_title || '', variant: p.variant_title || '', upc: c, price: p.price || '', url: p.product_url || '' };
+  });
+  const examples = [...new Set(items.map(i => i.title).filter(Boolean))].slice(0, 5);
   rows.push(dp(ctx, 'Channel presence', 'amazon.missing_products', 'Site products with no Amazon listing',
-    J({ missing: missingCodes.length, checked: siteCodes.length, examples }),
-    { source: 'Amazon SP-API UPC lookup', notes: examples.length ? `e.g. ${examples.join('; ')}` : '' }));
+    J({ missing: missingCodes.length, checked: siteCodes.length, examples, items }),
+    { source: 'Amazon SP-API UPC lookup' }));
 
   // Pick ASINs to check in detail
   const ranked = [...all.values()].sort((a, b) => (a.rankNumber ?? 9e9) - (b.rankNumber ?? 9e9));
@@ -97,10 +102,13 @@ async function stageAmazon(ctx) {
     : [new Map(), new Map()];
 
   // Sellers
-  const sellerIds = [...new Set([...offers.values()].flatMap(o => o.offers.map(x => x.sellerId)))].slice(0, MAX_SELLER_LOOKUPS);
-  const names = sellerIds.length ? await getSellerNames(sellerIds) : new Map();
+  // The brand's own seller ID(s), entered on the dashboard, settle who is the brand. Name lookups are only a fallback.
+  const brandIds = parseSellerIds(brand.amazon_seller_id);
   const medaltusId = (process.env.SP_SELLER_ID || '').trim();
-  const nameOf = id => id === medaltusId ? 'Medaltus' : (names.get(id) || '');
+  const sellerIds = [...new Set([...offers.values()].flatMap(o => o.offers.map(x => x.sellerId)))]
+    .filter(id => !brandIds.includes(id) && id !== medaltusId).slice(0, MAX_SELLER_LOOKUPS);
+  const names = sellerIds.length ? await getSellerNames(sellerIds) : new Map();
+  const nameOf = id => brandIds.includes(id) ? `${brand.brand_name} (brand)` : id === medaltusId ? 'Medaltus' : (names.get(id) || '');
 
   let anyBrand = false, anyUnknown = false, fbm = 0;
   const noOffer = [], sellerSummary = new Set();
@@ -111,7 +119,10 @@ async function stageAmazon(ctx) {
     if (!o.offers.length && !o.error) { noOffer.push({ asin, title: c.title || '' }); continue; }
     const sellers = o.offers.map(x => {
       const name = nameOf(x.sellerId);
-      const isBrand = x.sellerId === medaltusId ? false : sellerIsBrand(name, brand);
+      const isBrand = brandIds.includes(x.sellerId) ? true
+        : x.sellerId === medaltusId ? false
+        : brandIds.length ? false
+        : sellerIsBrand(name, brand);
       if (isBrand) anyBrand = true;
       if (isBrand === null) anyUnknown = true;
       sellerSummary.add(x.sellerId);
@@ -125,7 +136,7 @@ async function stageAmazon(ctx) {
   }
   const brandSeller = anyBrand ? 'Yes' : (!sellerSummary.size ? 'No listings with offers' : anyUnknown ? 'Unknown' : 'No');
   rows.push(dp(ctx, 'Listing control', 'control.brand_seller', 'Does the brand sell its own Amazon listings?', brandSeller,
-    { source: 'Seller names vs brand name', confidence: brandSeller === 'Unknown' ? 'Needs check' : 'High',
+    { source: brandIds.length ? "Brand's seller ID (entered on the dashboard)" : 'Seller names vs brand name', confidence: brandSeller === 'Unknown' ? 'Needs check' : 'High',
       notes: brandSeller === 'Unknown' ? 'Some seller names were blocked by Amazon. Open the listings and check the Sold by line, then edit this to Yes or No.' : '' }));
   rows.push(dp(ctx, 'Listing control', 'control.no_offer_asins', 'Listings with nobody selling', J(noOffer.map(n => n.asin)),
     { source: 'Amazon SP-API offers', notes: noOffer.map(n => n.title.slice(0, 60)).join('; ') }));
