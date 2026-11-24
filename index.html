@@ -188,6 +188,8 @@ textarea.input{resize:vertical;min-height:64px;line-height:1.5;}
 .modal-bg{position:fixed;inset:0;background:rgba(0,31,96,.45);display:none;align-items:center;justify-content:center;z-index:50;padding:20px;}
 .modal-bg.open{display:flex;}
 .modal{background:var(--white);border-radius:var(--radius);padding:24px;width:100%;max-width:480px;box-shadow:0 20px 50px rgba(0,31,96,.25);}
+.modal-wide{max-width:600px;max-height:90vh;overflow-y:auto;}
+.modal:not(.editing-retired) .retired-only{display:none;}
 .modal h3{font-family:var(--font-subheader);font-weight:400;font-size:19px;margin-bottom:4px;}
 .modal p{font-size:12px;color:var(--muted);margin-bottom:16px;}
 
@@ -234,6 +236,12 @@ textarea.input{resize:vertical;min-height:64px;line-height:1.5;}
 .drow .val{color:var(--navy);word-break:break-word;}
 .drow .val .sub{display:block;color:var(--muted);font-size:11px;margin-top:3px;}
 .drow .src{font-size:11px;color:var(--muted);}
+.missing-toggle{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 12px;background:none;border:none;padding:0;font:inherit;color:var(--navy);cursor:pointer;text-align:left;}
+.missing-caret{font-size:11px;color:var(--muted);text-decoration:underline;}
+.missing-toggle:hover .missing-caret{color:var(--navy);}
+.missing-list{margin-top:10px;border:1px solid var(--border);border-radius:var(--radius-sm);max-height:320px;overflow:auto;}
+.missing-list table.data-table thead th{position:sticky;top:0;background:var(--navy);}
+.missing-list table.data-table tbody td{padding:8px 10px;font-weight:400;}
 .drow .src a{color:var(--muted);}
 .drow .acts{display:flex;flex-direction:column;gap:5px;align-items:flex-start;}
 .chk{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;color:var(--navy);cursor:pointer;}
@@ -425,27 +433,40 @@ textarea.input{resize:vertical;min-height:64px;line-height:1.5;}
 </main>
 </div>
 
-<!-- Add brand modal -->
+<!-- Add / edit brand modal -->
 <div class="modal-bg" id="add-modal" onclick="if(event.target===this)closeModal('add-modal')">
-  <form class="modal" onsubmit="saveNewPartner(event)">
-    <h3>Add a current brand</h3>
-    <p>Adds a row to the Partner Brands tab. The scanner will skip this brand from now on.</p>
+  <form class="modal modal-wide" onsubmit="savePartner(event)">
+    <h3 id="partner-title">Add a current brand</h3>
+    <p id="partner-sub">Adds a row to the Partner Brands tab. The scanner will skip this brand from now on.</p>
     <div class="form-grid">
       <label class="full">Brand name<input class="input" name="brand_name" required></label>
-      <label class="full">Website<input class="input" name="website_url" placeholder="https://"></label>
+      <label>Website<input class="input" name="website_url" placeholder="https://"></label>
+      <label>Category<input class="input" name="category" placeholder="Skincare"></label>
       <label>Partner since<input class="input" type="date" name="sign_date"></label>
       <label>Partnership model
         <select class="input" name="partnership_model">
           <option value="">Choose…</option><option>Fully managed</option><option>Resale</option><option>3PL</option><option>Resale + 3PL</option>
         </select>
       </label>
+      <label class="retired-only">Partnership ended<input class="input" type="date" name="end_date"></label>
+      <label class="retired-only">Reason
+        <select class="input" name="retired_reason">
+          <option value="">Choose…</option><option>Brand closed</option><option>Contract ended</option>
+          <option>Brand moved in-house</option><option>Moved to another agency</option><option>Medaltus ended it</option><option>Other</option>
+        </select>
+      </label>
+      <label class="full">Services<input class="input" name="channels" placeholder="Amazon, askderm, Walmart.com"></label>
+      <label>Primary contact<input class="input" name="primary_contact"></label>
+      <label>Contact email<input class="input" type="email" name="contact_email"></label>
       <label>Brand manager<input class="input" name="brand_manager"></label>
-      <label>Channels<input class="input" name="channels" placeholder="Amazon, Walmart, TikTok Shop"></label>
+      <label>Where we met<input class="input" name="where_met"></label>
       <label class="full">Dashboard link<input class="input" name="dashboard_url" placeholder="https://"></label>
+      <label class="full">Pricing<textarea class="input" name="pricing" rows="2"></textarea></label>
+      <label class="full">Notes<textarea class="input" name="notes" rows="3"></textarea></label>
     </div>
     <div class="form-actions">
       <button type="button" class="btn btn-ghost" onclick="closeModal('add-modal')">Cancel</button>
-      <button type="submit" class="btn btn-primary">Add brand</button>
+      <button type="submit" class="btn btn-primary" id="partner-save">Add brand</button>
     </div>
   </form>
 </div>
@@ -480,7 +501,7 @@ textarea.input{resize:vertical;min-height:64px;line-height:1.5;}
 /* ───────────── State ───────────── */
 const KEY_STORE = 'medaltus_portfolio_key';
 let DATA = null;
-const UI = { stage: '', az: '', shown: 60, open: null, productCache: {}, missingOnly: {}, currentSort: 'sign_date' };
+const UI = { currentRows: [], retiredRows: [], stage: '', az: '', shown: 60, open: null, productCache: {}, missingOnly: {}, currentSort: 'sign_date' };
 const PAGE_TITLES = { current: 'Current Brands', retired: 'Retired Brands', prospects: 'Future Prospects', audit: 'Audit Builder' };
 
 const AZ = [
@@ -593,6 +614,7 @@ function renderCurrent() {
     : s === 'newest' ? (b._d || 0) - (a._d || 0)
     : (a._d || Infinity) - (b._d || Infinity));
 
+  UI.currentRows = rows;
   const hasModel = rows.some(r => r.partnership_model), hasMgr = rows.some(r => r.brand_manager), hasDash = rows.some(r => safeUrl(r.dashboard_url));
   $('current-table').innerHTML = `<table class="data-table plain"><thead><tr>
       <th class="sortable" onclick="setCurrentSort('name')">Brand</th>
@@ -601,7 +623,7 @@ function renderCurrent() {
       <th>Partnership length</th><th>Services</th>
       ${hasModel ? '<th>Model</th>' : ''}${hasMgr ? '<th>Brand manager</th>' : ''}
       <th>Primary contact</th>${hasDash ? '<th>Dashboard</th>' : ''}<th></th>
-    </tr></thead><tbody>${rows.map(r => `<tr>
+    </tr></thead><tbody>${rows.map((r, i) => `<tr>
       <td><div class="brand-cell">${brandMark(r.brand_name)}<div><div class="brand-name">${esc(r.brand_name)}</div>${siteLink(r.website_url)}</div></div></td>
       <td>${splitChannels(r.category)}</td>
       <td class="nowrap">${r._d ? fmtDate(r.sign_date) : '<span class="muted">Add sign date</span>'}</td>
@@ -611,7 +633,7 @@ function renderCurrent() {
       ${hasMgr ? `<td>${esc(r.brand_manager) || '<span class="muted">—</span>'}</td>` : ''}
       <td>${contactCell(r)}</td>
       ${hasDash ? `<td>${safeUrl(r.dashboard_url) ? `<a class="btn btn-ghost btn-sm" href="${esc(safeUrl(r.dashboard_url))}" target="_blank" rel="noopener">Open</a>` : '<span class="muted">—</span>'}</td>` : ''}
-      <td class="nowrap"><button class="btn-link" onclick="openRetire('${esc(r.brand_name).replace(/'/g, '&#39;')}')">Retire</button></td>
+      <td class="nowrap"><button class="btn-link" onclick="openEditPartner('current', ${i})">Edit</button>&nbsp;&nbsp;<button class="btn-link" onclick="openRetire('${esc(r.brand_name).replace(/'/g, '&#39;')}')">Retire</button></td>
     </tr>`).join('')}</tbody></table>`;
 }
 function contactCell(r) {
@@ -640,9 +662,10 @@ function renderRetired() {
     <div class="kpi-card"><div class="kpi-label">Most common reason</div><div class="kpi-value" style="font-size:20px">${topReason ? esc(topReason[0]) : '—'}</div><div class="kpi-sub">${topReason ? `${topReason[1]} of ${rows.length}` : ''}</div></div>`;
 
   if (!rows.length) { $('retired-table').innerHTML = `<div class="empty"><strong>No retired brands</strong>Retire a brand from Current Brands and it moves here.</div>`; return; }
+  UI.retiredRows = rows;
   $('retired-table').innerHTML = `<table class="data-table plain"><thead><tr>
       <th>Brand</th><th>Category</th><th>Partner since</th><th>Ended</th><th>Partnership length</th><th>Services</th><th>Reason</th><th>Notes</th><th></th>
-    </tr></thead><tbody>${rows.map(r => `<tr>
+    </tr></thead><tbody>${rows.map((r, i) => `<tr>
       <td><div class="brand-cell">${brandMark(r.brand_name)}<div><div class="brand-name">${esc(r.brand_name)}</div>${siteLink(r.website_url)}</div></div></td>
       <td>${splitChannels(r.category)}</td>
       <td class="nowrap">${fmtDate(r.sign_date) || '<span class="muted">—</span>'}</td>
@@ -651,19 +674,63 @@ function renderRetired() {
       <td style="max-width:200px">${splitChannels(r.channels)}</td>
       <td>${esc(r.retired_reason) || '<span class="muted">—</span>'}</td>
       <td class="small" style="max-width:260px">${esc(r.notes)}</td>
-      <td class="nowrap"><button class="btn-link" onclick="reinstate('${esc(r.brand_name).replace(/'/g, '&#39;')}')">Reinstate</button></td>
+      <td class="nowrap"><button class="btn-link" onclick="openEditPartner('retired', ${i})">Edit</button>&nbsp;&nbsp;<button class="btn-link" onclick="reinstate('${esc(r.brand_name).replace(/'/g, '&#39;')}')">Reinstate</button></td>
     </tr>`).join('')}</tbody></table>`;
 }
 
 /* ───────────── Partner actions ───────────── */
-function openAddModal() { const f = $('add-modal').querySelector('form'); f.reset(); f.sign_date.value = todayIso(); $('add-modal').classList.add('open'); f.brand_name.focus(); }
+const PARTNER_FIELDS = ['brand_name', 'website_url', 'category', 'sign_date', 'partnership_model', 'end_date', 'retired_reason',
+  'channels', 'primary_contact', 'contact_email', 'brand_manager', 'where_met', 'dashboard_url', 'pricing', 'notes'];
+const toInputDate = s => { const d = parseDate(s); return d ? `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}` : ''; };
 function closeModal(id) { $(id).classList.remove('open'); }
-async function saveNewPartner(e) {
+let PARTNER_EDIT = null;   // { name, retired } while editing; null while adding
+
+function openAddModal() {
+  PARTNER_EDIT = null;
+  const f = $('add-modal').querySelector('form'); f.reset(); f.classList.remove('editing-retired');
+  f.sign_date.value = todayIso();
+  $('partner-title').textContent = 'Add a current brand';
+  $('partner-sub').textContent = 'Adds a row to the Partner Brands tab. The scanner will skip this brand from now on.';
+  $('partner-save').textContent = 'Add brand';
+  $('add-modal').classList.add('open'); f.brand_name.focus();
+}
+function openEditPartner(kind, i) {
+  const r = (kind === 'retired' ? UI.retiredRows : UI.currentRows)[i]; if (!r) return;
+  PARTNER_EDIT = { name: r.brand_name, retired: kind === 'retired' };
+  const f = $('add-modal').querySelector('form'); f.reset();
+  f.classList.toggle('editing-retired', kind === 'retired');
+  for (const k of PARTNER_FIELDS) {
+    if (!f[k]) continue;
+    const v = r[k] ?? '';
+    if (f[k].tagName === 'SELECT' && v && ![...f[k].options].some(o => o.value === v)) f[k].add(new Option(v, v));
+    f[k].value = f[k].type === 'date' ? toInputDate(v) : v;
+  }
+  $('partner-title').textContent = `Edit ${r.brand_name}`;
+  $('partner-sub').textContent = 'Changes save straight to the Partner Brands tab.';
+  $('partner-save').textContent = 'Save changes';
+  $('add-modal').classList.add('open'); f.brand_name.focus();
+}
+async function savePartner(e) {
   e.preventDefault();
-  const data = Object.fromEntries(new FormData(e.target).entries());
-  try { await api('/api/dashboard-update', { method: 'POST', body: JSON.stringify({ type: 'partner', action: 'add', data }) });
-    closeModal('add-modal'); toast(`${data.brand_name} added`); load();
+  const f = e.target;
+  const data = {};
+  for (const k of PARTNER_FIELDS) {
+    if (!f[k]) continue;
+    if (k === 'end_date' || k === 'retired_reason') { if (PARTNER_EDIT?.retired) data[k] = f[k].value.trim(); continue; }
+    data[k] = f[k].value.trim();
+  }
+  const btn = $('partner-save'); btn.disabled = true;
+  try {
+    if (PARTNER_EDIT) {
+      await api('/api/dashboard-update', { method: 'POST', body: JSON.stringify({ type: 'partner', action: 'update', brand_name: PARTNER_EDIT.name, data }) });
+      toast(`${data.brand_name || PARTNER_EDIT.name} saved`);
+    } else {
+      await api('/api/dashboard-update', { method: 'POST', body: JSON.stringify({ type: 'partner', action: 'add', data }) });
+      toast(`${data.brand_name} added`);
+    }
+    closeModal('add-modal'); load();
   } catch (err) { if (err.message !== 'unauthorized') toast(err.message, true); }
+  finally { btn.disabled = false; }
 }
 function openRetire(name) {
   const f = $('retire-modal').querySelector('form'); f.reset();
@@ -834,9 +901,20 @@ function detailHtml(p) {
           <dt>UPC matches</dt><dd>${esc(p.amazon_upc_matches) || '—'}</dd>
           <dt>Most sellers</dt><dd>${esc(p.amazon_max_sellers) || '—'}</dd>
           <dt>Price vs site</dt><dd>${esc(p.amazon_price_gap) || '—'}</dd>
-          <dt>Checked</dt><dd>${fmtDate(p.amazon_checked_at) || 'Not yet'}</dd>
+          <dt>Checked</dt><dd>${fmtDate(p.amazon_checked_at) || (p.amazon_seller_id ? 'Re-checking within the hour' : 'Not yet')}</dd>
+          ${p.amazon_brand_buybox ? `<dt>Brand's Buy Box</dt><dd>${esc(p.amazon_brand_buybox)} listings</dd>` : ''}
         </dl>
         ${p.amazon_notes ? `<ul class="signals" style="margin-top:10px">${splitNotes(p.amazon_notes).map(n => `<li>${esc(n)}</li>`).join('')}</ul>` : ''}
+        <form class="form-grid" style="margin-top:14px" onsubmit="saveSellerInfo(event,'${esc(p.brand_id)}')">
+          <label class="full">Brand's Amazon seller ID
+            <input class="input" name="amazon_seller_id" value="${esc(p.amazon_seller_id)}" placeholder="e.g. A2S14XZ2NR1V9Q" style="font-family:var(--mono)">
+          </label>
+          <label class="full">Brand name on Amazon
+            <input class="input" name="amazon_brand_name" value="${esc(p.amazon_brand_name)}" placeholder="${esc(p.brand_name)}">
+          </label>
+          <div class="full small muted">Every other seller on their listings is treated as a reseller. Separate several IDs with commas.</div>
+          <div class="full form-actions" style="margin-top:0"><button class="btn btn-ghost btn-sm" type="submit">Save seller info</button></div>
+        </form>
       </div>
       <form onsubmit="saveOutreach(event,'${id}')">
         <div class="detail-hd">Outreach</div>
@@ -880,7 +958,7 @@ function renderProductTable(id) {
   if (UI.missingOnly[id]) list = list.filter(r => !r.asin && String(r.match_method).startsWith('upc: not found'));
   if (!list.length) { box.innerHTML = `<div class="empty" style="padding:24px">Every product with a UPC was found on Amazon.</div>`; return; }
   box.innerHTML = `<table class="data-table plain"><thead><tr>
-      <th>Product</th><th>Price</th><th>UPC</th><th>Amazon</th><th>Buy Box</th><th>Sellers</th><th>vs site</th>
+      <th>Product</th><th>Price</th><th>UPC</th><th>Amazon</th><th>Buy Box</th><th>Buy Box seller</th><th>Sellers</th><th>vs site</th>
     </tr></thead><tbody>${list.map(r => {
       const url = safeUrl(r.product_url);
       const title = esc(r.product_title) + (r.variant_title ? `<div class="small muted">${esc(r.variant_title)}</div>` : '');
@@ -894,11 +972,22 @@ function renderProductTable(id) {
         <td class="small" style="font-family:var(--mono)">${esc(r.upc)}</td>
         <td>${az}</td>
         <td class="nowrap">${r.buy_box_price ? money(r.buy_box_price) + (r.buy_box_fba ? ` <span class="small muted">${esc(r.buy_box_fba)}</span>` : '') : ''}</td>
+        <td>${bbSellerCell(r.buy_box_seller)}</td>
         <td>${esc(r.seller_count)}</td>
         <td>${gap}</td>
       </tr>`; }).join('')}</tbody></table>`;
 }
 
+function bbSellerCell(v) {
+  if (!v) return '';
+  if (v === 'Brand') return '<span class="pill az-not">Brand</span>';
+  if (v === 'Medaltus') return '<span class="pill az-single">Medaltus</span>';
+  return `<a class="small" style="font-family:var(--mono)" href="https://www.amazon.com/sp?seller=${encodeURIComponent(v)}" target="_blank" rel="noopener">${esc(v)}</a>`;
+}
+async function saveSellerInfo(e, id) {
+  e.preventDefault();
+  await postOutreach(id, Object.fromEntries(new FormData(e.target).entries()));
+}
 async function setOutreach(id, status) {
   await postOutreach(id, { outreach_status: status });
 }
@@ -910,7 +999,10 @@ async function postOutreach(id, data) {
   const p = DATA.prospects.find(x => x.brand_id === id);
   try {
     const res = await api('/api/dashboard-update', { method: 'POST', body: JSON.stringify({ type: 'prospect', brand_id: id, data }) });
-    Object.assign(p, data, { outreach_updated: res.outreach_updated });
+    Object.assign(p, data);
+    if (res.outreach_updated) p.outreach_updated = res.outreach_updated;
+    if (res.amazon_seller_id !== undefined) p.amazon_seller_id = res.amazon_seller_id;
+    if (res.recheck) { p.amazon_checked_at = ''; toast('Saved. Amazon status will update within the hour.'); renderProspects(); return; }
     if (res.addedPartner) { toast(`${p.brand_name} signed and added to Current Brands`); load(); return; }
     toast('Saved');
     renderPipeline(); renderAzSeg(); renderProspects();
@@ -944,7 +1036,7 @@ function populateAuditBrands() {
 function buildAudit(id) { showPage('audit'); openAudit(id); }
 
 async function openAudit(id) {
-  AUD.brandId = id; AUD.data = null; AUD.sel = null; AUD.dirtyData = false; AUD.edit = null;
+  AUD.brandId = id; AUD.data = null; AUD.sel = null; AUD.dirtyData = false; AUD.edit = null; AUD.missingOpen = false; AUD.missingFallback = null;
   populateAuditBrands();
   $('aud-run').disabled = !id;
   $('aud-steps').hidden = true;
@@ -957,6 +1049,7 @@ async function loadAudit() {
   try {
     const d = await api('/api/audit-data?brand_id=' + encodeURIComponent(AUD.brandId));
     AUD.data = d;
+    AUD.missingFallback = null;
     AUD.logoData = d.build?.logo_data || '';
     AUD.sel = initSelections(d);
     $('aud-run').textContent = d.scan_id ? 'Run a new scan' : 'Run scan';
@@ -1096,10 +1189,44 @@ function fmtRowValue(r) {
     return `${j.count} seller${j.count === 1 ? '' : 's'}<span class="sub">${(j.sellers || []).map(s =>
       `${esc(s.name || s.id)}${s.buyBox ? ' (Buy Box)' : ''}${s.isBrand ? ' — brand' : ''}${s.price ? ' ' + fmtMoney(s.price) : ''}${s.fba ? ' FBA' : ' FBM'}`).join('<br>')}</span>`;
   }
-  if (r.field === 'amazon.missing_products' && j) return `${j.missing} of ${j.checked} product codes not on Amazon` + (j.examples?.length ? `<span class="sub">${esc(j.examples.join('; '))}</span>` : '');
+  if (r.field === 'amazon.missing_products' && j) return missingProductsHtml(j);
   if (r.field === 'amazon.best_rank' && j) return `#${Number(j.rank).toLocaleString('en-US')} in ${esc(j.category)}<span class="sub">${esc(j.product)}</span>`;
   if (Array.isArray(j)) return j.length ? esc(j.join(', ')) : '<span class="muted">None</span>';
   return esc(v);
+}
+/* Missing-on-Amazon products: summary line + a click-to-open list with links to each product on the brand's site */
+function missingProductsHtml(j) {
+  const open = AUD.missingOpen;
+  const summary = `${j.missing} of ${j.checked} products aren’t on Amazon`;
+  if (!j.missing) return summary;
+  let list = '';
+  if (open) {
+    const items = j.items || AUD.missingFallback;
+    if (!items) { loadMissingFallback(); list = '<div class="small muted" style="margin-top:8px">Loading products…</div>'; }
+    else if (!items.length) list = '<div class="small muted" style="margin-top:8px">No product details saved for this scan. Run a new scan to get the full list.</div>';
+    else list = `<div class="missing-list"><table class="data-table plain"><thead><tr><th>Product on their site</th><th>Price</th><th>UPC</th><th></th></tr></thead><tbody>${items.map(i => {
+      const u = safeUrl(i.url);
+      const name = `${esc(i.title) || '<span class="muted">Untitled product</span>'}${i.variant ? `<div class="small muted">${esc(i.variant)}</div>` : ''}`;
+      return `<tr><td>${u ? `<a href="${esc(u)}" target="_blank" rel="noopener">${name}</a>` : name}</td>
+        <td class="nowrap">${money(i.price)}</td>
+        <td class="small" style="font-family:var(--mono)">${esc(i.upc)}</td>
+        <td class="nowrap"><a class="small" href="https://www.amazon.com/s?k=${encodeURIComponent(i.upc)}" target="_blank" rel="noopener">Search Amazon</a></td></tr>`;
+    }).join('')}</tbody></table></div>`;
+  }
+  return `<button class="missing-toggle" onclick="AUD.missingOpen=!AUD.missingOpen;renderDataTab()" aria-expanded="${open ? 'true' : 'false'}">
+    ${summary}<span class="missing-caret">${open ? 'Hide products' : `Show ${j.missing} product${j.missing === 1 ? '' : 's'}`}</span></button>${list}`;
+}
+async function loadMissingFallback() {
+  if (AUD.missingLoading) return;
+  AUD.missingLoading = true;
+  try {
+    const { products } = await api('/api/brand-products?brand_id=' + encodeURIComponent(AUD.brandId));
+    const seen = new Set();
+    AUD.missingFallback = products.filter(p => p.upc && String(p.match_method).startsWith('upc: not found') && !seen.has(p.upc) && seen.add(p.upc))
+      .map(p => ({ title: p.product_title, variant: p.variant_title, upc: p.upc, price: p.price, url: p.product_url }));
+  } catch (e) { AUD.missingFallback = []; }
+  AUD.missingLoading = false;
+  renderDataTab();
 }
 function editorFor(r) {
   if (/^channel\..*\.status$/.test(r.field)) return `<select class="input" id="ed-val">${STATUS_OPTS.map(o => `<option${o === r.value ? ' selected' : ''}>${o}</option>`).join('')}</select>`;
@@ -1144,7 +1271,7 @@ function dataRowHtml(r, used) {
   const canEdit = !isJsonVal(r.value) || r.field.startsWith('manual.');
   return `<div id="drow-${esc(r.field.replace(/[^A-Za-z0-9_-]/g, '_'))}" class="drow${isUsed ? ' used' : ''}${isUsed && r.verified === 'Y' ? ' ok' : ''}${r.verified === 'Excluded' ? ' excluded' : ''}">
     <div class="lbl">${esc(r.label)}${r.confidence && r.confidence !== 'High' ? `<div class="small muted">${esc(r.confidence)}</div>` : ''}</div>
-    <div class="val">${fmtRowValue(r)}${r.notes ? `<span class="sub">${esc(r.notes)}</span>` : ''}
+    <div class="val">${fmtRowValue(r)}${r.notes && r.field !== 'amazon.missing_products' ? `<span class="sub">${esc(r.notes)}</span>` : ''}
       ${editing ? `<div class="inline-edit">${editorFor(r)}<button class="btn btn-primary btn-sm" onclick="saveRowEdit(${r._row})">Save</button><button class="btn btn-ghost btn-sm" onclick="AUD.edit=null;renderDataTab()">Cancel</button></div>` : ''}</div>
     <div class="src"><span class="mtag ${m[0]}">${m[1]}</span><br>${esc(r.source)}${url ? ` · <a href="${esc(url)}" target="_blank" rel="noopener">open</a>` : ''}</div>
     <div class="acts">
