@@ -30,6 +30,9 @@ export const HEADERS = {
     // Discovery (written by this scanner)
     'first_seen', 'sources', 'source_count', 'signals', 'platform', 'product_count',
     'upc_coverage', 'discovery_status',
+    // Amazon check (written by amazon-check.js)
+    'amazon_status', 'amazon_asin_count', 'amazon_upc_matches', 'amazon_max_sellers',
+    'amazon_price_gap', 'amazon_checked_at', 'amazon_notes',
     // System (dashboard)
     'logo_url', 'scan_status', 'scan_requested_at', 'scan_completed_at', 'snapshot_count',
     'audit_status', 'pdf_url',
@@ -38,8 +41,9 @@ export const HEADERS = {
     'brand_id', 'brand_name', 'product_title', 'variant_title', 'sku', 'upc', 'upc_source',
     'price', 'compare_at_price', 'available', 'product_type', 'product_url', 'image_url',
     'last_scraped',
-    // Filled later by the Amazon scan
-    'asin', 'match_method', 'amazon_title', 'buy_box_price', 'offer_count', 'last_amazon_check',
+    // Filled by the Amazon check
+    'asin', 'match_method', 'amazon_title', 'amazon_brand', 'sales_rank', 'buy_box_price',
+    'buy_box_fba', 'offer_count', 'seller_count', 'price_gap', 'last_amazon_check',
   ],
   [TABS.EXCLUSIONS]: ['brand_name', 'domain', 'reason'],
   [TABS.RUN_LOG]: ['timestamp', 'job', 'processed', 'added', 'updated', 'errors', 'notes'],
@@ -56,6 +60,13 @@ export const STATUS = {
   PRODUCTS_SCANNED: 'Products Scanned',
   PRODUCTS_PARTIAL: 'Products Partial',
   NO_PRODUCTS: 'No Products Found',
+};
+
+export const AMAZON_STATUS = {
+  NOT_ON_AMAZON: 'Not on Amazon',
+  NO_OFFERS: 'Listed, no active offers',
+  RESELLERS: 'On Amazon: reseller signals',
+  SINGLE: 'On Amazon: single seller',
 };
 
 export const CATEGORIES = ['skincare', 'haircare', 'makeup', 'nail', 'wellness', 'other'];
