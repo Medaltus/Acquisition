@@ -88,8 +88,9 @@ export default async function handler(req, res) {
   let added = 0, updated = 0, sighted = 0;
 
   try {
-    const [sources, brands, exclusions, raw] = await Promise.all([
+    const [sources, brands, exclusions, raw, partners] = await Promise.all([
       readTab(TABS.SOURCES), readTab(TABS.BRANDS), readTab(TABS.EXCLUSIONS), readTab(TABS.RAW),
+      readTab(TABS.PARTNERS).catch(() => ({ rows: [] })),
     ]);
 
     // Indexes for dedupe
@@ -99,8 +100,15 @@ export default async function handler(req, res) {
       const n = normalizeName(b.brand_name); if (n) byName.set(n, b);
       if (b.brand_id) ids.add(b.brand_id);
     }
-    const excludedDomains = new Set(exclusions.rows.map(e => normalizeDomain(e.domain)).filter(Boolean));
-    const excludedNames = new Set(exclusions.rows.map(e => normalizeName(e.brand_name)).filter(Boolean));
+    // Exclusions tab + every current and past partner brand
+    const excludedDomains = new Set([
+      ...exclusions.rows.map(e => normalizeDomain(e.domain)),
+      ...partners.rows.map(p => normalizeDomain(p.website_url)),
+    ].filter(Boolean));
+    const excludedNames = new Set([
+      ...exclusions.rows.map(e => normalizeName(e.brand_name)),
+      ...partners.rows.map(p => normalizeName(p.brand_name)),
+    ].filter(Boolean));
 
     // Which sources to run
     const forced = req.query?.source;
