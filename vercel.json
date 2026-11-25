@@ -53,6 +53,9 @@
     },
     "api/inbound-pipeline.js": {
       "maxDuration": 300
+    },
+    "api/inbound-test-cleanup.js": {
+      "maxDuration": 120
     }
   },
   "crons": [
