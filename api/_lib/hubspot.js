@@ -102,10 +102,9 @@ export async function getOwners() {
 
 /* ───── Stage suggestions (written to the HubSpot Stage Map tab, where they can be changed) ───── */
 
-const LIFECYCLE = {
-  subscriber: 'Not Contacted', lead: 'Contacted', marketingqualifiedlead: 'Contacted',
-  salesqualifiedlead: 'In Conversation', opportunity: 'Proposal Sent', customer: 'Signed', evangelist: 'Signed',
-};
+// Lifecycle stage no longer drives the dashboard stage (deal stage and lead status do). It's only used
+// to spot customers, which are reported rather than imported.
+const LIFECYCLE = { customer: 'Signed', evangelist: 'Signed' };
 const LEAD_STATUS = {
   NEW: 'Not Contacted', OPEN: 'Researching', ATTEMPTED_TO_CONTACT: 'Contacted', CONNECTED: 'In Conversation',
   IN_PROGRESS: 'In Conversation', OPEN_DEAL: 'Proposal Sent', UNQUALIFIED: 'Disqualified', BAD_TIMING: 'Not Interested',
