@@ -44,6 +44,9 @@
     },
     "api/match-linkedin.js": {
       "maxDuration": 120
+    },
+    "api/find-emails.js": {
+      "maxDuration": 120
     }
   },
   "crons": [
