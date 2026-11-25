@@ -1140,7 +1140,8 @@ function contactsBlock(p) {
       return `<tr>
         <td><b>${esc(c.name)}</b>${isPrimary ? ' <span class="st st-ok">Primary</span>' : ''}<div class="small muted">${esc(c.title) || 'Title unknown'}</div></td>
         <td class="nowrap">${RANK_LABEL[c.rank] ? `<span class="st ${c.rank <= 2 ? 'st-ok' : 'st-na'}">${RANK_LABEL[c.rank]}</span>` : '<span class="small muted">Other</span>'}</td>
-        <td>${c.email ? `<a href="mailto:${esc(c.email)}">${esc(c.email)}</a><div class="small ${verify ? 'warn-text' : 'muted'}">${esc(c.email_source || '')}</div>` : '<span class="small muted">Not published</span>'}</td>
+        <td>${c.email ? `<a href="mailto:${esc(c.email)}">${esc(c.email)}</a> ${emailStatusChip(c.email_status)}<div class="small ${verify && !c.email_checked_at ? 'warn-text' : 'muted'}">${esc(c.email_source || '')}</div>` : `<span class="small muted">${c.email_checked_at ? esc(c.email_source || 'Not found') : 'Not published'}</span>`}
+          ${!c.email_checked_at && (!c.email || verify) ? `<div><button class="btn-link" onclick="hunterLookup('${esc(p.brand_id)}', ${i}, this)">${c.email ? 'Verify with Hunter' : 'Find email (Hunter)'}</button></div>` : ''}</td>
         <td>${li ? `<a class="li-link" href="${esc(li)}" target="_blank" rel="noopener">LinkedIn</a>` : `<a class="small" href="https://www.linkedin.com/search/results/people/?keywords=${encodeURIComponent(c.name + ' ' + p.brand_name)}" target="_blank" rel="noopener">Search</a>`}</td>
         <td class="small" style="max-width:260px">${src ? `<a href="${esc(src)}" target="_blank" rel="noopener">${esc(c.source || 'Source')}</a>` : esc(c.source || '')}${c.evidence ? `<div class="muted">${esc(c.evidence)}</div>` : ''}</td>
         <td class="nowrap">${!p.hubspot_company_id && !isPrimary ? `<button class="btn-link" onclick="makePrimary('${esc(p.brand_id)}', ${i})">Make primary</button>` : ''}</td>
@@ -1155,6 +1156,21 @@ function contactsBlock(p) {
   </div>`;
 }
 const normalizeKey = s => String(s || '').toLowerCase().replace(/[^a-z]/g, '');
+const EMAIL_STATUS = { valid: ['Valid', 'st-ok'], accept_all: ['Accept-all: risky', 'st-warn'], webmail: ['Webmail', 'st-na'],
+  unknown: ['Unknown', 'st-na'], unverified: ['Unverified', 'st-na'], invalid: ['Invalid', 'st-bad'], disposable: ['Disposable', 'st-bad'] };
+function emailStatusChip(s) { const x = EMAIL_STATUS[s]; return x ? `<span class="st ${x[1]}">${x[0]}</span>` : ''; }
+async function hunterLookup(id, i, btn) {
+  const p = DATA.prospects.find(x => x.brand_id === id); const c = p?.contacts?.[i]; if (!c) return;
+  btn.disabled = true; btn.textContent = 'Looking up…';
+  try {
+    const r = await api('/api/find-emails', { method: 'POST', body: JSON.stringify({ brand_id: id, name: c.name }) });
+    const res = r.results?.[0] || {};
+    const left = r.creditsLeft ? ` · ${r.creditsLeft.searches} searches, ${r.creditsLeft.verifications} verifications left` : '';
+    if (res.error || res.skipped) toast(res.error || res.skipped, true);
+    else toast((res.email && res.email !== '(none)' ? `Found ${res.email}` : 'Hunter found no email') + left);
+    await load();
+  } catch (e) { if (e.message !== 'unauthorized') toast(e.message, true); btn.disabled = false; btn.textContent = 'Try again'; }
+}
 async function makePrimary(id, i) {
   const p = DATA.prospects.find(x => x.brand_id === id); const c = p?.contacts?.[i]; if (!c) return;
   await postOutreach(id, { contact_name: c.name, contact_title: c.title || '', contact_email: c.email || '', contact_linkedin: c.linkedin_url || '' });
