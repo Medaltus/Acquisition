@@ -7,6 +7,7 @@
  * { type: 'partner', action: 'update', brand_name, data: { any Partner Brands column, incl. a new brand_name } }
  * { type: 'inbound', brand_id, action: 'answers', data: { hero_products, seller_text, channels, est_revenue, notes } }
  * { type: 'inbound', brand_id, action: 'rescan', from: 'enrich' | 'products' | 'amazon' | 'audit_amazon' }
+ * { type: 'inbound', brand_id, action: 'case', case_id }   (case study for the follow-up email; '' clears)
  * { type: 'inbound', brand_id, action: 'website', website_url }
  * { type: 'inbound', brand_id, action: 'sent' | 'unsent', date? }
  * Setting a prospect to "Signed" adds it to Partner Brands (sign_date = today) if it isn't there yet.
@@ -74,6 +75,11 @@ async function inboundAction(req, body, brands, b) {
     return { ok: true, audit_sent_at: sentAt, outreach_status: data.outreach_status };
   }
 
+  if (body.action === 'case') {
+    // The case study the follow-up email will use ('' = let the dashboard suggest one)
+    await updateRows(TABS.BRANDS, brands.headers, [{ row: b._row, data: { followup_case: String(body.case_id || '').trim() } }]);
+    return { ok: true };
+  }
   if (body.action === 'unsent') {
     await updateRows(TABS.BRANDS, brands.headers, [{ row: b._row, data: { audit_sent_at: '', inbound_step: INBOUND_DONE.REVIEW, inbound_updated: stamp } }]);
     return { ok: true };
