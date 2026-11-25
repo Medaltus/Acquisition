@@ -16,7 +16,11 @@ const PROSPECT_FIELDS = [
   'amazon_checked_at', 'amazon_notes', 'amazon_seller_id', 'amazon_brand_buybox', 'hubspot_company_id', 'hubspot_url', 'hubspot_owner', 'hubspot_stage', 'hubspot_synced_at', 'outreach_status', 'outreach_owner', 'outreach_updated',
   'next_step', 'outreach_notes', 'contact_name', 'contact_title', 'contact_email', 'contact_linkedin',
   'scan_status', 'scan_completed_at', 'audit_status', 'role_emails', 'warm_intros', 'contacts_checked_at', 'hubspot_company_id',
+  // Inbound (website form)
+  'form_message', 'hero_products', 'est_revenue', 'inbound_at', 'inbound_step', 'inbound_updated', 'inbound_note',
+  'inbound_answers', 'audit_sent_at',
 ];
+const INBOUND_UNMATCHED_DAYS = 30;
 const HIDDEN = [STATUS.DUPLICATE];
 
 const isRetired = p => /^retired$/i.test(String(p.status || '').trim()) || Boolean(String(p.end_date || '').trim());
@@ -25,12 +29,19 @@ const pick = (row, fields) => Object.fromEntries(fields.map(f => [f, row[f] ?? '
 export default async function handler(req, res) {
   if (!isDashboardAuthorized(req)) return res.status(401).json({ error: 'Wrong or missing dashboard password' });
   try {
-    const [partners, brands, products, contacts] = await Promise.all([
+    const [partners, brands, products, contacts, inbound] = await Promise.all([
       readTab(TABS.PARTNERS).catch(() => ({ rows: [] })),
       readTab(TABS.BRANDS),
       readTab(TABS.PRODUCTS),
       readTab(TABS.CONTACTS).catch(() => ({ rows: [] })),
+      readTab(TABS.INBOUND).catch(() => ({ rows: [] })),
     ]);
+    // Form submissions the scanner couldn't turn into a brand (personal email, no brand name), last 30 days
+    const since = Date.now() - INBOUND_UNMATCHED_DAYS * 86400000;
+    const inboundUnmatched = inbound.rows
+      .filter(r => !r.brand_id && Date.parse(r.received_at) > since)
+      .map(r => pick(r, ['received_at', 'form_name', 'page', 'name', 'email', 'brand_text', 'requests', 'outcome']))
+      .reverse();
     const contactsBy = {};
     for (const c of contacts.rows) (contactsBy[c.brand_id] ||= []).push({
       name: c.name, title: c.title, rank: Number(c.rank) || 9, email: c.email, email_source: c.email_source,
@@ -74,6 +85,7 @@ export default async function handler(req, res) {
       current: partnerRows.filter(p => !isRetired(p)),
       retired: partnerRows.filter(p => isRetired(p)),
       prospects,
+      inboundUnmatched,
     });
   } catch (err) {
     console.error('dashboard-data error:', err);
