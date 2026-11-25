@@ -19,23 +19,34 @@
  *   Prospect                 -> matched to Brands, or added as a new prospect
  *   (no Type)                -> matched if already in the sheet; added only if it has a deal
  *
+ * Website form leads: if the brand's HubSpot contact came in through a medaltus.com form, the brand goes on
+ * the Inbound Leads page (original submission date, form, traffic source) and its fast-track scan starts.
+ * The audit due date counts from when the sync brings it in, so older leads don't arrive overdue.
+ *
  * Preview mode: nothing is written to the sheet unless HUBSPOT_SYNC_ENABLED=yes is set in Vercel.
  * Until then every run (hourly cron or manual) only reports what it WOULD do, with example names.
  * ?preview=1 forces a preview even after the sync is turned on. HubSpot itself is never written to.
  */
 import { TABS, STATUS } from './_lib/schema.js';
 import { readTab, appendRows, updateRows, logRun } from './_lib/sheets.js';
-import { isAuthorized, nowIso, normalizeName, normalizeDomain, slugify } from './_lib/util.js';
+import { kickPipeline, bizDaysFrom } from './_lib/inbound.js';
+import { isAuthorized, nowIso, normalizeName, normalizeDomain, slugify, appendUnique } from './_lib/util.js';
 import { listCompanies, batchRead, getDealStages, getOwners, getPortalId, suggestStage } from './_lib/hubspot.js';
 
 const COMPANY_PROPS = ['name', 'domain', 'website', 'type', 'lifecyclestage', 'hs_lead_status', 'hubspot_owner_id',
   'notes_last_contacted', 'hs_last_sales_activity_timestamp', 'notes_last_updated', 'hs_lastmodifieddate'];
-const CONTACT_PROPS = ['firstname', 'lastname', 'jobtitle', 'email', 'hs_linkedin_url', 'lastmodifieddate', 'notes_last_contacted'];
+const CONTACT_PROPS = ['firstname', 'lastname', 'jobtitle', 'email', 'hs_linkedin_url', 'lastmodifieddate', 'notes_last_contacted',
+  'createdate', 'first_conversion_event_name', 'first_conversion_date', 'hs_analytics_source'];
+const SOURCE_LABEL = { PAID_SEARCH: 'paid search', ORGANIC_SEARCH: 'organic search', DIRECT_TRAFFIC: 'direct',
+  AI_REFERRALS: 'AI search', REFERRALS: 'referral', SOCIAL_MEDIA: 'organic social', PAID_SOCIAL: 'paid social',
+  EMAIL_MARKETING: 'email', OTHER_CAMPAIGNS: 'other campaign' };
+const INBOUND_DUE_BIZ_DAYS = 2;
 const DEAL_PROPS = ['dealname', 'dealstage', 'pipeline', 'closedate', 'hs_next_step', 'hs_lastmodifieddate', 'hubspot_owner_id'];
 // HubSpot company Type: Vendor / Reseller / Other are never brands, so they're skipped.
 const SKIP_TYPES = ['VENDOR', 'RESELLER', 'OTHER'];
 
 const toDate = v => { const d = v ? new Date(/^\d+$/.test(v) ? Number(v) : v) : null; return d && !isNaN(d) ? d.toISOString() : ''; };
+const firstDate = c => toDate(c.first_conversion_date) || toDate(c.createdate) || '';
 const latest = (...vals) => vals.map(toDate).filter(Boolean).sort().pop() || '';
 
 export default async function handler(req, res) {
@@ -100,6 +111,7 @@ export default async function handler(req, res) {
 
     const brandUpdates = [], partnerUpdates = [], newBrands = [], newPartners = [];
     const unmatchedCustomers = [];
+    const inboundStarts = [];
     let linked = 0;
 
     for (const c of companies) {
@@ -194,6 +206,27 @@ export default async function handler(req, res) {
       set(d, brand, 'outreach_updated', lastActivity);
       if (!brand.website_url && domain) d.website_url = `https://${domain}`;
 
+      // Came in through a medaltus.com form (HubSpot records the conversion): put it on Inbound Leads
+      const formContact = cons.filter(x => x.first_conversion_event_name)
+        .sort((a, b) => firstDate(a).localeCompare(firstDate(b)))[0];
+      if (formContact && !brand.inbound_at) {
+        const src = SOURCE_LABEL[String(formContact.hs_analytics_source || '').toUpperCase()] || '';
+        const form = String(formContact.first_conversion_event_name).replace(/:\s*#wf-form.*$/i, '').trim();
+        Object.assign(d, {
+          inbound_at: firstDate(formContact) || stamp,
+          lead_source: appendUnique(brand.lead_source, 'inbound', ', '),
+          form_message: `${form}${src ? ` · via ${src}` : ''} (from HubSpot)`,
+          inbound_step: [STATUS.NEW, STATUS.NEEDS_URL, '', undefined].includes(brand.discovery_status) ? 'enrich' : 'products',
+          inbound_updated: stamp, inbound_attempts: '0', inbound_note: '',
+          audit_due: bizDaysFrom(stamp, INBOUND_DUE_BIZ_DAYS),
+        });
+        if (!brand.contact_email && formContact.email) {
+          d.contact_email = formContact.email;
+          d.contact_name = [formContact.firstname, formContact.lastname].filter(Boolean).join(' ');
+        }
+        inboundStarts.push(brand.brand_id);
+      }
+
       if (brand._row) { if (Object.keys(d).length) brandUpdates.push({ row: brand._row, data: { ...d, hubspot_synced_at: stamp } }); }
       else Object.assign(brand, d, { hubspot_synced_at: stamp });
       linked++;
@@ -222,6 +255,7 @@ export default async function handler(req, res) {
         wouldAddPartners: newPartners.map(p => p.brand_name),
         wouldUpdatePartners: partnerUpdates.map(u => partners.rows.find(p => p._row === u.row)?.brand_name || `row ${u.row}`),
         skippedAsExcluded: skipped,
+        wouldStartInbound: inboundStarts,
         wouldAddStageMappings: newMapRows.map(m => `${m.hubspot_field}: ${m.hubspot_value} -> ${m.dashboard_stage || '(ignore)'}`),
         customersNotInPartnerBrands: unmatchedCustomers,
       });
@@ -233,7 +267,10 @@ export default async function handler(req, res) {
     await appendRows(TABS.PARTNERS, partners.headers, newPartners);
     await updateRows(TABS.PARTNERS, partners.headers, partnerUpdates);
 
+    for (const id of inboundStarts) await kickPipeline(req, id);
+
     const result = {
+      inboundStarted: inboundStarts,
       companies: companies.length, linked, prospectsUpdated: brandUpdates.length, prospectsAdded: newBrands.length,
       partnersUpdated: partnerUpdates.length, partnersAdded: newPartners.length, newStageMappings: newMapRows.length,
       customersNotInPartnerBrands: unmatchedCustomers,
