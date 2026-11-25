@@ -2140,7 +2140,8 @@ function ibGroup(p) { return p.inbound_step === 'sent' ? 'followup' : IB_SCAN.in
 
 function ibDue(p) {
   if (p.inbound_step === 'sent' || !parseDate(p.inbound_at)) return null;
-  const due = addBizDays(parseDate(p.inbound_at), IB_DUE_BIZ_DAYS);
+  // audit_due is set for older leads brought in from HubSpot (due counts from when they were brought in)
+  const due = parseDate(p.audit_due) || addBizDays(parseDate(p.inbound_at), IB_DUE_BIZ_DAYS);
   const left = dayDiff(due, new Date());
   return { due, left, overdue: left < 0 };
 }
