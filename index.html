@@ -564,6 +564,8 @@ mark.fl-need{background:#FBF0E2;border-bottom:1px dashed var(--warn);padding:0 2
 .gp-st.s0{background:var(--bg2);color:var(--slate);}
 .gp-st.s1{background:#FBF0E2;color:var(--warn);}
 .gp-st.s2{background:var(--green-dim);color:var(--green-ink);}
+.gp-st.s3{background:#fff;color:var(--slate);border:1px dashed var(--slate);}
+.gp-crow.future{opacity:.78;border-left-style:dashed;}
 .gp-detail{margin-top:16px;border-top:1px solid var(--border);padding-top:18px;display:grid;grid-template-columns:1.1fr 1fr;gap:22px;}
 .gp-detail h5{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:0 0 8px;font-weight:600;}
 .gp-detail ol,.gp-detail ul{padding-left:18px;display:flex;flex-direction:column;gap:5px;font-size:12.5px;}
@@ -1034,7 +1036,7 @@ function showPage(page) {
 /* ───────────── Growth Plan (discussion view) ───────────── */
 // s: 0 not started · 1 in progress · 2 working. meter: 0–4 progress toward "could be".
 // built: y = built, p = in progress, n = not started.
-const GP_STATUS = ['Not started', 'In progress', 'Working'];
+const GP_STATUS = ['Not started', 'In progress', 'Working', 'Future opportunity'];
 const GP_FOUND = [
   { id: 'proof', name: 'Case studies and proof', s: 1, meter: 1,
     today: 'No published case studies. One story staged on webflow.io; the CMS collection, page template and fill-in template are built.',
@@ -1063,9 +1065,9 @@ const GP_TYPES = { in: 'Brands come to us', out: 'We go to them', seen: 'Gets us
 const GP_ENGINE = {
   today: 'The scanner and Audit Builder are built: Amazon API, Helium 10 Cerebro, web research and a 2-page PDF. No live analyses sent yet.',
   could: 'Every inbound lead, outbound prospect and event brand gets a growth and gap analysis, so the first conversation starts with their own numbers.',
-  feeds: ['Inbound', 'Outbound', 'Events', 'LinkedIn teardowns'],
+  feeds: ['Inbound', 'Outbound', 'Ads targeting', 'LinkedIn teardowns'],
   built: [['y', 'Brand Scanner and Future Prospects'], ['y', 'Audit Builder and PDF export'], ['y', 'Rank Snapshots for follow-up re-scans'], ['n', 'First live analyses']],
-  q: 'Who builds the analyses? Each one takes brand manager time away from current brands.',
+  q: 'How many analyses can we send each week as inbound scales up? Since it runs from a template, could more than one person build them so volume can grow?',
 };
 const GP_CH = [
   { id: 'inb', type: 'in', name: 'Inbound', sub: 'Contact form, free analysis offer, welcome and follow-up emails', s: 1, meter: 2,
@@ -1095,51 +1097,48 @@ const GP_CH = [
     what: ['“Who we’re looking for” one-pager', 'Referral form with a required Referred by field', 'Referral lead sources in HubSpot', 'Referral Partner Program page'],
     built: [['n', 'Incentive'], ['n', 'One-pager'], ['n', 'Referral tracking']],
     q: 'What incentive can we offer, and who approves payouts?' },
-  { id: 'li', type: 'seen', name: 'LinkedIn', sub: 'Organic posts from the company page and leadership profiles', s: 1, meter: 1,
+  { id: 'li', type: 'seen', name: 'LinkedIn', sub: 'Organic posts from the Medaltus company page', s: 1, meter: 1,
     why: 'Keeps Medaltus in front of founders between conversations, and warms up outbound.',
-    ts: 'Posting regularly, about what we do', cs: 'Proof posts 2–3 times a week, from leadership too',
-    today: 'Posting is running, mostly about what we do. Clicks and leads aren’t tracked.',
-    could: '2–3 posts a week, mostly from leadership profiles: mini case studies, listing teardowns, policy updates and the two models, every link tracked.',
+    ts: 'Posting from the company page, about what we do', cs: 'Proof posts 2–3 times a week, every link tracked',
+    today: 'We post from the Medaltus company page, mostly about what we do. Clicks and leads aren’t tracked.',
+    could: '2–3 posts a week built on proof: mini case studies, listing teardowns, policy updates and the two models, with every link tracked into HubSpot.',
     how: ['One proof post a week once case studies exist', 'Listing teardowns using anonymized or public examples', 'Policy and compliance updates for beauty brands', 'Behind the scenes: the warehouse, peak season, the dashboards', 'UTM links on every post so leads show in HubSpot'],
     what: ['Case study posts and carousels', 'A posting calendar', 'LinkedIn – Organic lead source'],
-    built: [['y', 'Posting running'], ['n', 'Proof content'], ['n', 'Tracking']],
-    q: 'Who posts from their personal profile?' },
-  { id: 'ads', type: 'seen', name: 'Advertising', sub: 'Paid LinkedIn campaigns, retargeting, other paid channels later', s: 1, meter: 1,
-    why: 'Puts proof and the free analysis in front of exactly the founders we want, on demand.',
-    ts: 'LinkedIn ads running; spend and results unknown', cs: 'Proof and free-analysis ads, every lead in HubSpot',
-    today: 'LinkedIn ads are running. Spend, cost per lead and where they point aren’t tracked in one place.',
-    could: '5+ qualified leads a month by month 4, with ads promoting case studies and the free analysis and every lead landing in HubSpot.',
-    how: ['Baseline first: spend, audience, cost per lead, landing page', 'Connect LinkedIn Ads to HubSpot so lead forms create tagged contacts', 'Target founders and ecommerce leads at beauty and wellness brands (2–200 employees)', 'Switch creative to proof and the free analysis; retarget site visitors', 'Show ads to the outbound list as a matched audience'],
-    what: ['LinkedIn Insight Tag and HubSpot connection', 'Proof-based creative', 'LinkedIn – Ads lead source'],
-    built: [['y', 'Ads running'], ['n', 'Baseline numbers'], ['n', 'HubSpot connection'], ['n', 'Proof creative']],
-    q: 'What are current spend and cost per lead, and where do the ads point?' },
-  { id: 'seo', type: 'in', name: 'Organic search (SEO)', sub: 'Rankings, content and pages that bring brands in from Google and AI search', s: 1, meter: 1,
+    built: [['y', 'Company page posting'], ['n', 'Proof content'], ['n', 'Tracking']],
+    q: 'Should leadership also share or post from their personal profiles? Personal posts usually reach more people than company pages.' },
+  { id: 'ads', type: 'seen', name: 'Advertising', sub: 'LinkedIn campaigns and lead generation ads sending traffic to the website', s: 1, meter: 1,
+    why: 'Puts proof and the free analysis in front of exactly the brands we want, on demand.',
+    ts: 'LinkedIn and website lead gen ads running; most form fills are spam', cs: 'Ads aimed at the brands we’ve already found, real leads in HubSpot',
+    today: 'LinkedIn ads and lead generation ads to the website are running. Most of the form submissions they produce are spam, and spend and cost per lead aren’t tracked in one place.',
+    could: '5+ qualified leads a month by month 4, with ads aimed at the brands in Future Prospects, promoting case studies and the free analysis, and every real lead landing in HubSpot.',
+    how: ['Baseline first: spend, audience, cost per lead and landing page for each campaign', 'Target the brands we’ve already found: LinkedIn lets us upload a company list (brand name and website), so the brands in Future Prospects can become an ad audience; the scanner can export that list', 'Narrow by job title within those companies: founders, CEOs, ecommerce leads', 'Switch creative to proof and the free analysis; retarget site visitors', 'Connect LinkedIn Ads to HubSpot so lead forms create tagged contacts'],
+    what: ['Future Prospects export for a LinkedIn company list', 'LinkedIn Insight Tag and HubSpot connection', 'Proof-based creative', 'Lead sources for each ad channel'],
+    built: [['y', 'Ads running'], ['y', 'Future Prospects brand list'], ['n', 'Company list export'], ['n', 'Baseline numbers'], ['n', 'HubSpot connection']],
+    q: 'What are current spend and cost per lead for each campaign, and which one drives the spam submissions?' },
+  { id: 'seo', type: 'in', name: 'Organic search (SEO)', sub: 'Rankings, content and pages that bring brands in from Google and AI search', s: 1, meter: 2,
     why: 'Slow to build but compounds: brands searching for a marketplace partner find us without ad spend.',
-    ts: 'Site rebuilt; technical gaps open, no content rhythm', cs: 'Ranking for beauty marketplace terms, 2 pieces a month',
-    today: 'The site is rebuilt and SEO metadata is in place. Technical gaps (sitemap) are open and there’s no regular content.',
-    could: 'Ranking for beauty marketplace searches, with industry pages, a K-beauty entry page and 2 insight pieces a month.',
-    how: ['Technical fixes: sitemap, indexing, Search Console', 'Phase 2 pages: Beauty and Wellness, US entry for international and K-beauty brands, Technology and Reporting, About and Team', 'Insights hub with 2 pieces a month: case studies, teardowns, policy updates', 'FAQ and Who We Work With pages (also help AI search)'],
-    what: ['Search Console tracking', 'Content calendar', 'Organic Search lead source'],
-    built: [['y', 'Site rebuilt, SEO metadata'], ['y', 'Case study template'], ['n', 'Sitemap and technical fixes'], ['n', 'Content rhythm']],
+    ts: 'Site rebuilt; rankings and traffic not tracked yet', cs: 'Ranking for beauty marketplace terms, 2 pieces a month',
+    today: 'The site is rebuilt and SEO metadata is in place. Rankings, traffic and which pages lead to forms aren’t tracked yet.',
+    could: 'Ranking for beauty marketplace searches, with industry pages, a K-beauty entry page and 2 insight pieces a month, all measured.',
+    how: ['Set up tracking in our Google Search Console and Google Analytics accounts: rankings, traffic and which pages lead to form submissions', 'Phase 2 pages: Beauty and Wellness, US entry for international and K-beauty brands, Technology and Reporting, About and Team', 'Insights hub with 2 pieces a month: case studies, teardowns, policy updates', 'FAQ and Who We Work With pages (also help AI search)'],
+    what: ['Search Console and Google Analytics tracking', 'Content calendar', 'Organic Search lead source'],
+    built: [['y', 'Site rebuilt, SEO metadata'], ['y', 'Case study template'], ['n', 'Search Console and Analytics tracking'], ['n', 'Content rhythm']],
     q: 'Who writes the 2 pieces a month?' },
-  { id: 'mkt', type: 'in', name: 'Marketplace directories', sub: 'Amazon SPN, Walmart, TikTok Shop and Target+ partner listings', s: 1, meter: 1,
-    why: 'Brands look for help inside the marketplaces’ own directories, and the badges add credibility.',
-    ts: 'Amazon SPN active; Walmart unconfirmed', cs: 'Listed on all three, leads routed to HubSpot',
-    today: 'Amazon SPN active. Walmart believed set up but unconfirmed. TikTok Shop not started. Target+ unknown.',
-    could: 'Listed in all three by month 2, each routing leads into HubSpot with its own source, badges on the site.',
-    how: ['Refresh the Amazon SPN listing: beauty and wellness first, both models, proof', 'Confirm the Walmart Solution Provider listing', 'Apply to the TikTok Shop Partner program', 'Ask our Target+ contact about a partner directory', 'Badges on the homepage, channel pages and proposals'],
-    what: ['A dedicated inbox or form per directory', 'Directory lead sources in HubSpot', 'Partner badges'],
-    built: [['y', 'Amazon SPN'], ['p', 'Walmart (to confirm)'], ['n', 'TikTok Shop application']],
-    q: 'Who manages our Walmart account access, to confirm the listing?' },
-  { id: 'ev', type: 'out', name: 'Events', sub: 'Trade shows where emerging beauty and wellness brands gather', s: 0, meter: 0,
-    why: 'Face to face with many brands at once, each with an analysis finding in hand.',
-    ts: 'Not started', cs: 'First show by month 3, then one a quarter',
-    today: 'Not started.',
-    could: 'First show booked by month 3, then one a quarter, each producing 10+ qualified conversations. Walk the floor first, booth later.',
-    how: ['Six weeks out: screen the exhibitor list, check the top 30 in the scanner', 'Four weeks out: book 10–15 meetings with a finding for each brand', 'At the show: one-pager and printed sample analyses; log every conversation in HubSpot', 'Within a week: follow up with a personalized analysis'],
-    what: ['Shortlist: Cosmoprof North America, Indie Beauty Expo, Expo West, Glossy Summit, Beauty Connect LA', 'Event lead source and a campaign per event'],
-    built: [['n', 'Shortlist with dates and costs'], ['n', 'First show booked']],
-    q: 'Which show first, and what travel budget is there?' },
+  { id: 'mkt', type: 'in', name: 'Marketplace partnerships', sub: 'Amazon SPN, Walmart, TikTok Shop and Target+ partner programs', s: 1, meter: 1,
+    why: 'Mostly proof: partner badges on the website and in proposals show brands we’re recognized by the marketplaces. Some programs also open doors, like API access for Walmart ads.',
+    ts: 'Amazon SPN member; not on Walmart yet', cs: 'Partner on the major marketplaces, shown on the site',
+    today: 'Amazon SPN member. Not in Walmart’s partner program yet. TikTok Shop not started. Target+ unknown.',
+    could: 'Recognized partners on Amazon, Walmart and TikTok Shop, with the badges on the homepage, channel pages and proposals, and API access for Walmart ads.',
+    how: ['Join Walmart’s partner program, which also opens API access for Walmart ads', 'Apply to the TikTok Shop Partner program', 'Ask our Target+ contact whether a partner directory exists', 'Refresh the Amazon SPN listing: beauty and wellness first, both models, proof', 'Add each badge to the homepage trust bar, channel pages and proposals'],
+    what: ['Partner applications', 'Partner badges for the website', 'A lead source per directory in HubSpot'],
+    built: [['y', 'Amazon SPN'], ['n', 'Walmart partner program'], ['n', 'TikTok Shop application'], ['n', 'Badges on the website']],
+    q: 'What does Walmart’s partner program require, and who owns the application?' },
+  { id: 'ev', type: 'out', name: 'Events', sub: 'Trade shows where emerging beauty and wellness brands gather', s: 3, meter: 0, future: true,
+    why: 'Face to face with many brands at once. A strong channel once someone can own it.',
+    ts: 'Not started', cs: 'A future opportunity, when someone can own it',
+    today: 'Not started, and no one on the team is dedicated to it.',
+    could: 'A future opportunity. Shows like Cosmoprof North America, Indie Beauty Expo and Expo West gather many of the brands we want, and the growth and gap analysis would give us a reason to meet each one.',
+    built: [], q: '' },
 ];
 const GP_NEXT = [
   ['Run the first live gap analyses', 'One or two prospects already in Future Prospects. Tests the builder and gives real analyses to show next to the case studies.'],
@@ -1153,7 +1152,7 @@ const GP_OPEN = [
   ['Who owns sales follow-up?', 'The plan assumes one named owner for HubSpot and the weekly pipeline review.'],
   ['Minimums for each model', 'Revenue, margin and SKU count for Model 1 and Model 2, and the revenue fit floor for inbound.'],
   ['LinkedIn baseline', 'Current spend, cost per lead and where the ads point, before changing anything.'],
-  ['Who builds the audits?', 'Brand managers have the Helium 10 skills, but every audit takes time from current brands.'],
+  ['Scaling the analyses', 'How many can we send each week as inbound grows, and could more than one person build them from the template?'],
   ['Referral incentive', 'What we can offer each audience, and who approves payouts.'],
   ['Capacity', 'Can onboarding and account management absorb 2 new brands a month, especially fully managed ones?'],
   ['Referrals: build on them or grow past them?', 'Referrals built Medaltus. Do we create a formal program around what has worked, or focus on the new channels to reduce our dependence on referrals, since we’ve already capitalized on them?'],
@@ -1194,7 +1193,7 @@ function renderGrowth() {
     <div class="gp-side could"><div class="gp-eyebrow">Where we could be</div>
       <div class="gp-big">
         <div class="gp-stat"><b>2 a month</b><span>new brand partners, 24 a year</span></div>
-        <div class="gp-stat"><b>8 channels</b><span>feeding one HubSpot pipeline</span></div>
+        <div class="gp-stat"><b>8 channels</b><span>feeding one HubSpot pipeline, events later</span></div>
       </div>
       <ul class="gp-pts">
         <li>Inbound and outbound led by the growth and gap analysis, referrals turned into a system</li>
@@ -1215,9 +1214,9 @@ function renderGrowth() {
     <div class="gp-tl">
       <div class="gp-ph p1"><span class="m">Month 1</span><b>Foundation</b><ul><li>HubSpot</li><li>3 case studies</li><li>Phase 1 pages</li></ul></div>
       <div class="gp-ph p2"><span class="m">Month 2</span><b>Turn on</b><ul><li>Referral asks</li><li>Inbound flow live</li><li>LinkedIn proof ads</li></ul></div>
-      <div class="gp-ph p3"><span class="m">Month 3</span><b>Measure</b><ul><li>First channel review</li><li>5 case studies</li><li>Book a show</li></ul></div>
-      <div class="gp-ph p4"><span class="m">Months 4–6</span><b>Build out</b><ul><li>Phase 2 pages</li><li>2 content pieces a month</li><li>First event</li></ul></div>
-      <div class="gp-ph p5"><span class="m">Months 7–12</span><b>Scale</b><ul><li>More outbound volume and partners</li><li>One event a quarter</li><li>Reset targets with our own data</li></ul></div>
+      <div class="gp-ph p3"><span class="m">Month 3</span><b>Measure</b><ul><li>First channel review</li><li>5 case studies</li></ul></div>
+      <div class="gp-ph p4"><span class="m">Months 4–6</span><b>Build out</b><ul><li>Phase 2 pages</li><li>2 content pieces a month</li></ul></div>
+      <div class="gp-ph p5"><span class="m">Months 7–12</span><b>Scale</b><ul><li>More outbound volume and partners</li><li>Reset targets with our own data</li></ul></div>
     </div>
     <div class="gp-goalrow"><div class="gp-goal g0">Building the engine</div><div class="gp-goal g1">1 a month</div><div class="gp-goal gm">Ramping</div><div class="gp-goal g2">2 a month</div></div>`;
 
@@ -1231,16 +1230,16 @@ function renderGrowth() {
     <div class="gp-engine"><div><div class="gp-eyebrow">The engine behind them</div><div class="gp-h">The growth and gap analysis</div>
       <p>${esc(GP_ENGINE.today)}</p><p>${esc(GP_ENGINE.could)}</p>
       <div class="feeds">${GP_ENGINE.feeds.map(f => `<span>Powers ${esc(f)}</span>`).join('')}</div></div>
-      <div>${gpBuilt(GP_ENGINE.built)}<div class="gp-q" style="margin-top:12px;color:var(--navy)"><b>To decide</b>${esc(GP_ENGINE.q)}</div></div></div>
+      <div>${gpBuilt(GP_ENGINE.built)}<div class="gp-q" style="margin-top:12px;color:var(--navy)"><b>Consideration</b>${esc(GP_ENGINE.q)}</div></div></div>
     <div class="gp-types">${Object.entries(GP_TYPES).map(([k, v]) => `<span><i class="t-${k}"></i>${v}</span>`).join('')}</div>
-    <div class="gp-list">${GP_CH.map((c, i) => `<div class="gp-crow t-${c.type}${GP.c === c.id ? ' sel' : ''}">
+    <div class="gp-list">${GP_CH.map((c, i) => `<div class="gp-crow t-${c.type}${c.future ? ' future' : ''}${GP.c === c.id ? ' sel' : ''}">
       <button class="gp-crow-hd" onclick="GP.c=GP.c==='${c.id}'?null:'${c.id}';renderGrowth()">
         <span class="gp-rank">${i + 1}</span>
         <span class="gp-cname"><span class="gp-tag">${GP_TYPES[c.type]}</span><h4>${esc(c.name)}</h4><p>${esc(c.sub)}</p></span>
         <span class="gp-cell"><small>Today</small>${esc(c.ts)}</span>
         <span class="gp-carrow">→</span>
         <span class="gp-cell could"><small>Could be</small>${esc(c.cs)}</span>
-        <span class="gp-cstat">${gpSt(c.s)}${gpMeter(c.meter)}</span>
+        <span class="gp-cstat">${gpSt(c.s)}${c.future ? '' : gpMeter(c.meter)}</span>
       </button>
       ${GP.c === c.id ? gpDetail({ ...c, n: i + 1 }) : ''}</div>`).join('')}</div>`;
 
@@ -1259,11 +1258,11 @@ function gpDetail(x, isFound) {
       <div class="gp-h" style="font-size:17px">${isFound ? '' : `${x.n}. `}${esc(x.name)}</div>
       <div class="gp-lead" style="margin-bottom:12px">${esc(x.why)}</div>
       <div class="gp-tc"><div class="t"><small>Today</small>${esc(x.today)}</div><div class="c"><small>Could be</small>${esc(x.could)}</div></div>
-      <h5>How we get there</h5>${list(x.how)}
+      ${x.how ? `<h5>How we get there</h5>${list(x.how)}` : ''}
     </div>
     <div>
       ${x.what ? `<h5>What it takes</h5>${list(x.what, 'ul')}<div style="height:14px"></div>` : ''}
-      <h5>What’s built</h5>${gpBuilt(x.built)}
+      ${x.built?.length ? `<h5>What’s built</h5>${gpBuilt(x.built)}` : ''}
       ${x.q ? `<div class="gp-q"><b>To decide</b>${esc(x.q)}</div>` : ''}
     </div></div>`;
 }
