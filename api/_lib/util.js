@@ -22,6 +22,11 @@ export function isDashboardAuthorized(req) {
   return (req.headers?.['x-dashboard-key'] || '') === pw;
 }
 
+/** "A2S14XZ2NR1V9Q, A1B2..." -> ['A2S14XZ2NR1V9Q', 'A1B2...'] (Amazon merchant IDs only). */
+export function parseSellerIds(s) {
+  return [...new Set(String(s || '').toUpperCase().split(/[\s,|;]+/).filter(id => /^A[0-9A-Z]{9,15}$/.test(id)))];
+}
+
 export function normalizeName(name) {
   return String(name || '')
     .toLowerCase()
