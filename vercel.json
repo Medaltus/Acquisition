@@ -47,6 +47,12 @@
     },
     "api/find-emails.js": {
       "maxDuration": 120
+    },
+    "api/inbound-form.js": {
+      "maxDuration": 60
+    },
+    "api/inbound-pipeline.js": {
+      "maxDuration": 300
     }
   },
   "crons": [
@@ -77,12 +83,10 @@
     {
       "path": "/api/match-linkedin",
       "schedule": "15 12 * * *"
-    }
-  ],
-  "rewrites": [
+    },
     {
-      "source": "/",
-      "destination": "/medaltus_brands_index.html"
+      "path": "/api/inbound-pipeline",
+      "schedule": "*/5 * * * *"
     }
   ]
 }
