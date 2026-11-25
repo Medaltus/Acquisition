@@ -175,6 +175,12 @@ tr.row.open td{background:rgba(36,233,163,0.08);}
 fieldset.form-grid{border:none;padding:0;margin:0;min-width:0;}
 fieldset[disabled] .input{background:var(--bg);color:var(--muted);}
 .outreach-select{border:1px solid var(--border);background:var(--white);border-radius:var(--radius-sm);padding:5px 8px;font-size:11.5px;color:var(--navy);cursor:pointer;max-width:150px;}
+.ib-steps{display:flex;gap:3px;margin-top:5px;}
+.ib-steps i{display:block;width:14px;height:4px;border-radius:2px;background:var(--bg2);}
+.ib-steps i.done{background:var(--green);}
+.ib-steps i.now{background:var(--navy);}
+.ib-msg{font-size:10.5px;color:var(--muted);margin-top:3px;max-width:240px;}
+.ib-actions{display:flex;flex-wrap:wrap;gap:6px;align-items:center;}
 .az-meta{font-size:10.5px;color:var(--muted);margin-top:4px;}
 .prod-count{font-family:var(--font-header);font-size:13px;}
 
@@ -430,6 +436,9 @@ textarea.input{resize:vertical;min-height:64px;line-height:1.5;}
       <svg viewBox="0 0 16 16"><rect x="1.5" y="3" width="13" height="3" rx="1"/><path d="M2.5 6v7.5a1 1 0 001 1h9a1 1 0 001-1V6M6.5 9h3"/></svg>Retired Brands<span class="nav-badge" id="nb-retired">–</span>
     </button>
     <div class="nav-section">Growth</div>
+    <button class="nav-btn" data-page="inbound" onclick="showPage('inbound')">
+      <svg viewBox="0 0 16 16"><path d="M1.5 9.5h3.5l1 2h4l1-2h3.5"/><path d="M1.5 9.5L3.5 3h9l2 6.5v4a1 1 0 01-1 1h-11a1 1 0 01-1-1z"/></svg>Inbound Leads<span class="nav-badge" id="nb-inbound">–</span>
+    </button>
     <button class="nav-btn" data-page="prospects" onclick="showPage('prospects')">
       <svg viewBox="0 0 16 16"><circle cx="7" cy="7" r="5"/><path d="M10.7 10.7L14.5 14.5"/></svg>Future Prospects<span class="nav-badge" id="nb-prospects">–</span>
     </button>
@@ -481,6 +490,20 @@ textarea.input{resize:vertical;min-height:64px;line-height:1.5;}
     </div>
     <div class="kpi-row" id="retired-kpis"></div>
     <div class="card"><div class="table-wrap" id="retired-table"><div class="loading">Loading brands…</div></div></div>
+  </section>
+
+  <!-- ══ INBOUND ══ -->
+  <section class="page" id="page-inbound">
+    <div class="page-hd">
+      <div>
+        <div class="page-title">Inbound Leads</div>
+        <div class="page-sub">Brands that filled out the form on medaltus.com. The scan starts on its own; verify the audit, send it within two business days, then follow the sequence.</div>
+      </div>
+    </div>
+    <div class="kpi-row" id="inbound-kpis"></div>
+    <div class="filters"><div class="seg" id="ib-seg"></div></div>
+    <div class="card"><div class="table-wrap" id="inbound-table"><div class="loading">Loading leads…</div></div></div>
+    <div id="inbound-unmatched"></div>
   </section>
 
   <!-- ══ PROSPECTS ══ -->
@@ -594,6 +617,30 @@ textarea.input{resize:vertical;min-height:64px;line-height:1.5;}
   </form>
 </div>
 
+<div class="modal-bg" id="ans-modal" onclick="if(event.target===this)closeModal('ans-modal')">
+  <form class="modal modal-wide" onsubmit="saveAnswers(event)">
+    <h3 id="ans-title">Their answers</h3>
+    <p>Paste what they sent back. Top products go to the top of the listing scorecard, a seller ID separates their listings from resellers', and channels are checked first in the web research.</p>
+    <input type="hidden" name="brand_id">
+    <div class="form-grid">
+      <label class="full">Top products (one per line)<textarea class="input" name="hero_products" rows="4" placeholder="Vitamin C Brightening Serum&#10;Barrier Repair Cream"></textarea></label>
+      <label class="full">Amazon seller name, storefront link, or seller ID<input class="input" name="seller_text" placeholder="https://www.amazon.com/sp?seller=A2S14XZ2NR1V9Q"></label>
+      <label class="full">Channels they sell on today (and any they stopped)<input class="input" name="channels" placeholder="Own site, Amazon (stopped 2024), Ulta"></label>
+      <label>Annual revenue
+        <select class="input" name="est_revenue">
+          <option value="">Not shared</option><option>Under $500K</option><option>$500K to $1M</option><option>$1M to $5M</option>
+          <option>$5M to $20M</option><option>Over $20M</option>
+        </select>
+      </label>
+      <label class="full">Notes (goals, anything else they said)<textarea class="input" name="notes" rows="3"></textarea></label>
+    </div>
+    <div class="form-actions">
+      <button type="button" class="btn btn-ghost" onclick="closeModal('ans-modal')">Cancel</button>
+      <button type="submit" class="btn btn-primary" id="ans-save">Save answers</button>
+    </div>
+  </form>
+</div>
+
 <div class="modal-bg" id="sc-modal" onclick="if(event.target===this)closeModal('sc-modal')">
   <div class="modal sc-wide" id="sc-body" role="dialog" aria-label="Brand scorecard"></div>
 </div>
@@ -606,7 +653,7 @@ textarea.input{resize:vertical;min-height:64px;line-height:1.5;}
 const KEY_STORE = 'medaltus_portfolio_key';
 let DATA = null;
 const UI = { currentRows: [], retiredRows: [], stage: '', az: '', shown: 60, open: null, productCache: {}, missingOnly: {}, currentSort: 'sign_date' };
-const PAGE_TITLES = { current: 'Current Brands', retired: 'Retired Brands', prospects: 'Future Prospects', audit: 'Audit Builder' };
+const PAGE_TITLES = { current: 'Current Brands', retired: 'Retired Brands', inbound: 'Inbound Leads', prospects: 'Future Prospects', audit: 'Audit Builder' };
 
 // rank = order for "Sort: best fit" (best prospects first)
 const AZ = [
@@ -681,6 +728,7 @@ async function load(manual = false) {
     $('nb-current').textContent = DATA.current.length;
     $('nb-retired').textContent = DATA.retired.length;
     $('nb-prospects').textContent = DATA.prospects.filter(p => p.discovery_status !== 'Not a Fit').length;
+    $('nb-inbound').textContent = DATA.prospects.filter(p => p.inbound_at && IB_NEEDS_YOU.includes(p.inbound_step)).length;
     $('sb-updated').textContent = 'Updated ' + new Date(DATA.generatedAt).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
     if (DATA.sheetUrl) { $('sheet-link').href = DATA.sheetUrl; $('sheet-link').hidden = false; }
     buildProspectFilters();
@@ -689,11 +737,11 @@ async function load(manual = false) {
     if (manual) toast('Refreshed');
   } catch (e) {
     if (e.message !== 'unauthorized') {
-      ['current-table', 'retired-table', 'prospect-table'].forEach(id => $(id).innerHTML = `<div class="empty"><strong>Couldn’t load data</strong>${esc(e.message)}</div>`);
+      ['current-table', 'retired-table', 'inbound-table', 'prospect-table'].forEach(id => $(id).innerHTML = `<div class="empty"><strong>Couldn’t load data</strong>${esc(e.message)}</div>`);
     }
   }
 }
-function renderAll() { renderCurrent(); renderRetired(); renderPipeline(); renderAzSeg(); renderProspects(); }
+function renderAll() { renderCurrent(); renderRetired(); renderInbound(); renderPipeline(); renderAzSeg(); renderProspects(); }
 
 /* ───────────── Navigation ───────────── */
 function showPage(page) {
@@ -2064,6 +2112,194 @@ async function exportAuditPdf() {
       AUD.data.brand.audit_status = 'Exported'; renderAuditStatus();
     } catch { /* export still worked */ }
   };
+}
+
+/* ───────────── Inbound leads ───────────── */
+const IB_SCAN = ['enrich', 'products', 'amazon', 'contacts', 'audit_amazon', 'audit_web', 'audit_findings'];
+const IB_NEEDS_YOU = ['review', 'needs_website', 'not_a_fit', 'failed'];
+const IB_LABEL = {
+  enrich: 'Finding their site', products: 'Reading their products', amazon: 'Checking Amazon', contacts: 'Finding contacts',
+  audit_amazon: 'Audit: Amazon listings', audit_web: 'Audit: web research', audit_findings: 'Audit: writing findings',
+  review: 'Ready to review', sent: 'Audit sent', needs_website: 'Needs their website', not_a_fit: 'Check fit', failed: 'Scan stopped',
+};
+// Follow-up touches, in days after the audit is sent
+const IB_TOUCHES = [[0, 'Audit'], [2, 'How partnering works'], [5, 'Case study'], [9, 'Channel note'], [15, 'Check-in with new data'], [23, 'Close-out']];
+const IB_DUE_BIZ_DAYS = 2;
+
+function addBizDays(d, n) {
+  const x = new Date(d); let left = n;
+  while (left > 0) { x.setDate(x.getDate() + 1); if (x.getDay() !== 0 && x.getDay() !== 6) left--; }
+  return x;
+}
+const shortDay = d => d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+const dayDiff = (a, b) => Math.round((new Date(a).setHours(12, 0, 0, 0) - new Date(b).setHours(12, 0, 0, 0)) / 86400000);
+function ibAnswers(p) { try { return JSON.parse(p.inbound_answers || '{}'); } catch { return {}; } }
+function ibGroup(p) { return p.inbound_step === 'sent' ? 'followup' : IB_SCAN.includes(p.inbound_step) ? 'scanning' : 'needs'; }
+
+function ibDue(p) {
+  if (p.inbound_step === 'sent' || !parseDate(p.inbound_at)) return null;
+  const due = addBizDays(parseDate(p.inbound_at), IB_DUE_BIZ_DAYS);
+  const left = dayDiff(due, new Date());
+  return { due, left, overdue: left < 0 };
+}
+function ibDueCell(p) {
+  const d = ibDue(p);
+  if (!d) return '<span class="muted">—</span>';
+  const cls = d.overdue ? 'st-bad' : d.left === 0 ? 'st-warn' : 'st-na';
+  const txt = d.overdue ? `Overdue ${-d.left} day${d.left === -1 ? '' : 's'}` : d.left === 0 ? 'Due today' : `Due ${shortDay(d.due)}`;
+  return `<span class="pill ${cls}">${txt}</span>`;
+}
+function ibStatusCell(p) {
+  const step = p.inbound_step || '';
+  if (IB_SCAN.includes(step)) {
+    const i = IB_SCAN.indexOf(step);
+    return `<div class="small"><strong>Scanning</strong> · ${esc(IB_LABEL[step])}</div>
+      <div class="ib-steps">${IB_SCAN.map((_, j) => `<i class="${j < i ? 'done' : j === i ? 'now' : ''}"></i>`).join('')}</div>
+      ${p.inbound_note ? `<div class="ib-msg">${esc(p.inbound_note)}</div>` : ''}`;
+  }
+  if (step === 'sent') {
+    const n = dayDiff(new Date(), parseDate(p.audit_sent_at) || new Date());
+    const nxt = IB_TOUCHES.find(([d]) => d > n);
+    const when = nxt ? new Date(parseDate(p.audit_sent_at).getTime() + nxt[0] * 86400000) : null;
+    return `<span class="pill st-ok">Day ${n}</span><div class="ib-msg">Audit sent ${fmtDate(p.audit_sent_at)}${nxt ? `<br>Next: ${esc(nxt[1])}, ${shortDay(when)}` : '<br>Sequence finished: move to nurture'}</div>`;
+  }
+  const cls = step === 'review' ? 'st-ok' : step === 'failed' ? 'st-bad' : 'st-warn';
+  return `<span class="pill ${cls}">${esc(IB_LABEL[step] || step || 'Unknown')}</span>${p.inbound_note ? `<div class="ib-msg">${esc(p.inbound_note)}</div>` : ''}`;
+}
+function ibActions(p) {
+  const id = esc(p.brand_id), step = p.inbound_step;
+  const btn = (label, fn, primary = false) => `<button class="btn ${primary ? 'btn-primary' : 'btn-ghost'} btn-sm" onclick="${fn}">${label}</button>`;
+  const ans = btn('Their answers', `openAnswers('${id}')`);
+  if (step === 'review') return btn('Open audit', `buildAudit('${id}')`, true) + ans + btn('Mark sent', `ibMarkSent('${id}')`);
+  if (step === 'needs_website') return btn('Add website', `ibSetWebsite('${id}')`, true) + ans;
+  if (step === 'failed') return btn('Retry scan', `ibRescan('${id}', '${['New', 'Needs URL', 'URL Not Found', 'Site Unreachable'].includes(p.discovery_status) ? 'enrich' : 'audit_amazon'}')`, true) + ans;
+  if (step === 'not_a_fit') return btn('Scan anyway', `ibRescan('${id}', 'products')`) + ans;
+  if (step === 'sent') return ans + btn('Open audit', `buildAudit('${id}')`) + `<button class="btn-link small" onclick="ibUnsend('${id}')">Undo sent</button>`;
+  return ans;
+}
+
+function setIbSeg(k) { UI.ibSeg = k; renderInbound(); }
+function renderInbound() {
+  if (!$('inbound-table')) return;
+  const leads = DATA.prospects.filter(p => p.inbound_at);
+  const weekAgo = Date.now() - 7 * 86400000;
+  const counts = { needs: 0, scanning: 0, followup: 0 };
+  leads.forEach(p => counts[ibGroup(p)]++);
+  const overdue = leads.filter(p => ibDue(p)?.overdue).length;
+  $('inbound-kpis').innerHTML = `
+    <div class="kpi-card"><div class="kpi-label">New this week</div><div class="kpi-value">${leads.filter(p => parseDate(p.inbound_at) > weekAgo).length}</div><div class="kpi-sub">${leads.length} inbound leads in total</div></div>
+    <div class="kpi-card"><div class="kpi-label">Needs you</div><div class="kpi-value">${counts.needs}</div><div class="kpi-sub">${leads.filter(p => p.inbound_step === 'review').length} audits ready to review</div></div>
+    <div class="kpi-card"><div class="kpi-label">Overdue</div><div class="kpi-value"${overdue ? ' style="color:var(--danger)"' : ''}>${overdue}</div><div class="kpi-sub">Audit not sent within ${IB_DUE_BIZ_DAYS} business days</div></div>
+    <div class="kpi-card"><div class="kpi-label">In follow-up</div><div class="kpi-value">${counts.followup}</div><div class="kpi-sub">${counts.scanning} still scanning</div></div>`;
+
+  const seg = UI.ibSeg || '';
+  const segs = [['', `All · ${leads.length}`], ['needs', `Needs you · ${counts.needs}`], ['scanning', `Scanning · ${counts.scanning}`], ['followup', `Follow-up · ${counts.followup}`]];
+  $('ib-seg').innerHTML = segs.map(([k, l]) => `<button class="${seg === k ? 'active' : ''}" onclick="setIbSeg('${k}')">${l}</button>`).join('');
+
+  const order = { needs: 0, scanning: 1, followup: 2 };
+  const rows = leads.filter(p => !seg || ibGroup(p) === seg)
+    .sort((a, b) => order[ibGroup(a)] - order[ibGroup(b)] || (parseDate(b.inbound_at) - parseDate(a.inbound_at)));
+  if (!rows.length) {
+    $('inbound-table').innerHTML = `<div class="empty"><strong>${leads.length ? 'Nothing here' : 'No inbound leads yet'}</strong>${leads.length ? 'Try another filter.' : 'When someone fills out a form on medaltus.com, their brand shows up here and the scan starts on its own.'}</div>`;
+  } else {
+    $('inbound-table').innerHTML = `<table class="data-table plain"><thead><tr>
+        <th>Brand</th><th>Contact</th><th>Submitted</th><th>Status</th><th>Audit due</th><th>Their answers</th><th></th>
+      </tr></thead><tbody>${rows.map(p => {
+        const a = ibAnswers(p);
+        const got = [p.hero_products && 'Top products', p.amazon_seller_id && 'Seller ID', a.channels && 'Channels', p.est_revenue].filter(Boolean);
+        const email = String(p.contact_email || '').trim();
+        return `<tr>
+        <td><div class="brand-cell">${brandMark(p.brand_name, p.logo_url)}<div><div class="brand-name">${esc(p.brand_name)}</div>${siteLink(p.website_url)}</div></div></td>
+        <td>${esc(p.contact_name) || '<span class="muted">—</span>'}${email ? `<div class="small"><a class="brand-site" href="mailto:${esc(email)}">${esc(email)}</a></div>` : ''}</td>
+        <td class="nowrap">${relTime(p.inbound_at)}<div class="ib-msg">${esc(p.form_message)}</div></td>
+        <td>${ibStatusCell(p)}</td>
+        <td class="nowrap">${ibDueCell(p)}</td>
+        <td>${got.length ? got.map(g => `<span class="chip">${esc(g)}</span>`).join('') : '<span class="muted small">None yet</span>'}</td>
+        <td><div class="ib-actions">${ibActions(p)}</div></td>
+      </tr>`; }).join('')}</tbody></table>`;
+  }
+
+  const un = DATA.inboundUnmatched || [];
+  $('inbound-unmatched').innerHTML = un.length ? `<div class="card" style="margin-top:16px"><div class="table-wrap">
+    <div class="small muted" style="padding:12px 14px 4px"><strong>Couldn’t match to a brand (last 30 days).</strong> These came in with a personal email and no brand name, so there was nothing to scan. Reply to ask which brand they’re with.</div>
+    <table class="data-table plain"><thead><tr><th>Name</th><th>Email</th><th>Form</th><th>Requested</th><th>Received</th></tr></thead><tbody>
+    ${un.map(r => `<tr><td>${esc(r.name) || '<span class="muted">—</span>'}</td><td><a class="brand-site" href="mailto:${esc(r.email)}">${esc(r.email)}</a></td>
+      <td class="small">${esc(r.form_name)}${r.page ? `<div class="ib-msg">${esc(r.page)}</div>` : ''}</td><td class="small">${esc(r.requests) || '—'}</td><td class="nowrap">${relTime(r.received_at)}</td></tr>`).join('')}
+    </tbody></table></div></div>` : '';
+}
+
+async function ibPost(brand_id, action, extra = {}) {
+  return api('/api/dashboard-update', { method: 'POST', body: JSON.stringify({ type: 'inbound', brand_id, action, ...extra }) });
+}
+async function ibMarkSent(id) {
+  const p = DATA.prospects.find(x => x.brand_id === id); if (!p) return;
+  const date = prompt(`Date the audit went to ${p.brand_name} (YYYY-MM-DD)`, todayIso());
+  if (date === null) return;
+  try {
+    const r = await ibPost(id, 'sent', { date: date.trim() });
+    Object.assign(p, { audit_sent_at: r.audit_sent_at, inbound_step: 'sent' });
+    if (r.outreach_status) p.outreach_status = r.outreach_status;
+    renderAll(); toast('Marked sent. The follow-up clock has started.');
+  } catch (e) { if (e.message !== 'unauthorized') toast(e.message, true); }
+}
+async function ibUnsend(id) {
+  const p = DATA.prospects.find(x => x.brand_id === id); if (!p || !confirm(`Undo "audit sent" for ${p.brand_name}?`)) return;
+  try { await ibPost(id, 'unsent'); Object.assign(p, { audit_sent_at: '', inbound_step: 'review' }); renderAll(); }
+  catch (e) { if (e.message !== 'unauthorized') toast(e.message, true); }
+}
+async function ibSetWebsite(id) {
+  const p = DATA.prospects.find(x => x.brand_id === id); if (!p) return;
+  const url = prompt(`${p.brand_name}'s website`, p.website_url || 'https://');
+  if (!url) return;
+  try {
+    const r = await ibPost(id, 'website', { website_url: url.trim() });
+    Object.assign(p, { website_url: r.website_url, inbound_step: 'enrich', inbound_note: '' });
+    renderAll(); toast('Saved. The scan is starting again.');
+  } catch (e) { if (e.message !== 'unauthorized') toast(e.message, true); }
+}
+async function ibRescan(id, from) {
+  const p = DATA.prospects.find(x => x.brand_id === id); if (!p) return;
+  if (p.audit_status && from !== 'enrich' && !confirm(`Run a new scan for ${p.brand_name}? Review work on the current audit scan is replaced.`)) return;
+  try {
+    await ibPost(id, 'rescan', { from });
+    Object.assign(p, { inbound_step: from, inbound_note: '' });
+    renderAll(); toast('Scan started. Refresh in a few minutes.');
+  } catch (e) { if (e.message !== 'unauthorized') toast(e.message, true); }
+}
+function openAnswers(id) {
+  const p = DATA.prospects.find(x => x.brand_id === id); if (!p) return;
+  const a = ibAnswers(p), f = document.querySelector('#ans-modal form');
+  $('ans-title').textContent = `${p.brand_name}: their answers`;
+  f.brand_id.value = id;
+  f.hero_products.value = p.hero_products || '';
+  f.seller_text.value = a.seller_text || p.amazon_seller_id || '';
+  f.channels.value = a.channels || '';
+  f.est_revenue.value = p.est_revenue || '';
+  f.notes.value = a.notes || '';
+  $('ans-modal').classList.add('open');
+}
+async function saveAnswers(e) {
+  e.preventDefault();
+  const f = e.target, id = f.brand_id.value, p = DATA.prospects.find(x => x.brand_id === id);
+  const data = { hero_products: f.hero_products.value, seller_text: f.seller_text.value, channels: f.channels.value, est_revenue: f.est_revenue.value, notes: f.notes.value };
+  $('ans-save').disabled = true;
+  try {
+    const r = await ibPost(id, 'answers', { data });
+    Object.assign(p, { hero_products: data.hero_products.trim(), est_revenue: data.est_revenue, amazon_seller_id: r.sellerIds,
+      inbound_answers: JSON.stringify({ ...ibAnswers(p), channels: data.channels.trim(), seller_text: data.seller_text.trim(), notes: data.notes.trim() }) });
+    if (r.sellerChanged) p.amazon_checked_at = '';
+    closeModal('ans-modal'); renderAll();
+    if (data.seller_text.trim() && !r.sellerFound && !p.amazon_seller_id) toast('Saved, but there’s no seller ID in that. Open their Amazon storefront and paste its link.', true);
+    else toast('Answers saved');
+    const scanning = IB_SCAN.includes(p.inbound_step);
+    if (!scanning && (r.scanned || p.inbound_step === 'review') && (r.sellerChanged || data.hero_products.trim() || data.channels.trim())
+      && confirm(`Re-run the audit scan for ${p.brand_name} with their answers? Review work on the current scan is replaced.`)) {
+      await ibPost(id, 'rescan', { from: r.sellerChanged ? 'amazon' : 'audit_amazon' });
+      p.inbound_step = r.sellerChanged ? 'amazon' : 'audit_amazon'; renderAll();
+      toast('Scan started with their answers');
+    }
+  } catch (err) { if (err.message !== 'unauthorized') toast(err.message, true); }
+  finally { $('ans-save').disabled = false; }
 }
 
 /* ───────────── Init ───────────── */
