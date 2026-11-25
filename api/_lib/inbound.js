@@ -70,20 +70,37 @@ export function baseUrl(req) {
 }
 
 /**
- * Start the next pipeline step in its own function call. We only wait long enough for the request
- * to be received; the step keeps running on Vercel. If it ever doesn't start, the 5-minute cron picks it up.
+ * Keep work running after the response is sent. Vercel exposes waitUntil through its request context
+ * (the same thing the @vercel/functions package uses), so no npm dependency is needed.
+ * Returns false when it isn't available (e.g. local testing); the caller then runs the work before responding.
+ */
+export function waitUntil(promise) {
+  const ctx = globalThis[Symbol.for('@vercel/request-context')]?.get?.();
+  if (typeof ctx?.waitUntil !== 'function') return false;
+  ctx.waitUntil(promise);
+  return true;
+}
+
+/**
+ * Ask the pipeline to run a brand's next step. The pipeline answers right away (202) and does the work
+ * in the background, so this request finishes in a second or two and nothing is cut off.
+ * If it ever doesn't start, the 5-minute cron picks it up.
  */
 export async function kickPipeline(req, brandId) {
   const base = baseUrl(req);
   const secret = (process.env.CRON_SECRET || '').trim();
   if (!base || !secret) return false;
   try {
-    await fetch(`${base}/api/inbound-pipeline?brand_id=${encodeURIComponent(brandId)}`, {
+    const r = await fetch(`${base}/api/inbound-pipeline?brand_id=${encodeURIComponent(brandId)}`, {
       headers: { Authorization: `Bearer ${secret}` },
-      signal: AbortSignal.timeout(2500),
+      signal: AbortSignal.timeout(15000),
     });
-  } catch { /* timeout is expected: the step is still running */ }
-  return true;
+    if (!r.ok) console.error(`kickPipeline ${brandId}: HTTP ${r.status} ${(await r.text()).slice(0, 300)}`);
+    return r.ok;
+  } catch (e) {
+    console.error(`kickPipeline ${brandId}: ${e.message}`);
+    return false;
+  }
 }
 
 /** Run another endpoint's handler in this function call, as an authorized cron request. */
