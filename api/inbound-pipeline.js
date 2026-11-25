@@ -5,14 +5,15 @@
  *   enrich -> products -> amazon -> contacts -> audit_amazon -> audit_web -> audit_findings -> review
  * Each step reuses the existing endpoint's code, so inbound brands get exactly the same scan as outbound ones.
  *
- * ?brand_id=<id>  run that brand's current step (called by inbound-form and by itself)
+ * ?brand_id=<id>          start that brand's current step in the background and answer right away (202)
+ * ?brand_id=<id>&wait=1   run the step and answer with what happened (for checking by hand)
  * no brand_id     (cron, every 5 minutes) restart any lead whose step stalled
  * Auth: CRON_SECRET (Bearer header or ?key=)
  */
 import { TABS, STATUS, INBOUND_STEPS, INBOUND_DONE } from './_lib/schema.js';
 import { readTab, updateRows, logRun } from './_lib/sheets.js';
 import { isAuthorized, nowIso } from './_lib/util.js';
-import { runHandler, kickPipeline } from './_lib/inbound.js';
+import { runHandler, kickPipeline, waitUntil } from './_lib/inbound.js';
 import enrichBrands from './enrich-brands.js';
 import scanProducts from './scan-products.js';
 import amazonCheck from './amazon-check.js';
@@ -121,7 +122,19 @@ async function runBrand(req, id) {
 export default async function handler(req, res) {
   if (!isAuthorized(req)) return res.status(401).json({ error: 'Unauthorized' });
   try {
-    if (req.query?.brand_id) return res.status(200).json({ ok: true, ...(await runBrand(req, req.query.brand_id)) });
+    const id = req.query?.brand_id;
+    if (id) {
+      if (req.query?.wait !== '1') {
+        const work = runBrand(req, id).catch(async e => {
+          console.error('inbound-pipeline background error:', e);
+          await logRun({ job: 'inbound-pipeline', errors: `${id}: ${e.message}` });
+        });
+        if (waitUntil(work)) return res.status(202).json({ ok: true, accepted: id });
+        await work;   // no background support here: finish first, then answer
+        return res.status(200).json({ ok: true, ran: id });
+      }
+      return res.status(200).json({ ok: true, ...(await runBrand(req, id)) });
+    }
 
     // Cron: restart leads whose step never reported back
     const { rows } = await readTab(TABS.BRANDS);
