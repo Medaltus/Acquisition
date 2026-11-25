@@ -19,6 +19,7 @@ export const TABS = {
   HUBSPOT_MAP: 'HubSpot Stage Map',
   CONTACTS: 'Contacts',
   INBOUND: 'Inbound Log',
+  SETTINGS: 'Settings',
 };
 
 export const HEADERS = {
@@ -88,6 +89,8 @@ export const HEADERS = {
     'email_status', 'email_score', 'email_checked_at',
   ],
   // Every website form submission, kept as received (one row each), with what the scanner did with it.
+  // Scanner-managed secrets and connection state (values encrypted). Don't edit by hand.
+  [TABS.SETTINGS]: ['key', 'value', 'updated_at'],
   [TABS.INBOUND]: [
     'received_at', 'submission_id', 'form_name', 'page', 'name', 'email', 'brand_text', 'requests',
     'website_guess', 'brand_id', 'outcome', 'raw',
