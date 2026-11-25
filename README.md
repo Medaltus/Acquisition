@@ -18,6 +18,7 @@ websites, and captures their DTC product catalog and UPCs into Google Sheets.
 | `api/sync-hubspot.js` | One-way HubSpot -> sheet sync: contacts, outreach stage, owner, last activity, won deals | Hourly (:05) |
 | `api/find-contacts.js` | Free contact finding: brand About/Team/Press/Contact pages + one web search; ranks people by title into the Contacts tab | Hourly (:30), 5 brands |
 | `api/match-linkedin.js` | Matches LinkedIn connections exports (tabs named "LinkedIn - <Name>") to prospects for warm intros | Daily 12:15 UTC |
+| `api/find-emails.js` | Hunter.io email finder + verifier for top contacts (manual or dashboard button; not scheduled) | Manual |
 | `api/amazon-check.js` | Looks up UPCs + brand name on Amazon (SP-API), pulls offers/Buy Box, classifies each brand | Hourly (:50), 5 brands |
 | `api/_lib/*` | Shared helpers (Sheets client, Claude, site parsing, product/UPC extraction, schema) | — |
 
@@ -38,6 +39,7 @@ websites, and captures their DTC product catalog and UPCs into Google Sheets.
 | `SP_MARKETPLACE_ID` | Optional. Defaults to `ATVPDKIKX0DER` (US) |
 | `AUDIT_MODEL` | Optional. Model for audit research and copy; defaults to `claude-opus-5-5` |
 | `HUBSPOT_TOKEN` | HubSpot private app (or service key) access token, read scopes for companies, contacts, deals, owners |
+| `HUNTER_API_KEY` | Hunter.io API key (email finder/verifier). Optional `HUNTER_PER_BRAND` (default 1), `HUNTER_MAX_PER_RUN` (default 5) |
 | `DASHBOARD_PASSWORD` | Optional. Leave unset for an open dashboard; set it to require a sign-in password |
 
 No leading or trailing spaces. Redeploy after adding or changing any variable.
