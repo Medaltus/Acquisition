@@ -179,7 +179,7 @@ fieldset[disabled] .input{background:var(--bg);color:var(--muted);}
 .ib-steps i{display:block;width:14px;height:4px;border-radius:2px;background:var(--bg2);}
 .ib-steps i.done{background:var(--green);}
 .ib-steps i.now{background:var(--navy);}
-.ib-msg{font-size:10.5px;color:var(--muted);margin-top:3px;max-width:240px;}
+.ib-msg{font-size:10.5px;color:var(--muted);margin-top:3px;max-width:240px;overflow-wrap:anywhere;}
 .ib-actions{display:flex;flex-wrap:wrap;gap:6px;align-items:center;}
 .az-meta{font-size:10.5px;color:var(--muted);margin-top:4px;}
 .prod-count{font-family:var(--font-header);font-size:13px;}
@@ -2133,6 +2133,8 @@ function addBizDays(d, n) {
 }
 const shortDay = d => d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
 const dayDiff = (a, b) => Math.round((new Date(a).setHours(12, 0, 0, 0) - new Date(b).setHours(12, 0, 0, 0)) / 86400000);
+// "Email Form Homepage on https://www.medaltus.com/amazon-marketplace-management" -> "... on /amazon-marketplace-management"
+const ibShortPage = s => String(s || '').replace(/https?:\/\/(www\.)?medaltus\.com/gi, '') || '';
 function ibAnswers(p) { try { return JSON.parse(p.inbound_answers || '{}'); } catch { return {}; } }
 function ibGroup(p) { return p.inbound_step === 'sent' ? 'followup' : IB_SCAN.includes(p.inbound_step) ? 'scanning' : 'needs'; }
 
@@ -2211,7 +2213,7 @@ function renderInbound() {
         return `<tr>
         <td><div class="brand-cell">${brandMark(p.brand_name, p.logo_url)}<div><div class="brand-name">${esc(p.brand_name)}${/inbound-test/.test(p.lead_source) ? ' <span class="pill st-warn">Test</span>' : ''}</div>${siteLink(p.website_url)}</div></div></td>
         <td>${esc(p.contact_name) || '<span class="muted">—</span>'}${email ? `<div class="small"><a class="brand-site" href="mailto:${esc(email)}">${esc(email)}</a></div>` : ''}</td>
-        <td class="nowrap">${relTime(p.inbound_at)}<div class="ib-msg">${esc(p.form_message)}</div></td>
+        <td><span class="nowrap">${relTime(p.inbound_at)}</span><div class="ib-msg">${esc(ibShortPage(p.form_message))}</div></td>
         <td>${ibStatusCell(p)}</td>
         <td class="nowrap">${ibDueCell(p)}</td>
         <td>${got.length ? got.map(g => `<span class="chip">${esc(g)}</span>`).join('') : '<span class="muted small">None yet</span>'}</td>
@@ -2224,7 +2226,7 @@ function renderInbound() {
     <div class="small muted" style="padding:12px 14px 4px"><strong>Couldn’t match to a brand (last 30 days).</strong> These came in with a personal email and no brand name, so there was nothing to scan. Reply to ask which brand they’re with.</div>
     <table class="data-table plain"><thead><tr><th>Name</th><th>Email</th><th>Form</th><th>Requested</th><th>Received</th></tr></thead><tbody>
     ${un.map(r => `<tr><td>${esc(r.name) || '<span class="muted">—</span>'}</td><td><a class="brand-site" href="mailto:${esc(r.email)}">${esc(r.email)}</a></td>
-      <td class="small">${esc(r.form_name)}${r.page ? `<div class="ib-msg">${esc(r.page)}</div>` : ''}</td><td class="small">${esc(r.requests) || '—'}</td><td class="nowrap">${relTime(r.received_at)}</td></tr>`).join('')}
+      <td class="small">${esc(r.form_name)}${r.page ? `<div class="ib-msg">${esc(ibShortPage(r.page))}</div>` : ''}</td><td class="small">${esc(r.requests) || '—'}</td><td class="nowrap">${relTime(r.received_at)}</td></tr>`).join('')}
     </tbody></table></div></div>` : '';
 }
 
