@@ -17,6 +17,7 @@ export const TABS = {
   AUDIT_FINDINGS: 'Audit Findings',
   AUDIT_BUILDS: 'Audit Builds',
   HUBSPOT_MAP: 'HubSpot Stage Map',
+  CONTACTS: 'Contacts',
 };
 
 export const HEADERS = {
@@ -46,6 +47,8 @@ export const HEADERS = {
     'amazon_seller_id', 'amazon_brand_buybox',
     // HubSpot link (written by sync-hubspot.js). Linked brands' outreach fields are managed in HubSpot.
     'hubspot_company_id', 'hubspot_url', 'hubspot_owner', 'hubspot_stage', 'hubspot_synced_at',
+    // Contact finding (find-contacts.js, match-linkedin.js)
+    'role_emails', 'warm_intros', 'contacts_checked_at',
     // Outreach (written by the dashboard)
     'outreach_status', 'outreach_owner', 'outreach_updated', 'next_step', 'outreach_notes',
     // System (dashboard)
@@ -73,6 +76,11 @@ export const HEADERS = {
   ],
   // HubSpot stage -> dashboard outreach stage. sync-hubspot adds new HubSpot values with a suggestion.
   [TABS.HUBSPOT_MAP]: ['hubspot_field', 'hubspot_value', 'dashboard_stage', 'notes'],
+  // Every person found for a prospect, ranked (1 = founder/CEO ... 5 = manager). One row per person per brand.
+  [TABS.CONTACTS]: [
+    'brand_id', 'brand_name', 'name', 'title', 'rank', 'email', 'email_source', 'linkedin_url',
+    'source', 'source_url', 'evidence', 'found_at',
+  ],
   // Paste or import the CRM export here, then run /api/import-crm
   [TABS.CRM_IMPORT]: [
     'brand_name', 'category', 'stage', 'services', 'date_signed', 'where_met', 'notes',
