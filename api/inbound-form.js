@@ -5,6 +5,11 @@
  * fast-track scan for that brand. It never changes the form or the website.
  *
  * Webflow webhook URL: https://<deployment>/api/inbound-form?key=<INBOUND_SECRET>
+ *
+ * Test mode (&test=1, for our own test submissions only):
+ *   - brand IDs start with "test-" and lead_source is "inbound-test", so tests never merge with real prospects
+ *   - partners can be scanned (add &partners=1 to keep the partner check, to test that path)
+ *   - /api/inbound-test-cleanup removes every test row afterward
  * Each submission:
  *   1. is logged in the "Inbound Log" tab as received (Webflow retries are ignored by submission ID)
  *   2. is matched to a brand: the Brand Name field, a website typed in it, or the email's domain
@@ -12,7 +17,7 @@
  *   4. updates the prospect if we already have it, or adds it with lead_source "inbound"
  *   5. adds the person to Contacts and starts the scan (enrich, products, Amazon, contacts, audit)
  */
-import { TABS, STATUS } from './_lib/schema.js';
+import { TABS, STATUS, INBOUND_STEPS } from './_lib/schema.js';
 import { readTab, appendRows, updateRows, logRun } from './_lib/sheets.js';
 import { nowIso, normalizeDomain, normalizeName, slugify, appendUnique } from './_lib/util.js';
 import { parseSubmission, guessWebsite, nameFromDomain, kickPipeline } from './_lib/inbound.js';
@@ -28,6 +33,8 @@ export default async function handler(req, res) {
   if (!authorized(req)) return res.status(401).json({ error: 'Unauthorized' });
   if (req.method !== 'POST') return res.status(200).json({ ok: true, note: 'Inbound endpoint is live. Webflow sends POST.' });
 
+  const isTest = req.query?.test === '1';
+  const checkPartners = !isTest || req.query?.partners === '1';
   const body = typeof req.body === 'string' ? JSON.parse(req.body || '{}') : (req.body || {});
   const sub = parseSubmission(body);
   const stamp = nowIso();
@@ -42,7 +49,7 @@ export default async function handler(req, res) {
       readTab(TABS.PARTNERS).catch(() => ({ rows: [] })), readTab(TABS.CONTACTS),
     ]);
     const finish = async (outcome, extra = {}) => {
-      await appendRows(TABS.INBOUND, log.headers, [{ ...logRow, ...extra, outcome }]);
+      await appendRows(TABS.INBOUND, log.headers, [{ ...logRow, ...extra, outcome: isTest ? `TEST: ${outcome}` : outcome }]);
       return res.status(200).json({ ok: true, outcome, ...extra });
     };
 
@@ -61,13 +68,19 @@ export default async function handler(req, res) {
     const domain = normalizeDomain(website);
     const nName = normalizeName(brandName);
 
-    const partner = partners.rows.find(p => (domain && normalizeDomain(p.website_url) === domain) || normalizeName(p.brand_name) === nName);
+    const partner = checkPartners && partners.rows.find(p => (domain && normalizeDomain(p.website_url) === domain) || normalizeName(p.brand_name) === nName);
     if (partner) return finish(`Existing partner: ${partner.brand_name}`);
 
     const formMessage = [sub.formName, sub.page && `on ${sub.page}`, sub.requests.length && `· Requested: ${sub.requests.join(', ')}`]
       .filter(Boolean).join(' ');
-    let brand = brands.rows.find(b => (domain && normalizeDomain(b.website_url) === domain) || normalizeName(b.brand_name) === nName);
+    // Test submissions only match earlier test rows; real ones never match test rows
+    const pool = brands.rows.filter(b => String(b.brand_id).startsWith('test-') === isTest);
+    let brand = pool.find(b => (domain && normalizeDomain(b.website_url) === domain) || normalizeName(b.brand_name) === nName);
     let step;
+
+    // Same brand submitted again while its scan is still running: log it, leave the scan alone
+    const scanning = brand && INBOUND_STEPS.includes(brand.inbound_step) && Date.now() - Date.parse(brand.inbound_updated) < 10 * 60000;
+    if (scanning) return finish('Already scanning this brand from an earlier submission', { brand_id: brand.brand_id });
 
     if (brand) {
       const recentAudit = brand.audit_status && Date.parse(brand.scan_completed_at) > Date.now() - RECENT_AUDIT_DAYS * 86400000;
@@ -75,7 +88,7 @@ export default async function handler(req, res) {
         : [STATUS.NEW, STATUS.NEEDS_URL, STATUS.URL_NOT_FOUND, STATUS.UNREACHABLE].includes(brand.discovery_status) ? 'enrich'
         : 'products';
       const data = {
-        lead_source: appendUnique(brand.lead_source, 'inbound', ', '),
+        lead_source: appendUnique(brand.lead_source, isTest ? 'inbound-test' : 'inbound', ', '),
         inbound_at: stamp, inbound_step: step, inbound_updated: stamp, inbound_attempts: '0',
         inbound_note: recentAudit ? 'Already had an audit scan from the last 30 days' : '',
         form_message: formMessage,
@@ -93,12 +106,14 @@ export default async function handler(req, res) {
       logRow.brand_id = brand.brand_id;
     } else {
       const ids = new Set(brands.rows.map(b => b.brand_id));
-      let id = slugify(brandName), i = 2;
-      while (ids.has(id)) id = `${slugify(brandName)}-${i++}`;
+      const baseId = isTest ? `test-${slugify(brandName)}` : slugify(brandName);
+      let id = baseId, i = 2;
+      while (ids.has(id)) id = `${baseId}-${i++}`;
       step = 'enrich';
       brand = {
-        brand_id: id, brand_name: brandName, website_url: website, lead_source: 'inbound',
-        first_seen: stamp, sources: 'Website form', source_count: 1, signals: 'Filled out the medaltus.com form',
+        brand_id: id, brand_name: brandName, website_url: website, lead_source: isTest ? 'inbound-test' : 'inbound',
+        first_seen: stamp, sources: 'Website form', source_count: 1,
+        signals: isTest ? 'TEST submission (not a real lead)' : 'Filled out the medaltus.com form',
         discovery_status: website ? STATUS.NEW : STATUS.NEEDS_URL,
         contact_name: sub.name, contact_email: sub.email, form_message: formMessage,
         outreach_status: 'Researching', outreach_updated: stamp,
@@ -118,10 +133,11 @@ export default async function handler(req, res) {
       }]);
     }
 
-    await appendRows(TABS.INBOUND, log.headers, [{ ...logRow, outcome: step === 'review' ? 'Matched a prospect with a recent audit' : 'Scan started' }]);
+    const outcome = step === 'review' ? 'Matched a prospect with a recent audit' : brand._row ? 'Matched an existing prospect, scan started' : 'Scan started';
+    await appendRows(TABS.INBOUND, log.headers, [{ ...logRow, outcome: isTest ? `TEST: ${outcome}` : outcome }]);
     if (step !== 'review') await kickPipeline(req, logRow.brand_id);
     await logRun({ job: 'inbound-form', processed: 1, added: brand._row ? 0 : 1, updated: brand._row ? 1 : 0, notes: `${brand.brand_name}: ${step}` });
-    res.status(200).json({ ok: true, brand_id: logRow.brand_id, step });
+    res.status(200).json({ ok: true, brand_id: logRow.brand_id, step, outcome, test: isTest });
   } catch (err) {
     console.error('inbound-form error:', err);
     await logRun({ job: 'inbound-form', errors: `${sub.email || 'unknown'}: ${err.message}` });
