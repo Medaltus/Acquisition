@@ -12,6 +12,10 @@
  * Stage mapping lives in the "HubSpot Stage Map" tab: new HubSpot stages are added there with a
  * suggested dashboard stage, which you can change. A blank dashboard_stage means "ignore".
  * Manual: /api/sync-hubspot (Authorization: Bearer <CRON_SECRET>)
+ *
+ * Preview mode: nothing is written to the sheet unless HUBSPOT_SYNC_ENABLED=yes is set in Vercel.
+ * Until then every run (hourly cron or manual) only reports what it WOULD do, with example names.
+ * ?preview=1 forces a preview even after the sync is turned on. HubSpot itself is never written to.
  */
 import { TABS, STATUS } from './_lib/schema.js';
 import { readTab, appendRows, updateRows, logRun } from './_lib/sheets.js';
@@ -181,6 +185,22 @@ export default async function handler(req, res) {
           hubspot_owner: owner, hubspot_synced_at: stamp, notes: 'Signed in HubSpot',
         });
       }
+    }
+
+    const live = (process.env.HUBSPOT_SYNC_ENABLED || '').trim().toLowerCase() === 'yes' && req.query?.preview !== '1';
+    if (!live) {
+      const nameOfRow = row => brands.rows.find(b => b._row === row)?.brand_name || partners.rows.find(p => p._row === row)?.brand_name || `row ${row}`;
+      return res.status(200).json({
+        ok: true, preview: true,
+        note: 'Preview only: nothing was written. Set HUBSPOT_SYNC_ENABLED=yes in Vercel to turn the sync on.',
+        companies: companies.length, linked,
+        wouldAddProspects: newBrands.map(b => b.brand_name),
+        wouldUpdateProspects: brandUpdates.map(u => nameOfRow(u.row)),
+        wouldAddPartners: newPartners.map(p => p.brand_name),
+        wouldUpdatePartners: partnerUpdates.map(u => partners.rows.find(p => p._row === u.row)?.brand_name || `row ${u.row}`),
+        wouldAddStageMappings: newMapRows.map(m => `${m.hubspot_field}: ${m.hubspot_value} -> ${m.dashboard_stage || '(ignore)'}`),
+        customersNotInPartnerBrands: unmatchedCustomers,
+      });
     }
 
     await appendRows(TABS.HUBSPOT_MAP, stageMap.headers, newMapRows);
