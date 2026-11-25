@@ -405,6 +405,7 @@ textarea.input{resize:vertical;min-height:64px;line-height:1.5;}
 
 /* ── Inbound flow map ── */
 .fl-wrap{display:flex;flex-direction:column;gap:16px;}
+.fl-wrap[hidden]{display:none;}
 .fl-map{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:22px 22px 18px;overflow-x:auto;}
 .fl-grid{display:grid;grid-template-columns:110px repeat(var(--n),minmax(108px,1fr));min-width:1100px;}
 .fl-axis{grid-column:2 / -1;display:grid;grid-template-columns:repeat(var(--n),minmax(108px,1fr));position:relative;margin-bottom:6px;}
@@ -414,6 +415,9 @@ textarea.input{resize:vertical;min-height:64px;line-height:1.5;}
 .fl-tick.d0 b{background:var(--navy);color:#fff;}
 .fl-tick.pre b,.fl-tick.post b{border-style:dashed;border-color:var(--slate);color:var(--slate);}
 .fl-tick span{display:block;font-size:11px;color:var(--muted);margin-top:4px;}
+.fl-rv{display:inline-block;font-style:normal;font-size:10px;padding:1px 8px;border-radius:9px;margin-top:5px;}
+.fl-rv.rv{background:var(--navy);color:#fff;}
+.fl-rv.auto{background:var(--green-dim);color:var(--green-ink);}
 .fl-lane-name{grid-column:1;display:flex;flex-direction:column;justify-content:center;padding:10px 12px 10px 0;border-top:1px solid var(--border2);}
 .fl-lane-name b{font-size:13px;}
 .fl-lane-name span{font-size:11px;color:var(--muted);line-height:1.35;}
@@ -588,7 +592,7 @@ mark.fl-need{background:#FBF0E2;border-bottom:1px dashed var(--warn);padding:0 2
     <div class="page-hd">
       <div>
         <div class="page-title">Inbound Flow</div>
-        <div class="page-sub">What happens to an inbound lead from the form to the close-out, who does each part, and what each touch is for. Click any box for the detail.</div>
+        <div class="page-sub">Day 0 is the day the form comes in. What happens to an inbound lead from the form to the close-out, who does each part, and what each touch is for. Click any box for the detail.</div>
       </div>
       <div class="seg fl-tabs" id="fl-tabs"></div>
     </div>
@@ -850,69 +854,61 @@ function showPage(page) {
 /* ───────────── Inbound flow map (planning view) ───────────── */
 // status: built | partial | planned. h10 = Helium 10 calls per lead; api = free Amazon API checks.
 const FLOW = [
-  { id: 'form', tick: 'Form', sub: 'they submit', cls: 'pre', status: 'built',
-    title: 'They fill out the form', when: 'Any time, on medaltus.com',
-    goal: 'Capture the lead the moment it comes in, and start the work before anyone has to touch it.',
-    scanner: ['Receives the Webflow form (once the webhook is turned on after Monday’s review)', 'Matches the brand to an existing prospect or creates one', 'Guesses the website from what they typed or their email domain', 'Skips current partners and duplicate submissions', 'Starts the fast-track scan'],
-    you: ['Nothing yet'],
+  { id: 'confirm', tick: 'Day 0', sub: 'form + welcome', cls: 'd0', status: 'partial',
+    title: 'Form, welcome and a call', when: 'Day 0, within minutes of the form',
+    goal: 'Welcome them personally, offer a call right away and learn enough about the brand to make the audit and the conversation useful.',
+    scanner: ['Receives the Webflow form (once the webhook is turned on after Monday’s review)', 'Matches the brand to an existing prospect or creates one, guesses the website, and skips current partners and duplicates', 'Starts the audit scan', 'Sends the welcome email with a link to book a call and a few questions (automated)', 'Saves their answers when you paste them into Their answers, and re-runs the scan if they named products or a seller'],
+    you: ['Paste their reply into Their answers if they answer the questions', 'Take the call if they book one'],
     lead: null,
-    chips: { scanner: 'Match brand, start scan', you: '', lead: '' },
+    chips: { scanner: 'Match brand, start scan, send welcome', you: 'Paste answers, take the call', lead: 'Welcome, book a call, a few questions' },
     cost: ['api'] },
-  { id: 'confirm', tick: 'Same day', sub: 'confirmation', cls: 'pre', status: 'partial',
-    title: 'Confirmation and questions', when: 'Within a few hours of the form',
-    goal: 'Show them a real person read it, and get the four answers that make the audit sharper.',
-    scanner: ['Drafts the confirmation email', 'Saves their answers when you paste them into Their answers, and re-runs the scan if they named products or a seller'],
-    you: ['Send the confirmation', 'Paste their reply into Their answers'],
-    lead: { subj: 'Got it, your marketplace audit is underway', body: 'Thanks for reaching out. We’re building a free audit of where your brand shows up across Amazon, Walmart, Target+ and TikTok Shop. Four quick answers make it sharper: your top 3 products, your Amazon seller name (if you sell there), other channels you’re on, and a rough annual revenue range.' },
-    chips: { scanner: 'Draft confirmation', you: 'Send it, paste answers', lead: 'Confirmation + 4 questions' },
-    cost: [] },
-  { id: 'audit', tick: 'Day 0', sub: 'audit sent', cls: 'd0', status: 'built',
-    title: 'The audit', when: 'Due 2 business days after the form. Sending it starts the clock.',
+  { id: 'audit', tick: 'Day 2', sub: 'audit sent', status: 'built',
+    title: 'The audit', when: 'Day 2: due 2 business days after the form. Sending it starts the follow-up clock.',
     goal: 'Show them problems on their own listings they didn’t know they had, with numbers they can check.',
     scanner: ['Amazon API: listings, sellers, Buy Box, prices vs their site, hero listing scorecard (auto-verified)', 'Helium 10 Cerebro: keyword ranks and search volume for each hero product family, plus last month for movement', 'Web research: Walmart, Target+, TikTok Shop, social, competitors (needs your check)', 'Ranks the findings and suggests the PDF cards', 'Saves the keyword baseline to Rank Snapshots'],
     you: ['Review the flagged data and pick the findings', 'Export the PDF and send it', 'Click Mark sent'],
     lead: { subj: 'Your Marketplace Gap Audit', body: 'Two pages: where you sell today, what’s costing you on Amazon (pricing, sellers, listings, search), and the three moves we’d make first.' },
-    chips: { scanner: 'Amazon + Cerebro + web, findings', you: 'Review, send PDF, Mark sent', lead: 'Audit PDF' },
+    chips: { scanner: 'Amazon + Cerebro + web, findings', you: 'Verify, send, Mark sent', lead: 'Audit + 3 findings' },
     cost: ['h10:4', 'api'] },
-  { id: 'how', tick: '+2', sub: 'days', status: 'planned',
-    title: 'How partnering works', when: '2 days after the audit',
+  { id: 'how', tick: 'Day 4', sub: '2 days after audit', status: 'planned',
+    title: 'How partnering works', when: 'About day 4: 2 days after the audit is sent',
     goal: 'Answer “what would this cost me” before they have to ask.',
-    scanner: ['Picks the model from the audit: Model 1 (we buy inventory and sell on channels they don’t run) if they don’t sell their own Amazon listings, Model 2 (we run their account for a share of margin) if they do', 'Drafts the email with their brand and top finding'],
-    you: ['Review and send'],
+    scanner: ['Picks the model from the audit: Model 1 (we buy inventory and sell on channels they don’t run) if they don’t sell their own Amazon listings, Model 2 (we run their account for a share of margin) if they do', 'Sends on schedule (automated)'],
+    you: ['Nothing. It stops on its own if they reply'],
     lead: { subj: 'How this would work for [brand]', body: '$0 retainer either way: we only earn when you sell. For a brand where resellers hold your Buy Box, that usually means…' },
-    chips: { scanner: 'Pick model, draft', you: 'Review, send', lead: 'How partnering works' },
+    chips: { scanner: 'Pick version, send', you: '', lead: 'How we partner' },
     cost: [] },
-  { id: 'case', tick: '+5', sub: 'days', status: 'planned',
-    title: 'Case study', when: '5 days after the audit',
+  { id: 'case', tick: 'Day 7', sub: '5 days after audit', status: 'planned',
+    title: 'Case study', when: 'About day 7: 5 days after the audit is sent',
     goal: 'Proof from a brand like theirs.',
-    scanner: ['Matches a partner case study by category (skincare, nail, wellness, haircare)', 'Drafts the email'],
-    you: ['Review and send', 'Supply the case studies we can name, with real numbers (needed before this step can run)'],
+    scanner: ['Matches a partner result by category, using the results published on medaltus.com (skincare, nail care, supplements and wellness)', 'Sends on schedule (automated)'],
+    you: ['Nothing. It stops on its own if they reply'],
     lead: { subj: 'What this looked like for a brand like yours', body: 'A short before and after from a partner in the same category.' },
-    chips: { scanner: 'Match case study, draft', you: 'Review, send', lead: 'Case study' },
+    chips: { scanner: 'Match result, send', you: '', lead: 'A partner like them' },
     cost: [] },
-  { id: 'rank9', tick: '+9', sub: 'days', status: 'planned',
-    title: 'Rank check', when: '9 days after the audit (re-scan runs the day before)',
+  { id: 'rank9', tick: 'Day 11', sub: '9 days after audit', status: 'planned',
+    title: 'Rank check', when: 'About day 11: 9 days after the audit is sent (re-scan runs the day before)',
     goal: 'Give them a reason to reply that a generic check-in can’t: what changed on their own listings since the audit.',
     scanner: ['Re-pulls Cerebro on the same hero products', 'Compares to the baseline: dropped, improved, steady', 'Only counts real moves: 1,000+ searches a month, and 5+ spots or crossing page 1', 'Writes 2–3 next steps tied to the audit findings', 'If nothing moved, drafts the channel note instead of forcing a ranking story'],
     you: ['Review the change report and send'],
     lead: { subj: 'Since we sent your audit', body: 'You dropped from #6 to #19 for “quick dry nail polish” (40K searches a month), which takes you off page 1. Here’s what we’d look at first…' },
-    chips: { scanner: 'Re-scan, change report', you: 'Review, send', lead: 'What changed since the audit' },
+    chips: { scanner: 'Re-scan, draft report', you: 'Review the read, send', lead: 'How they show up in search' },
     cost: ['h10:1'] },
-  { id: 'check15', tick: '+15', sub: 'days', status: 'planned',
-    title: 'Check-in with something new', when: '15 days after the audit',
+  { id: 'check15', tick: 'Day 17', sub: '15 days after audit', status: 'planned',
+    title: 'Check-in with something new', when: 'About day 17: 15 days after the audit is sent',
     goal: 'A fresh reason to reply, at no Helium 10 cost.',
-    scanner: ['Re-checks sellers, Buy Box and prices through the Amazon API (free)', 'Flags anything new: a new reseller, a price below their site, the Buy Box changing hands', 'If nothing changed, drafts a short check-in'],
-    you: ['Review and send'],
+    scanner: ['Re-checks sellers, Buy Box and prices through the Amazon API (free)', 'Flags anything new: a new reseller, a price below their site, the Buy Box changing hands', 'If nothing changed, sends a short check-in instead', 'Sends on schedule (automated)'],
+    you: ['Nothing. It stops on its own if they reply'],
     lead: { subj: 'A new seller on your listing', body: 'Since your audit, a new seller started selling your Hot Pink kit at $4 under your site price…' },
-    chips: { scanner: 'Amazon re-check', you: 'Review, send', lead: 'New change, or short check-in' },
+    chips: { scanner: 'Amazon re-check, send', you: '', lead: 'What changed, or a check-in' },
     cost: ['api'] },
-  { id: 'close', tick: '+23', sub: 'days', status: 'planned',
-    title: 'Close-out', when: '23 days after the audit (re-scan runs the day before)',
+  { id: 'close', tick: 'Day 25', sub: '23 days after audit', status: 'planned',
+    title: 'Close-out', when: 'About day 25: 23 days after the audit is sent (re-scan runs the day before)',
     goal: 'End with value and leave the door open.',
     scanner: ['Second Cerebro re-pull: three weeks of movement since the audit', 'Drafts the close-out with the summary and a call offer', 'If no reply, moves the lead to Nurture'],
     you: ['Review and send'],
     lead: { subj: 'Three weeks since your audit', body: 'Where your rankings moved, what that likely cost, and an open offer to walk through it whenever the timing is right.' },
-    chips: { scanner: 'Re-scan, 3-week recap', you: 'Review, send', lead: 'Recap + open door' },
+    chips: { scanner: 'Re-scan, draft recap', you: 'Review, send', lead: 'Last note, door open' },
     cost: ['h10:1'] },
   { id: 'nurture', tick: 'After', sub: 'no reply', cls: 'post', status: 'planned',
     title: 'Nurture', when: 'After the close-out, if they haven’t replied',
@@ -930,122 +926,170 @@ const FLOW_LANES = [
 ];
 const FLOW_EXITS = ['They reply → In Conversation', 'A deal is created in HubSpot', 'Not interested or asks to be removed', 'Email bounces'];
 const FLOW_OPEN = [
-  ['Steps and timing', 'Do the seven touches and the +2 / +5 / +9 / +15 / +23 spacing feel right, or should the flow be shorter?'],
+  ['Steps and timing', 'Day 0 welcome, audit by day 2, then follow-ups 2, 5, 9, 15 and 23 days after the audit is sent. If the audit goes out late, everything after it shifts with it. Does that spacing feel right?'],
   ['Knowing they replied', 'A Replied button on this dashboard, the HubSpot sync reading logged emails, or reading your Gmail later on.'],
-  ['Who sends', 'You send from your own inbox, copying drafts from here. Later, the scanner could create the drafts in Gmail for you. Nothing would send on its own.'],
+  ['Sending the automated emails', 'Four emails go out without review, so they need a sending tool: HubSpot sequences (paid Sales Hub), or sending through your Gmail. Until one is connected they sit here as ready-to-send drafts.'],
+  ['The three reviewed emails', 'The audit, the day 11 search read and the close-out get a person. Is that the right three?'],
   ['Nurture', 'Quarterly rank checks for leads that go quiet, or stop at the close-out.'],
-  ['Case studies', 'Which partner brands we can name, and with what numbers. The +5 step needs these.'],
+  ['Partner results', 'The day 7 email uses the three results already on medaltus.com, without naming the brand. OK to use them this way, or should any be named?'],
   ['Webflow webhook', 'Turning on the form notification after Monday’s review, with your approval (GTM, Analytics and ad conversions stay untouched).'],
 ];
-const FL = { sel: 'audit' };
+const FL = { sel: 'confirm' };
 
 
 /* Example emails. {{x}} = filled in from the lead's data; [[x]] = still needs real content from us.
    Sample lead: Maya at Lumen & Rye (a made-up skincare brand), audit sent Mon Nov 30. */
 const FLOW_FROM = 'Jaclyn Sonberg <jsonberg@medaltus.com>';
 const FLOW_TO = '{{Maya Chen <maya@lumenandrye.com>}}';
-const FLOW_SIG = '<div class="sig"><b>Jaclyn Sonberg</b><br>Brand Manager, Medaltus<br>Marketplace growth for beauty and wellness brands since 1997</div>';
+const FLOW_SIG = '<div class="sig">Warmly,<br><b>Jaclyn Sonberg</b><br>Brand Manager, Medaltus<br>medaltus.com</div>';
+// review: true = a person reads it before it goes out. Everything else sends on schedule from the template
+// (once a sending tool is connected) and stops on its own when an exit rule is hit.
 const FLOW_EMAILS = {
-  confirm: { why: 'Fast and human. The four questions make the audit sharper and get them replying before the audit lands.', variants: [{ label: 'Confirmation', subj: 'Your marketplace audit for {{Lumen & Rye}} is underway', body: `
+  confirm: { review: false, why: 'Sent within minutes of the form. A real person, a way to talk right away, and a few questions that make the audit and the call more useful.', variants: [{ label: 'Welcome', subj: 'Thank you for reaching out, {{Maya}}', body: `
 Hi {{Maya}},
 
-Thanks for reaching out to Medaltus. I'm putting together a free marketplace audit for {{Lumen & Rye}} and you'll have it by {{Wednesday}}.
+Thank you for reaching out to Medaltus. I'm Jaclyn, and I'll be your point of contact as we get to know {{Lumen & Rye}}.
 
-It covers where your brand sells today, who sells your products on Amazon, how your listings compare and which searches you're missing.
+I'd love to set up a time to talk about where you are today and where you'd like the brand to go. You can pick a time that works for you here: [[calendar link]]
 
-Four quick answers will make it sharper. A line or two each is plenty:
-- Your top three products
+Before we talk, our team likes to do a little homework. We're putting together a complimentary marketplace audit for you: a look at how {{Lumen & Rye}} shows up today across Amazon, Walmart, Target+ and TikTok Shop, who is selling your products and where shoppers are looking for brands like yours. You'll have it by {{Friday, November 27}}, and if we talk before then we'll walk through what we're finding together.
+
+If you have a few minutes, a bit of context helps us make both as useful as possible:
+- The products that matter most to you right now
+- Who runs your Amazon today: your team, an agency, a distributor or no one yet
 - Your Amazon seller name, if you sell there yourself
-- Other channels you're on (Walmart, Target+, TikTok Shop, retail)
-- A rough annual revenue range
+- Anywhere else you sell today, online or in stores
+- The biggest thing slowing growth right now, whether that's operations, advertising, inventory or something else
+- Where you'd love the brand to be a year from now
 
-If you'd rather skip them that's fine. The audit works either way.` }] },
-  audit: { why: 'Leads with the three findings they picked so the email stands on its own, even if they never open the PDF.', variants: [{ label: 'Audit', subj: '{{Lumen & Rye}} marketplace audit', body: `
+Nothing formal is needed. A quick reply is perfect, and if you'd rather we dig in on our own, we're happy to.
+
+I'm looking forward to learning more about {{Lumen & Rye}}.` }] },
+  audit: { review: true, why: 'The first real look at their brand. You verify every number and choose the three findings, so this one always gets a person.', variants: [{ label: 'Audit', subj: 'Your marketplace audit for {{Lumen & Rye}}', body: `
 Hi {{Maya}},
 
-Your audit is attached. Three things stood out:
-- {{Other sellers offer your Vitamin C Serum on Amazon for 18% below your site price}}
-- {{You're on the first page for 3 of your 10 biggest non-branded searches}}
-- {{Your Barrier Cream listing has 4 images where top competitors run 7 or more}}
+Thank you for your patience while we put this together. Your audit is attached.
 
-Page two lays out the first three moves we'd make. If it's useful I'm happy to walk through it in 20 minutes. [[calendar link]]` }] },
-  how: { why: 'Answers the cost question early. The scanner picks the version from the audit: who sells their Amazon listings today.', variants: [
-    { label: 'They don’t sell on Amazon (Model 1)', subj: 'How this would work for {{Lumen & Rye}}', body: `
+We looked at your brand the way we would for a partner we already work with, and a few things stood out that we think are worth your attention:
+- {{On Amazon, other sellers are offering your Vitamin C Serum at about 18% below your site price, which can quietly undercut the value you've built}}
+- {{Shoppers searching for serums like yours tend to find other brands first. You appear on the first page for 3 of the 10 biggest searches in your category}}
+- {{Your Barrier Cream listing has room to tell its story more fully, with 4 images where the leading brands use 7 or more}}
+
+None of this is unusual for a growing brand, and all of it is fixable. The second page outlines where we'd start and why.
+
+I'd love to walk you through it and hear more about your goals for {{Lumen & Rye}}. If you haven't had a chance to book a time yet, you can find one that works here: [[calendar link]]` }] },
+  how: { review: false, why: 'Explains how we work before they have to ask. The scanner picks the version from the audit: whether the brand sells its own Amazon listings today.', variants: [
+    { label: 'They don’t sell their own Amazon listings', subj: 'How we partner with brands like {{Lumen & Rye}}', body: `
 Hi {{Maya}},
 
-A quick note on how we'd work together since that's usually the next question.
+I wanted to share a little more about how we work, since every brand we partner with starts from a different place.
 
-There's no retainer. We only earn when your products sell.
+At Medaltus we work as an extension of your team. You stay focused on your products and your customers. We take on the day-to-day of running your marketplaces: listings, advertising, inventory, fulfillment and the operational details that tend to slow growing brands down.
 
-For a brand where {{other sellers control your Amazon listings}} it usually looks like this. We buy inventory from you at wholesale and become the authorized seller on Amazon, Walmart and the other channels you'd rather not run yourself. You get one seller on your listings and pricing that stays in line with your site.
+For {{Lumen & Rye}}, where Amazon is currently {{being handled by other sellers}}, we would typically purchase inventory directly from you and become your dedicated partner on Amazon and Walmart. That gives you one trusted seller representing your brand, pricing that respects your own site and a team that cares how your products are presented.
 
-We work this way with about 50 brands today.
+Our model is a little different from a typical agency. There's no monthly retainer. We invest our own capital in your inventory and advertising, and we only earn when your sales grow. It keeps every recommendation we make focused on what's genuinely best for your brand.
 
-If that sounds like a fit, reply and I'll set up a call.` },
-    { label: 'They sell on Amazon (Model 2)', subj: 'How this would work for {{Lumen & Rye}}', body: `
+If it would help to talk through what this could look like for you, I'm always happy to.` },
+    { label: 'They sell their own Amazon listings', subj: 'How we partner with brands like {{Lumen & Rye}}', body: `
 Hi {{Maya}},
 
-A quick note on how we'd work together since that's usually the next question.
+I wanted to share a little more about how we work, since every brand we partner with starts from a different place.
 
-There's no retainer. We're paid a share of margin, so we only do well when you do.
+At Medaltus we work as an extension of your team. You stay focused on your products and your customers. We take on the day-to-day of running your marketplaces: listings, advertising, inventory, fulfillment and the operational details that tend to slow growing brands down.
 
-Since you already sell on Amazon we'd run the account alongside you: listings, ads, inventory planning and expansion to Walmart and TikTok Shop. Your audit showed {{3 of 10 top searches on page one}}, so search is where we'd start.
+Since you already sell on Amazon, we would work alongside your team inside your account, taking on listings and advertising and helping you expand to channels like {{Walmart and TikTok Shop}}, so everything runs as one connected system instead of separate pieces.
 
-We fully manage 15 brands this way today.
+Our model is a little different from a typical agency. There's no monthly retainer. We invest our own capital in your inventory and advertising, and we only earn when your sales grow. It keeps every recommendation we make focused on what's genuinely best for your brand.
 
-If that sounds like a fit, reply and I'll set up a call.` }] },
-  case: { why: 'Proof from a similar brand. Needs real case studies from us before it can run.', variants: [{ label: 'Case study', subj: 'What this looked like for [[a skincare brand like yours]]', body: `
+If it would help to talk through what this could look like for you, I'm always happy to.` }] },
+  case: { review: false, why: 'Proof from a partner in the same category, using the results already published on medaltus.com. The scanner picks the closest match.', variants: [
+    { label: 'Skincare', subj: 'What partnership has looked like for a skincare brand', body: `
 Hi {{Maya}},
 
-[[Partner brand]] came to us with [[the same starting point as yours: resellers undercutting their site price on Amazon]].
+I thought it might be helpful to share what partnership has looked like for one of the skincare brands we work with.
 
-In [[12 months]] we [[consolidated their listings to one seller, brought Amazon pricing back in line with their site and grew Amazon sales by X%]].
+We've grown alongside them since 2018 across Amazon, Shopify and TikTok Shop. Over that time their revenue has grown 581%, and over the last few years we've made their advertising 2.2 times more efficient.
 
-Your audit showed {{a similar gap on your Vitamin C Serum}}, which is why I thought of them.
+What made the difference wasn't one tactic. It was having one team responsible for every channel, so advertising, inventory and listings all moved toward the same goal.
 
-Happy to share more if it's helpful.` }] },
-  rank9: { why: 'The scanner re-checks their rankings the day before. It only reports real moves; if nothing moved it sends the channel note instead.', variants: [
-    { label: 'Rankings moved', subj: 'Since we sent your audit', body: `
+Several of the things we found in your audit, like {{pricing on Amazon and search visibility}}, are the same places we started with them.
+
+If you'd ever like to hear more about how it came together, I'd be glad to share.` },
+    { label: 'Nail care', subj: 'What partnership has looked like for a nail care brand', body: `
 Hi {{Maya}},
 
-I re-ran your Amazon search rankings this week. Since your audit on {{Nov 30}}:
-- Dropped: {{"vitamin c serum" (52,000 searches a month) went from #31 to #52, off the first page}}
-- Improved: {{"brightening serum" moved from #61 to #44}}
-- Holding: {{"vitamin c serum for face" steady at #9}}
+I thought it might be helpful to share what partnership has looked like for one of the nail care brands we work with.
 
-The drop lines up with {{a new seller taking the Buy Box on your 1 oz size}}. That's the first thing we'd fix since it pulls your ranking down for everyone selling the listing.
+We've partnered with them since 2018 on Amazon and Shopify. Their revenue has grown 251% in that time, and together we expanded their catalog to 192 products without the operational growing pains that usually come with it.
 
-Want me to walk you through it?` },
-    { label: 'Nothing moved (channel note)', subj: 'Where else {{Lumen & Rye}} could be selling', body: `
+What made the difference wasn't one tactic. It was having one team responsible for every channel, so advertising, inventory and listings all moved toward the same goal.
+
+Several of the things we found in your audit, like {{pricing on Amazon and search visibility}}, are the same places we started with them.
+
+If you'd ever like to hear more about how it came together, I'd be glad to share.` },
+    { label: 'Supplements and wellness', subj: 'What partnership has looked like for a wellness brand', body: `
 Hi {{Maya}},
 
-Your Amazon rankings held steady since the audit, so a different thought.
+I thought it might be helpful to share what partnership has looked like for one of the supplement brands we work with.
 
-Right now you're on {{your site and Amazon}}. {{Walmart and TikTok Shop}} are where we see brands like yours pick up new customers without discounting. We run both for partners today and can launch them without you adding staff.
+Since we began working together on Amazon and Walmart in 2025, their revenue has grown 410% and their advertising cost of sale has come down 62%.
 
-Worth a conversation?` }] },
-  check15: { why: 'A free Amazon re-check gives them something new. If nothing changed it stays short.', variants: [
-    { label: 'Something changed', subj: 'A new seller on your {{Vitamin C Serum}}', body: `
+What made the difference wasn't one tactic. It was having one team responsible for every channel, so advertising, inventory and listings all moved toward the same goal.
+
+Several of the things we found in your audit, like {{pricing on Amazon and search visibility}}, are the same places we started with them.
+
+If you'd ever like to hear more about how it came together, I'd be glad to share.` }] },
+  rank9: { review: true, why: 'Our first read on their data since the audit, with a point of view on what’s driving it. A person checks the explanation before it goes out.', variants: [
+    { label: 'Rankings moved', subj: 'How {{Lumen & Rye}} is showing up in Amazon search', body: `
 Hi {{Maya}},
 
-Since your audit {{a new seller started offering your Vitamin C Serum on Amazon at $28.99}}. That's {{$9 under your site price}} and they {{now hold the Buy Box}}.
+We've been keeping an eye on how {{Lumen & Rye}} shows up in Amazon search since we sent your audit, and I wanted to share what we're seeing.
+- {{"vitamin c serum" (about 52,000 searches a month) moved from #31 to #52, which takes it off the first page}}
+- {{"brightening serum" improved from #61 to #44}}
+- {{"vitamin c serum for face" is holding steady at #9}}
 
-This is the pattern we fix first for brands we work with. Happy to show you how if it's useful.` },
-    { label: 'Nothing changed', subj: 'Quick check-in on your audit', body: `
+{{The change on "vitamin c serum" lines up with a new seller winning the Buy Box on your 1 oz size. When that happens Amazon often shows the listing less, so it's usually the first thing we'd look into.}}
+
+Rankings move from week to week, so none of this is cause for alarm on its own. It's the kind of thing we watch closely for our partners, and I thought you'd want to know.
+
+I'm happy to talk it through anytime.` },
+    { label: 'Rankings held steady', subj: 'Thinking about where else {{Lumen & Rye}} could grow', body: `
 Hi {{Maya}},
 
-Checking in on the audit I sent. Did anything in it surprise you or raise questions?
+Good news first: your Amazon rankings have held steady since we sent your audit. That gave me a chance to think about where else the brand could grow.
 
-Happy to talk it through whenever works.` }] },
-  close: { why: 'The last touch. Ends with value and leaves the door open without another follow-up.', variants: [{ label: 'Close-out', subj: 'Three weeks since your audit', body: `
+Today we see {{Lumen & Rye}} on {{your own site and Amazon}}. For skincare brands like yours, {{Walmart and TikTok Shop}} have been strong places to reach new customers. Walmart brings a large audience that shops with intent, and TikTok Shop is where shoppers discover new brands fastest.
+
+We run both for our partners today and handle everything from setup through fulfillment, so it wouldn't add to your team's workload.
+
+If expanding is on your radar, I'd love to share how we would approach it.` }] },
+  check15: { review: false, why: 'A free Amazon re-check. It only reports facts the API confirms, so it can go out on its own. If nothing changed it’s a gentle check-in.', variants: [
+    { label: 'Something changed', subj: 'Something we noticed on your {{Vitamin C Serum}} listing', body: `
 Hi {{Maya}},
 
-I'll keep this short. In the three weeks since your audit:
-- {{You're on the first page for 2 of your 10 biggest searches, down from 3}}
-- {{"vitamin c serum" is at #58 (52,000 searches a month)}}
+While keeping an eye on your listings, we noticed a change we wanted to pass along. {{A new seller started offering your Vitamin C Serum on Amazon at $28.99, about $9 below your site price, and they're currently winning the Buy Box.}}
+
+This happens often as brands grow and isn't always intentional. Over time though it can shape how shoppers see your pricing and who controls how your product is presented. It's one of the areas we help our partners get under control.
+
+If it would help to talk through your options, I'm here.` },
+    { label: 'Nothing changed', subj: 'Checking in', body: `
+Hi {{Maya}},
+
+I wanted to check in and see whether the audit was helpful, and whether anything in it raised questions for you or your team.
+
+Whether or not now is the right time for a partnership, I'm happy to be a resource as you think through your marketplace plans.` }] },
+  close: { review: true, why: 'The last note. It should sound personal and leave a good last impression, so a person reads it before it goes out.', variants: [{ label: 'Close-out', subj: 'Following up on your audit', body: `
+Hi {{Maya}},
+
+It's been a few weeks since we shared your audit, and I wanted to send one last note with a quick update.
+- {{You now appear on the first page for 2 of your 10 biggest searches, down from 3}}
+- {{"vitamin c serum" is at #58 (about 52,000 searches a month)}}
 - {{Two sellers are still offering your products below your site price}}
 
-I won't keep filling your inbox. If the timing changes, reply here and we'll pick it up from your audit.` }] },
+I don't want to fill your inbox, so this will be my last note for now. If the timing isn't right, that's completely okay. Whenever you're ready to talk about growth, whether that's next month or next year, just reply here and we'll pick up right where we left off.
+
+Thank you again for thinking of Medaltus.` }] },
 };
 const FLV = {};   // selected variant per step
 
@@ -1069,12 +1113,12 @@ function mailCard(stepId) {
     <div class="fl-mail"><div class="fl-mail-hd"><span>From</span><b>${esc(FLOW_FROM)}</b><span>To</span><b>${inline(FLOW_TO)}</b><div class="subj">${inline(v.subj)}</div></div>
     <div class="fl-mail-body">${mailHtml(v.body)}${FLOW_SIG}</div></div>`;
 }
-const FLOW_KEY = '<span><mark class="fl-m">Green</mark> fills in from the lead and their audit</span><span><mark class="fl-need">Orange</mark> needs real content from us</span><span>Sample lead: Maya at Lumen &amp; Rye, a made-up skincare brand</span>';
+const FLOW_KEY = '<span><mark class="fl-m">Green</mark> fills in from the lead and their audit</span><span><mark class="fl-need">Orange</mark> still needed from us</span><span>Sample lead: Maya at Lumen &amp; Rye, a made-up skincare brand</span>';
 function renderFlowEmails() {
   if (FL.view === 'emails') {
     $('fl-key').innerHTML = FLOW_KEY;
     $('fl-all').innerHTML = FLOW.filter(st => FLOW_EMAILS[st.id]).map(st => `<div class="fl-all-step"><div class="tick">${esc(st.tick)}<span>${esc(st.title)}</span></div>
-      <div><div class="fl-why">${esc(FLOW_EMAILS[st.id].why)}</div>${mailCard(st.id)}</div></div>`).join('');
+      <div><div class="fl-why"><em class="fl-rv ${FLOW_EMAILS[st.id].review ? 'rv' : 'auto'}">${FLOW_EMAILS[st.id].review ? 'You review' : 'Automated'}</em> ${esc(FLOW_EMAILS[st.id].why)}</div>${mailCard(st.id)}</div></div>`).join('');
   } else renderFlowStep();
 }
 function setFlowView(v) { FL.view = v; renderFlow(); }
@@ -1091,7 +1135,8 @@ function renderFlow() {
   $('fl-map-wrap').hidden = FL.view !== 'map';
   $('fl-all-wrap').hidden = FL.view !== 'emails';
   if (FL.view === 'emails') { renderFlowEmails(); return; }
-  const cols = FLOW.map(s => `<div class="fl-tick ${s.cls || ''}"><b>${esc(s.tick)}</b><span>${esc(s.sub)}</span></div>`).join('');
+  const tag = id => { const e = FLOW_EMAILS[id]; return e ? `<em class="fl-rv ${e.review ? 'rv' : 'auto'}">${e.review ? 'You review' : 'Automated'}</em>` : ''; };
+  const cols = FLOW.map(s => `<div class="fl-tick ${s.cls || ''}"><b>${esc(s.tick)}</b><span>${esc(s.sub)}</span>${tag(s.id)}</div>`).join('');
   let grid = `<div class="fl-grid" style="--n:${FLOW.length}"><div></div><div class="fl-axis">${cols}</div>`;
   for (const [lane, name, sub] of FLOW_LANES) {
     grid += `<div class="fl-lane-name"><b>${name}</b><span>${sub}</span></div>`;
@@ -1108,6 +1153,8 @@ function renderFlow() {
     <span><span class="fl-st built">Built</span> works today</span>
     <span><span class="fl-st partial">Partly built</span> pieces in place</span>
     <span><span class="fl-st planned">Planned</span> to build</span>
+    <span><em class="fl-rv rv">You review</em> ${Object.values(FLOW_EMAILS).filter(e => e.review).length} emails</span>
+    <span><em class="fl-rv auto">Automated</em> ${Object.values(FLOW_EMAILS).filter(e => !e.review).length} emails</span>
     <span>About ${h10} Helium 10 calls per lead through the close-out (1,000 a month shared across the account)</span></div>`;
   renderFlowStep();
   $('fl-open').innerHTML = `<div class="when">To settle at Monday’s review</div><h2>Open decisions</h2>
@@ -1122,7 +1169,7 @@ function renderFlowStep() {
     <div class="fl-goal">${esc(s.goal)}</div>
     <div class="fl-sec"><h4>The scanner</h4>${list(s.scanner)}${s.cost.length ? `<div class="fl-cost" style="margin-top:6px">${flowCost(s.cost)}</div>` : ''}</div>
     <div class="fl-sec"><h4>You</h4>${list(s.you)}</div>
-    ${FLOW_EMAILS[s.id] ? `<div class="fl-sec"><h4>What they receive</h4><div class="fl-why">${esc(FLOW_EMAILS[s.id].why)}</div><div class="fl-key">${FLOW_KEY}</div>${mailCard(s.id)}</div>` : ''}`;
+    ${FLOW_EMAILS[s.id] ? `<div class="fl-sec"><h4>What they receive <em class="fl-rv ${FLOW_EMAILS[s.id].review ? 'rv' : 'auto'}">${FLOW_EMAILS[s.id].review ? 'You review' : 'Automated'}</em></h4><div class="fl-why">${esc(FLOW_EMAILS[s.id].why)}</div><div class="fl-key">${FLOW_KEY}</div>${mailCard(s.id)}</div>` : ''}`;
 }
 
 /* ───────────── Current brands ───────────── */
