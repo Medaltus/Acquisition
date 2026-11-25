@@ -36,10 +36,11 @@ export default async function handler(req, res) {
       readTab(TABS.CONTACTS).catch(() => ({ rows: [] })),
       readTab(TABS.INBOUND).catch(() => ({ rows: [] })),
     ]);
-    // Form submissions the scanner couldn't turn into a brand (personal email, no brand name), last 30 days
+    // Form submissions the scanner couldn't turn into a brand (personal email, no brand name), last 30 days.
+    // Partner submissions and duplicates are logged too but aren't listed here.
     const since = Date.now() - INBOUND_UNMATCHED_DAYS * 86400000;
     const inboundUnmatched = inbound.rows
-      .filter(r => !r.brand_id && Date.parse(r.received_at) > since)
+      .filter(r => !r.brand_id && /No brand/.test(r.outcome) && Date.parse(r.received_at) > since)
       .map(r => pick(r, ['received_at', 'form_name', 'page', 'name', 'email', 'brand_text', 'requests', 'outcome']))
       .reverse();
     const contactsBy = {};
