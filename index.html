@@ -458,6 +458,7 @@ textarea.input{resize:vertical;min-height:64px;line-height:1.5;}
 .fl-st.built{background:var(--green-dim);color:var(--green-ink);}
 .fl-st.partial{background:#FBF0E2;color:var(--warn);}
 .fl-st.planned{background:var(--bg2);color:var(--slate);}
+.fl-st.hold{background:#FBF0E2;color:var(--warn);border:1px dashed var(--warn);}
 .fl-detail{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:16px;}
 .fl-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:20px 22px;}
 .fl-card h2{font-family:var(--font-header);font-size:20px;font-weight:500;margin:4px 0 2px;}
@@ -610,7 +611,7 @@ mark.fl-need{background:#FBF0E2;border-bottom:1px dashed var(--warn);padding:0 2
     <div class="page-hd">
       <div>
         <div class="page-title">Inbound Flow</div>
-        <div class="page-sub">Day 0 is the day the form comes in. What happens to an inbound lead from the form to the close-out, who does each part, and what each touch is for. Click any box for the detail.</div>
+        <div class="page-sub">Day 0 is the day the form comes in. What happens to an inbound lead from the form to the close-out, who does each part, and what each touch is for. HubSpot sends every email. Click any box for the detail.</div>
       </div>
       <div class="seg fl-tabs" id="fl-tabs"></div>
     </div>
@@ -887,59 +888,59 @@ function showPage(page) {
 const FLOW = [
   { id: 'confirm', tick: 'Day 0', sub: 'form + welcome', cls: 'd0', status: 'partial',
     title: 'Form, welcome and a call', when: 'Day 0, within minutes of the form',
-    goal: 'Welcome them personally, offer a call right away and learn enough about the brand to make the audit and the conversation useful.',
-    scanner: ['Receives the Webflow form (once the webhook is turned on after Monday’s review)', 'Matches the brand to an existing prospect or creates one, guesses the website, and skips current partners and duplicates', 'Starts the audit scan', 'Sends the welcome email with a link to book a call and a few questions (automated)', 'Saves their answers when you paste them into Their answers, and re-runs the scan if they named products or a seller'],
-    you: ['Paste their reply into Their answers if they answer the questions', 'Take the call if they book one'],
+    goal: 'Welcome them personally, offer a call right away and learn enough about the brand to make the analysis and the conversation useful.',
+    scanner: ['Receives the Webflow form (once the webhook is turned on after Monday’s review)', 'Matches the brand to an existing prospect or creates one, guesses the website, and skips current partners and duplicates', 'Forwards the lead to the hidden HubSpot form Inbound Intake, which makes HubSpot send the welcome email', 'Starts the analysis scan', 'Pulls their Brand Details form answers from HubSpot into Their answers every hour, and re-runs the scan if they named products'],
+    you: ['Nothing for the welcome. HubSpot sends it', 'If they answer by email instead of the form, paste it into Their answers', 'Take the call if they book one'],
     lead: null,
-    chips: { scanner: 'Match brand, start scan, send welcome', you: 'Paste answers, take the call', lead: 'Welcome, book a call, a few questions' },
+    chips: { scanner: 'Match brand, start scan, trigger welcome', you: 'Take the call', lead: 'Welcome, revenue range, a few questions' },
     cost: ['api'] },
-  { id: 'audit', tick: 'Day 2', sub: 'audit sent', status: 'built',
-    title: 'The audit', when: 'Day 2: due 2 business days after the form. Sending it starts the follow-up clock.',
+  { id: 'audit', tick: 'Day 2', sub: 'analysis sent', status: 'built',
+    title: 'The growth and gap analysis', when: 'Day 2: due 2 business days after the form. Sending it starts the follow-up clock.',
     goal: 'Show them problems on their own listings they didn’t know they had, with numbers they can check.',
     scanner: ['Amazon API: listings, sellers, Buy Box, prices vs their site, hero listing scorecard (auto-verified)', 'Helium 10 Cerebro: keyword ranks and search volume for each hero product family, plus last month for movement', 'Web research: Walmart, Target+, TikTok Shop, social, competitors (needs your check)', 'Ranks the findings and suggests the PDF cards', 'Saves the keyword baseline to Rank Snapshots'],
-    you: ['Review the flagged data and pick the findings', 'Export the PDF and send it', 'Click Mark sent'],
-    lead: { subj: 'Your Marketplace Gap Audit', body: 'Two pages: where you sell today, what’s costing you on Amazon (pricing, sellers, listings, search), and the three moves we’d make first.' },
-    chips: { scanner: 'Amazon + Cerebro + web, findings', you: 'Verify, send, Mark sent', lead: 'Audit + 3 findings' },
+    you: ['Review the flagged data and pick the findings', 'Export the PDF and send it from the contact’s record in HubSpot', 'Click Mark sent, which starts the follow-up clock'],
+    lead: { subj: 'Your growth and gap analysis', body: 'Two pages: where you sell today, what’s costing you on Amazon (pricing, sellers, listings, search), and the three moves we’d make first.' },
+    chips: { scanner: 'Amazon + Cerebro + web, findings', you: 'Verify, send in HubSpot, Mark sent', lead: 'Analysis + 3 findings' },
     cost: ['h10:4', 'api'] },
-  { id: 'how', tick: 'Day 4', sub: '2 days after audit', status: 'planned',
-    title: 'How partnering works', when: 'About day 4: 2 days after the audit is sent',
+  { id: 'how', tick: 'Day 4', sub: '2 days after analysis', status: 'hold',
+    title: 'How partnering works', when: 'About day 4: 2 days after the analysis is sent. On hold until you talk with Josh.',
     goal: 'Answer “what would this cost me” before they have to ask.',
-    scanner: ['Picks the model from the audit: Model 1 (we buy inventory and sell on channels they don’t run) if they don’t sell their own Amazon listings, Model 2 (we run their account for a share of margin) if they do', 'Sends on schedule (automated)'],
-    you: ['Nothing. It stops on its own if they reply'],
+    scanner: ['Picks the model from the analysis: Model 1 (we buy inventory and sell on channels they don’t run) if they don’t sell their own Amazon listings, Model 2 (we run their account for a share of margin) if they do', 'Submits that version’s hidden HubSpot form, and HubSpot sends it', 'Skips it if they replied or booked a call'],
+    you: ['Nothing once it’s live. Copy is being reworked after you talk with Josh'],
     lead: { subj: 'How this would work for [brand]', body: '$0 retainer either way: we only earn when you sell. For a brand where resellers hold your Buy Box, that usually means…' },
-    chips: { scanner: 'Pick version, send', you: '', lead: 'How we partner' },
+    chips: { scanner: 'Pick version, trigger send', you: '', lead: 'How we partner' },
     cost: [] },
-  { id: 'case', tick: 'Day 7', sub: '5 days after audit', status: 'planned',
-    title: 'Case study', when: 'About day 7: 5 days after the audit is sent',
+  { id: 'case', tick: 'Day 7', sub: '5 days after analysis', status: 'planned',
+    title: 'Case study', when: 'About day 7: 5 days after the analysis is sent',
     goal: 'Proof from a brand like theirs.',
-    scanner: ['Picks the case study from the Case Studies tab whose topics best match their audit findings, then their category', 'Sends on schedule (automated)'],
+    scanner: ['Picks the case study from the Case Studies tab whose topics best match their findings, then their category', 'Submits the FU Day 7 Case Study form with the category, story and findings filled in, and HubSpot sends it', 'Skips it if they replied or booked a call'],
     you: ['Nothing. You can change the case study from Inbound Leads (Case study button) before it goes out'],
     lead: { subj: 'What this looked like for a brand like yours', body: 'A short before and after from a partner in the same category.' },
-    chips: { scanner: 'Match result, send', you: '', lead: 'A partner like them' },
+    chips: { scanner: 'Match story, trigger send', you: '', lead: 'A partner like them' },
     cost: [] },
-  { id: 'rank9', tick: 'Day 11', sub: '9 days after audit', status: 'planned',
-    title: 'Rank check', when: 'About day 11: 9 days after the audit is sent (re-scan runs the day before)',
-    goal: 'Give them a reason to reply that a generic check-in can’t: what changed on their own listings since the audit.',
-    scanner: ['Re-pulls Cerebro on the same hero products', 'Compares to the baseline: dropped, improved, steady', 'Only counts real moves: 1,000+ searches a month, and 5+ spots or crossing page 1', 'Writes 2–3 next steps tied to the audit findings', 'If nothing moved, drafts the channel note instead of forcing a ranking story'],
-    you: ['Review the change report and send'],
-    lead: { subj: 'Since we sent your audit', body: 'You dropped from #6 to #19 for “quick dry nail polish” (40K searches a month), which takes you off page 1. Here’s what we’d look at first…' },
-    chips: { scanner: 'Re-scan, draft report', you: 'Review the read, send', lead: 'How they show up in search' },
+  { id: 'rank9', tick: 'Day 11', sub: '9 days after analysis', status: 'planned',
+    title: 'Rank check', when: 'About day 11: 9 days after the analysis is sent (re-scan runs the day before)',
+    goal: 'Give them a reason to reply that a generic check-in can’t: what changed on their own listings since the analysis.',
+    scanner: ['Re-pulls Cerebro on the same hero products', 'Compares to the baseline: dropped, improved, steady', 'Only counts real moves: 1,000+ searches a month, and 5+ spots or crossing page 1', 'Writes 2–3 next steps tied to the findings', 'If nothing moved, drafts the channel note instead of forcing a ranking story'],
+    you: ['Review the draft, send it from the contact’s record in HubSpot', 'Click Mark sent'],
+    lead: { subj: 'Since we sent your analysis', body: 'You dropped from #6 to #19 for “quick dry nail polish” (40K searches a month), which takes you off page 1. Here’s what we’d look at first…' },
+    chips: { scanner: 'Re-scan, draft report', you: 'Review, send in HubSpot', lead: 'How they show up in search' },
     cost: ['h10:1'] },
-  { id: 'check15', tick: 'Day 17', sub: '15 days after audit', status: 'planned',
-    title: 'Check-in with something new', when: 'About day 17: 15 days after the audit is sent',
+  { id: 'check15', tick: 'Day 17', sub: '15 days after analysis', status: 'planned',
+    title: 'Check-in with something new', when: 'About day 17: 15 days after the analysis is sent',
     goal: 'A fresh reason to reply, at no Helium 10 cost.',
-    scanner: ['Re-checks sellers, Buy Box and prices through the Amazon API (free)', 'Flags anything new: a new reseller, a price below their site, the Buy Box changing hands', 'If nothing changed, sends a short check-in instead', 'Sends on schedule (automated)'],
-    you: ['Nothing. It stops on its own if they reply'],
-    lead: { subj: 'A new seller on your listing', body: 'Since your audit, a new seller started selling your Hot Pink kit at $4 under your site price…' },
-    chips: { scanner: 'Amazon re-check, send', you: '', lead: 'What changed, or a check-in' },
+    scanner: ['Re-checks sellers, Buy Box and prices through the Amazon API (free)', 'Flags anything new: a new reseller, a price below their site, the Buy Box changing hands', 'Something new: submits FU Day 17 Change with the product and the change filled in. Nothing new: submits FU Day 17 Check-in. HubSpot sends either one', 'Skips it if they replied or booked a call'],
+    you: ['Nothing'],
+    lead: { subj: 'A new seller on your listing', body: 'Since your analysis, a new seller started selling your Hot Pink kit at $4 under your site price…' },
+    chips: { scanner: 'Amazon re-check, trigger send', you: '', lead: 'What changed, or a check-in' },
     cost: ['api'] },
-  { id: 'close', tick: 'Day 25', sub: '23 days after audit', status: 'planned',
-    title: 'Close-out', when: 'About day 25: 23 days after the audit is sent (re-scan runs the day before)',
+  { id: 'close', tick: 'Day 25', sub: '23 days after analysis', status: 'planned',
+    title: 'Close-out', when: 'About day 25: 23 days after the analysis is sent (re-scan runs the day before)',
     goal: 'End with value and leave the door open.',
-    scanner: ['Second Cerebro re-pull: three weeks of movement since the audit', 'Drafts the close-out with the summary and a call offer', 'If no reply, moves the lead to Nurture'],
-    you: ['Review and send'],
-    lead: { subj: 'Three weeks since your audit', body: 'Where your rankings moved, what that likely cost, and an open offer to walk through it whenever the timing is right.' },
-    chips: { scanner: 'Re-scan, draft recap', you: 'Review, send', lead: 'Last note, door open' },
+    scanner: ['Second Cerebro re-pull: three weeks of movement since the analysis', 'Drafts the close-out with the summary and a call offer', 'If no reply, moves the lead to Nurture'],
+    you: ['Review the draft, send it from the contact’s record in HubSpot', 'Click Mark sent'],
+    lead: { subj: 'Three weeks since your analysis', body: 'Where your rankings moved, what that likely cost, and an open offer to walk through it whenever the timing is right.' },
+    chips: { scanner: 'Re-scan, draft recap', you: 'Review, send in HubSpot', lead: 'Last note, door open' },
     cost: ['h10:1'] },
   { id: 'nurture', tick: 'After', sub: 'no reply', cls: 'post', status: 'planned',
     title: 'Nurture', when: 'After the close-out, if they haven’t replied',
@@ -952,15 +953,16 @@ const FLOW = [
 ];
 const FLOW_LANES = [
   ['scanner', 'Scanner', 'Runs on its own'],
-  ['you', 'You', 'Review and send'],
+  ['you', 'You', 'Review, send in HubSpot'],
   ['lead', 'They receive', 'The email'],
 ];
-const FLOW_EXITS = ['They reply → In Conversation', 'A deal is created in HubSpot', 'Not interested or asks to be removed', 'Email bounces'];
+const FLOW_EXITS = ['They reply → In Conversation', 'They book a call', 'A deal is created in HubSpot', 'Not interested, unsubscribes or asks to be removed', 'Email bounces'];
 const FLOW_OPEN = [
-  ['Steps and timing', 'Day 0 welcome, audit by day 2, then follow-ups 2, 5, 9, 15 and 23 days after the audit is sent. If the audit goes out late, everything after it shifts with it. Does that spacing feel right?'],
-  ['Knowing they replied', 'A Replied button on this dashboard, the HubSpot sync reading logged emails, or reading your Gmail later on.'],
-  ['Sending the automated emails', 'Four emails go out without review, so they need a sending tool: HubSpot sequences (paid Sales Hub), or sending through your Gmail. Until one is connected they sit here as ready-to-send drafts.'],
-  ['The three reviewed emails', 'The audit, the day 11 search read and the close-out get a person. Is that the right three?'],
+  ['Sending: decided', 'HubSpot sends every email. The scanner triggers each automated one through a hidden HubSpot form, so it can skip the email when the brand has replied or booked. Works on the free plan; Starter removes the HubSpot branding. Setup steps are in the HubSpot Setup: Inbound Email Flow doc.'],
+  ['HubSpot setup', 'Your own HubSpot user with your inbox and calendar connected, the Medaltus Inbound contact properties, five forms (Inbound Intake, Brand Details, FU Day 7 Case Study, FU Day 17 Change, FU Day 17 Check-in) and four automated emails. Once the forms exist, send their IDs, the Brand Details link and your booking link so the scanner can be wired up.'],
+  ['Day 4 partnership email', 'On hold until you talk with Josh about how he handles that conversation. It needs two versions, so two more hidden forms and emails when it’s ready.'],
+  ['Knowing they replied', 'The hourly HubSpot sync reads replies and booked meetings logged on the contact, with a Replied button on this dashboard as a backup.'],
+  ['Steps and timing', 'Day 0 welcome, analysis by day 2, then follow-ups 2, 5, 9, 15 and 23 days after the analysis is sent. If the analysis goes out late, everything after it shifts with it. Does that spacing feel right?'],
   ['Nurture', 'Quarterly rank checks for leads that go quiet, or stop at the close-out.'],
   ['Case studies', 'The library starts with your Black Friday compliance story and the three results on medaltus.com, none naming the brand. Add more rows to the Case Studies tab as you write them, and a full-story link once each is published.'],
   ['Webflow webhook', 'Turning on the form notification after Monday’s review, with your approval (GTM, Analytics and ad conversions stay untouched).'],
@@ -973,29 +975,28 @@ const FL = { sel: 'confirm' };
 const FLOW_FROM = 'Jaclyn Sonberg <jsonberg@medaltus.com>';
 const FLOW_TO = '{{Maya Chen <maya@lumenandrye.com>}}';
 const FLOW_SIG = '<div class="sig">Warmly,<br><b>Jaclyn Sonberg</b><br>Brand Manager, Medaltus<br>medaltus.com</div>';
-// review: true = a person reads it before it goes out. Everything else sends on schedule from the template
-// (once a sending tool is connected) and stops on its own when an exit rule is hit.
+// review: true = you review it and send it from the contact's record in HubSpot. Everything else HubSpot sends
+// when the scanner submits that email's hidden form, and the scanner skips it once an exit rule is hit.
 const FLOW_EMAILS = {
-  confirm: { review: false, why: 'Sent within minutes of the form. A real person, a way to talk right away, and a few questions that make the audit and the call more useful.', variants: [{ label: 'Welcome', subj: 'Thank you for reaching out, {{Maya}}', body: `
+  confirm: { review: false, why: 'HubSpot sends it within minutes of the form, when the scanner forwards the lead to Inbound Intake. Each revenue range links to the Brand Details form with that range already picked.', variants: [{ label: 'Welcome', subj: 'Excited to get started with {{Lumen & Rye}}', body: `
 Hi {{Maya}},
 
-Thank you for reaching out to Medaltus. I'm Jaclyn, and I'll be your point of contact as we get to know {{Lumen & Rye}}.
+Thank you for reaching out. Our team is excited to work with {{Lumen & Rye}}. One of the first things we do with every partner is a growth and gap analysis, so we can see where the brand is today and where some of the greatest opportunities are.
 
-I'd love to set up a time to talk about where you are today and where you'd like the brand to go. You can pick a time that works for you here: [[calendar link]]
+We'll put it together over the next few days and send it over for your review. In the meantime, a little more detail from you will help us make it as strategic as possible.
 
-One of the first things we do with every brand is a growth and gap analysis: a look at where {{Lumen & Rye}} stands today, what may be holding the brand back and some of the greatest opportunities we see ahead. Our team will compile it over the next few days and send it over for your review.
+To start, roughly where does annual revenue sit today? Just pick one:
+[[Under $500K]] · [[$500K to $2M]] · [[$2M to $10M]] · [[$10M to $50M]] · [[$50M+]]
 
-In the meantime, a little more detail on a few areas will help us make the analysis as strategic and useful for you as possible:
+That link opens a short form with a few more questions we'd love your take on:
 - The products that matter most to you right now
-- Who runs your Amazon today: your team, an agency, a distributor or no one yet
-- Your Amazon seller name, if you sell there yourself
-- Anywhere else you sell today, online or in stores
-- The biggest thing slowing growth right now, whether that's operations, advertising, inventory or something else
-- Where you'd love the brand to be a year from now
+- How revenue splits across your website, marketplaces and retail
+- How things run behind the scenes: your team, any agencies, fulfillment
+- What's on the horizon: launches, new channels, retail moves
+- Anything you've tried that hasn't moved the needle
+- What a great year would look like for the brand
 
-Nothing formal is needed. A quick reply is perfect, and if you'd rather we dig in on our own, we're happy to.
-
-I'm looking forward to learning more about {{Lumen & Rye}}.` }] },
+If it's easier, just reply here instead. And whenever you're ready, you can [[grab time on my calendar]] to talk it through.` }] },
   audit: { review: true, why: 'The first real look at their brand. You verify every number and choose the three findings, so this one always gets a person.', variants: [{ label: 'Audit', subj: 'Your growth and gap analysis for {{Lumen & Rye}}', body: `
 Hi {{Maya}},
 
@@ -1009,7 +1010,7 @@ We looked at your brand the way we would for a partner we already work with, and
 None of this is unusual for a growing brand, and all of it is fixable. The second page outlines where we'd start and why.
 
 I'd love to walk you through it and hear more about your goals for {{Lumen & Rye}}. If you haven't had a chance to book a time yet, you can find one that works here: [[calendar link]]` }] },
-  how: { review: false, why: 'Explains how we work before they have to ask. The scanner picks the version from the audit: whether the brand sells its own Amazon listings today.', variants: [
+  how: { review: false, why: 'On hold until you talk with Josh. Explains how we work before they have to ask. The scanner picks the version from the audit: whether the brand sells its own Amazon listings today.', variants: [
     { label: 'They don’t sell their own Amazon listings', subj: 'How we partner with brands like {{Lumen & Rye}}', body: `
 Hi {{Maya}},
 
@@ -1034,7 +1035,7 @@ Since you already sell on Amazon, we would work alongside your team inside your 
 Our model is a little different from a typical agency. There's no monthly retainer. We invest our own capital in your inventory and advertising, and we only earn when your sales grow. It keeps every recommendation we make focused on what's genuinely best for your brand.
 
 If it would help to talk through what this could look like for you, I'm always happy to.` }] },
-  case: { review: false, why: 'A story from a partner that matches what their audit found. Each case study on the Case Studies tab is a version below; the scanner suggests one per lead and you can change it.', variants: [
+  case: { review: false, why: 'HubSpot sends it when the scanner submits FU Day 7 Case Study with the story filled in. A story from a partner that matches what their analysis found. Each case study on the Case Studies tab is a version below; the scanner suggests one per lead and you can change it.', variants: [
     { label: 'Skincare', subj: 'What partnership has looked like for a skincare brand', body: `
 Hi {{Maya}},
 
@@ -1095,7 +1096,7 @@ Today we see {{Lumen & Rye}} on {{your own site and Amazon}}. For skincare brand
 We run both for our partners today and handle everything from setup through fulfillment, so it wouldn't add to your team's workload.
 
 If expanding is on your radar, I'd love to share how we would approach it.` }] },
-  check15: { review: false, why: 'A free Amazon re-check. It only reports facts the API confirms, so it can go out on its own. If nothing changed it’s a gentle check-in.', variants: [
+  check15: { review: false, why: 'HubSpot sends it when the scanner submits FU Day 17 Change or FU Day 17 Check-in. A free Amazon re-check. It only reports facts the API confirms, so it can go out on its own. If nothing changed it’s a gentle check-in.', variants: [
     { label: 'Something changed', subj: 'Something we noticed on your {{Vitamin C Serum}} listing', body: `
 Hi {{Maya}},
 
@@ -1159,7 +1160,7 @@ function renderFlowEmails() {
   if (FL.view === 'emails') {
     $('fl-key').innerHTML = FLOW_KEY;
     $('fl-all').innerHTML = FLOW.filter(st => FLOW_EMAILS[st.id]).map(st => `<div class="fl-all-step"><div class="tick">${esc(st.tick)}<span>${esc(st.title)}</span></div>
-      <div><div class="fl-why"><em class="fl-rv ${FLOW_EMAILS[st.id].review ? 'rv' : 'auto'}">${FLOW_EMAILS[st.id].review ? 'You review' : 'Automated'}</em> ${esc(FLOW_EMAILS[st.id].why)}</div>${mailCard(st.id)}</div></div>`).join('');
+      <div><div class="fl-why"><em class="fl-rv ${FLOW_EMAILS[st.id].review ? 'rv' : 'auto'}">${FLOW_EMAILS[st.id].review ? 'You send' : 'HubSpot sends'}</em> ${esc(FLOW_EMAILS[st.id].why)}</div>${mailCard(st.id)}</div></div>`).join('');
   } else renderFlowStep();
 }
 function setFlowView(v) { FL.view = v; renderFlow(); }
@@ -1168,7 +1169,7 @@ function flowCost(c) {
   return c.map(x => x === 'api' ? '<i>Amazon API</i>' : x === 'h10:opt' ? '<i class="h10">Helium 10 optional</i>'
     : `<i class="h10">Helium 10 × ${x.split(':')[1]}</i>`).join('');
 }
-const FLOW_STATUS = { built: 'Built', partial: 'Partly built', planned: 'Planned' };
+const FLOW_STATUS = { built: 'Built', partial: 'Partly built', planned: 'Planned', hold: 'On hold' };
 
 function renderFlow() {
   FL.view = FL.view || 'map';
@@ -1178,7 +1179,7 @@ function renderFlow() {
   $('fl-cases-wrap').hidden = FL.view !== 'cases';
   if (FL.view === 'emails') { renderFlowEmails(); return; }
   if (FL.view === 'cases') { renderCaseLibrary(); return; }
-  const tag = id => { const e = FLOW_EMAILS[id]; return e ? `<em class="fl-rv ${e.review ? 'rv' : 'auto'}">${e.review ? 'You review' : 'Automated'}</em>` : ''; };
+  const tag = id => { const e = FLOW_EMAILS[id]; return e ? `<em class="fl-rv ${e.review ? 'rv' : 'auto'}">${e.review ? 'You send' : 'HubSpot sends'}</em>` : ''; };
   const cols = FLOW.map(s => `<div class="fl-tick ${s.cls || ''}"><b>${esc(s.tick)}</b><span>${esc(s.sub)}</span>${tag(s.id)}</div>`).join('');
   let grid = `<div class="fl-grid" style="--n:${FLOW.length}"><div></div><div class="fl-axis">${cols}</div>`;
   for (const [lane, name, sub] of FLOW_LANES) {
@@ -1196,8 +1197,9 @@ function renderFlow() {
     <span><span class="fl-st built">Built</span> works today</span>
     <span><span class="fl-st partial">Partly built</span> pieces in place</span>
     <span><span class="fl-st planned">Planned</span> to build</span>
-    <span><em class="fl-rv rv">You review</em> ${Object.values(FLOW_EMAILS).filter(e => e.review).length} emails</span>
-    <span><em class="fl-rv auto">Automated</em> ${Object.values(FLOW_EMAILS).filter(e => !e.review).length} emails</span>
+    <span><span class="fl-st hold">On hold</span> waiting on a decision</span>
+    <span><em class="fl-rv rv">You send</em> ${Object.values(FLOW_EMAILS).filter(e => e.review).length} emails, reviewed and sent from HubSpot</span>
+    <span><em class="fl-rv auto">HubSpot sends</em> ${Object.values(FLOW_EMAILS).filter(e => !e.review).length} emails, triggered by the scanner</span>
     <span>About ${h10} Helium 10 calls per lead through the close-out (1,000 a month shared across the account)</span></div>`;
   renderFlowStep();
   $('fl-open').innerHTML = `<div class="when">To settle at Monday’s review</div><h2>Open decisions</h2>
@@ -1212,7 +1214,7 @@ function renderFlowStep() {
     <div class="fl-goal">${esc(s.goal)}</div>
     <div class="fl-sec"><h4>The scanner</h4>${list(s.scanner)}${s.cost.length ? `<div class="fl-cost" style="margin-top:6px">${flowCost(s.cost)}</div>` : ''}</div>
     <div class="fl-sec"><h4>You</h4>${list(s.you)}</div>
-    ${FLOW_EMAILS[s.id] ? `<div class="fl-sec"><h4>What they receive <em class="fl-rv ${FLOW_EMAILS[s.id].review ? 'rv' : 'auto'}">${FLOW_EMAILS[s.id].review ? 'You review' : 'Automated'}</em></h4><div class="fl-why">${esc(FLOW_EMAILS[s.id].why)}</div><div class="fl-key">${FLOW_KEY}</div>${mailCard(s.id)}</div>` : ''}`;
+    ${FLOW_EMAILS[s.id] ? `<div class="fl-sec"><h4>What they receive <em class="fl-rv ${FLOW_EMAILS[s.id].review ? 'rv' : 'auto'}">${FLOW_EMAILS[s.id].review ? 'You send' : 'HubSpot sends'}</em></h4><div class="fl-why">${esc(FLOW_EMAILS[s.id].why)}</div><div class="fl-key">${FLOW_KEY}</div>${mailCard(s.id)}</div>` : ''}`;
 }
 
 
