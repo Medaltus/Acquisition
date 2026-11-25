@@ -18,7 +18,7 @@ const PROSPECT_FIELDS = [
   'scan_status', 'scan_completed_at', 'audit_status', 'role_emails', 'warm_intros', 'contacts_checked_at', 'hubspot_company_id',
   // Inbound (website form)
   'form_message', 'hero_products', 'est_revenue', 'inbound_at', 'inbound_step', 'inbound_updated', 'inbound_note',
-  'inbound_answers', 'audit_sent_at', 'audit_due',
+  'inbound_answers', 'audit_sent_at', 'audit_due', 'followup_case',
 ];
 const INBOUND_UNMATCHED_DAYS = 30;
 const HIDDEN = [STATUS.DUPLICATE];
@@ -29,12 +29,13 @@ const pick = (row, fields) => Object.fromEntries(fields.map(f => [f, row[f] ?? '
 export default async function handler(req, res) {
   if (!isDashboardAuthorized(req)) return res.status(401).json({ error: 'Wrong or missing dashboard password' });
   try {
-    const [partners, brands, products, contacts, inbound] = await Promise.all([
+    const [partners, brands, products, contacts, inbound, cases] = await Promise.all([
       readTab(TABS.PARTNERS).catch(() => ({ rows: [] })),
       readTab(TABS.BRANDS),
       readTab(TABS.PRODUCTS),
       readTab(TABS.CONTACTS).catch(() => ({ rows: [] })),
       readTab(TABS.INBOUND).catch(() => ({ rows: [] })),
+      readTab(TABS.CASES).catch(() => ({ rows: [] })),
     ]);
     // Form submissions the scanner couldn't turn into a brand (personal email, no brand name), last 30 days.
     // Partner submissions and duplicates are logged too but aren't listed here.
@@ -87,6 +88,7 @@ export default async function handler(req, res) {
       retired: partnerRows.filter(p => isRetired(p)),
       prospects,
       inboundUnmatched,
+      caseStudies: cases.rows.filter(c => c.case_id).map(({ _row, ...c }) => c),
     });
   } catch (err) {
     console.error('dashboard-data error:', err);
