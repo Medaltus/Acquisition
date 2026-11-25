@@ -34,7 +34,8 @@ export default async function handler(req, res) {
     const contactsBy = {};
     for (const c of contacts.rows) (contactsBy[c.brand_id] ||= []).push({
       name: c.name, title: c.title, rank: Number(c.rank) || 9, email: c.email, email_source: c.email_source,
-      linkedin_url: c.linkedin_url, source: c.source, source_url: c.source_url, evidence: c.evidence });
+      linkedin_url: c.linkedin_url, source: c.source, source_url: c.source_url, evidence: c.evidence,
+      email_status: c.email_status, email_checked_at: c.email_checked_at });
 
     // Per-brand product rollups
     const stats = {};
