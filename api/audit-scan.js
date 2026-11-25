@@ -24,6 +24,9 @@ const HERO_COUNT = 3;
 
 const body = req => (typeof req.body === 'string' ? JSON.parse(req.body || '{}') : (req.body || {}));
 const J = v => JSON.stringify(v);
+const heroKey = t => String(t || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+/** What the brand told us in its reply to the inbound email (saved from the dashboard). */
+const answersOf = brand => { try { return JSON.parse(brand.inbound_answers || '{}'); } catch { return {}; } };
 const dpUrl = asin => `https://www.amazon.com/dp/${asin}`;
 
 /** Build one Audit Data row. */
@@ -74,7 +77,15 @@ async function stageAmazon(ctx) {
   const all = new Map();
   for (const s of byCode.values()) all.set(s.asin, { ...s, via: 'upc' });
   for (const s of brandHits) if (!all.has(s.asin)) all.set(s.asin, { ...s, via: 'brand search' });
-  const heroAsins = String(brand.hero_asins || '').split(/[\s,|]+/).filter(a => /^[A-Z0-9]{10}$/.test(a));
+  // Hero listings: ASINs entered by hand, then the brand's own top products (from their reply to the inbound email)
+  const heroNames = String(brand.hero_products || '').split(/\n|;|\|/).map(heroKey).filter(n => n.length >= 4);
+  const namedHeroAsins = heroNames.length ? heroNames.flatMap(n => products
+    .filter(p => { const t = heroKey(p.product_title); return p.asin && t.length >= 4 && (t.includes(n) || n.includes(t)); })
+    .map(p => p.asin)) : [];
+  const heroAsins = [...new Set([
+    ...String(brand.hero_asins || '').split(/[\s,|]+/).filter(a => /^[A-Z0-9]{10}$/.test(a)),
+    ...namedHeroAsins,
+  ])];
 
   rows.push(dp(ctx, 'Listing control', 'amazon.asin_count', 'Amazon listings found for the brand', all.size,
     { source: 'Amazon SP-API (UPC lookup + brand search)', notes: `${byCode.size} by UPC, ${all.size - byCode.size} by brand search` }));
@@ -214,7 +225,7 @@ async function researchChannels(ctx) {
 Website: ${b.website_url}
 Instagram: ${b.instagram_handle || 'unknown'}   TikTok: ${b.tiktok_handle || 'unknown'}
 Example products: ${ctx.productNames.slice(0, 6).join('; ')}
-
+${answersOf(b).channels ? `The brand says it sells on: ${answersOf(b).channels}. Check each one; don't assume it's accurate or current.\n` : ''}
 Find, for this brand in the United States:
 1. Walmart.com: are its products listed? Is the seller the brand itself or a third party? Note anything off (wrong price, wrong image).
 2. Target+ (Target's marketplace) or Target.com: is it listed? By whom?
