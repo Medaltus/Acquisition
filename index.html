@@ -452,6 +452,29 @@ textarea.input{resize:vertical;min-height:64px;line-height:1.5;}
 .fl-q li b{display:block;margin-bottom:2px;}
 .fl-q li.done{opacity:.6;}
 .fl-mobile{display:none;}
+
+.fl-tabs{display:flex;gap:6px;}
+.fl-mail{border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;background:var(--white);}
+.fl-mail-hd{padding:12px 16px;border-bottom:1px solid var(--border2);background:var(--bg);font-size:12px;color:var(--muted);display:grid;grid-template-columns:56px 1fr;row-gap:3px;}
+.fl-mail-hd b{color:var(--text);font-family:var(--font);font-weight:400;}
+.fl-mail-hd .subj{grid-column:1 / -1;font-family:var(--font-header);font-size:16px;color:var(--text);margin-top:6px;}
+.fl-mail-body{padding:18px 20px 22px;font-size:14px;line-height:1.65;max-width:640px;}
+.fl-mail-body p{margin:0 0 12px;}
+.fl-mail-body ul{margin:0 0 12px 18px;}
+.fl-mail-body li{margin-bottom:6px;}
+.fl-mail-body .sig{margin-top:18px;color:var(--muted);font-size:13px;line-height:1.5;}
+.fl-mail-body .sig b{color:var(--text);font-family:var(--font-header);font-weight:500;}
+mark.fl-m{background:var(--green-dim);color:var(--text);border-bottom:1px dashed var(--green-ink);padding:0 2px;border-radius:2px;}
+mark.fl-need{background:#FBF0E2;border-bottom:1px dashed var(--warn);padding:0 2px;border-radius:2px;color:var(--text);}
+.fl-var{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0;}
+.fl-var button{border:1px solid var(--border);background:var(--white);border-radius:14px;padding:4px 11px;font-size:12px;cursor:pointer;color:var(--text);}
+.fl-var button.on{background:var(--navy);color:#fff;border-color:var(--navy);}
+.fl-why{font-size:12px;color:var(--muted);margin:2px 0 10px;}
+.fl-all{display:flex;flex-direction:column;gap:22px;max-width:760px;}
+.fl-all-step{display:grid;grid-template-columns:70px 1fr;gap:16px;}
+.fl-all-step .tick{font-family:var(--font-bold);font-size:13px;padding-top:12px;}
+.fl-all-step .tick span{display:block;font-family:var(--font);font-size:11px;color:var(--muted);}
+.fl-key{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin-bottom:14px;}
 @media (max-width:1100px){.fl-detail{grid-template-columns:1fr;}}
 @media (prefers-reduced-motion:reduce){*{transition:none !important;}}
 </style>
@@ -567,8 +590,10 @@ textarea.input{resize:vertical;min-height:64px;line-height:1.5;}
         <div class="page-title">Inbound Flow</div>
         <div class="page-sub">What happens to an inbound lead from the form to the close-out, who does each part, and what each touch is for. Click any box for the detail.</div>
       </div>
+      <div class="seg fl-tabs" id="fl-tabs"></div>
     </div>
-    <div class="fl-wrap">
+    <div class="fl-wrap" id="fl-all-wrap" hidden><div class="fl-card"><div class="fl-key" id="fl-key"></div><div class="fl-all" id="fl-all"></div></div></div>
+    <div class="fl-wrap" id="fl-map-wrap">
       <div class="fl-map" id="fl-map"></div>
       <div class="fl-detail"><div class="fl-card" id="fl-step"></div><div class="fl-card" id="fl-open"></div></div>
     </div>
@@ -914,6 +939,146 @@ const FLOW_OPEN = [
 ];
 const FL = { sel: 'audit' };
 
+
+/* Example emails. {{x}} = filled in from the lead's data; [[x]] = still needs real content from us.
+   Sample lead: Maya at Lumen & Rye (a made-up skincare brand), audit sent Mon Nov 30. */
+const FLOW_FROM = 'Jaclyn Sonberg <jsonberg@medaltus.com>';
+const FLOW_TO = '{{Maya Chen <maya@lumenandrye.com>}}';
+const FLOW_SIG = '<div class="sig"><b>Jaclyn Sonberg</b><br>Brand Manager, Medaltus<br>Marketplace growth for beauty and wellness brands since 1997</div>';
+const FLOW_EMAILS = {
+  confirm: { why: 'Fast and human. The four questions make the audit sharper and get them replying before the audit lands.', variants: [{ label: 'Confirmation', subj: 'Your marketplace audit for {{Lumen & Rye}} is underway', body: `
+Hi {{Maya}},
+
+Thanks for reaching out to Medaltus. I'm putting together a free marketplace audit for {{Lumen & Rye}} and you'll have it by {{Wednesday}}.
+
+It covers where your brand sells today, who sells your products on Amazon, how your listings compare and which searches you're missing.
+
+Four quick answers will make it sharper. A line or two each is plenty:
+- Your top three products
+- Your Amazon seller name, if you sell there yourself
+- Other channels you're on (Walmart, Target+, TikTok Shop, retail)
+- A rough annual revenue range
+
+If you'd rather skip them that's fine. The audit works either way.` }] },
+  audit: { why: 'Leads with the three findings they picked so the email stands on its own, even if they never open the PDF.', variants: [{ label: 'Audit', subj: '{{Lumen & Rye}} marketplace audit', body: `
+Hi {{Maya}},
+
+Your audit is attached. Three things stood out:
+- {{Other sellers offer your Vitamin C Serum on Amazon for 18% below your site price}}
+- {{You're on the first page for 3 of your 10 biggest non-branded searches}}
+- {{Your Barrier Cream listing has 4 images where top competitors run 7 or more}}
+
+Page two lays out the first three moves we'd make. If it's useful I'm happy to walk through it in 20 minutes. [[calendar link]]` }] },
+  how: { why: 'Answers the cost question early. The scanner picks the version from the audit: who sells their Amazon listings today.', variants: [
+    { label: 'They don’t sell on Amazon (Model 1)', subj: 'How this would work for {{Lumen & Rye}}', body: `
+Hi {{Maya}},
+
+A quick note on how we'd work together since that's usually the next question.
+
+There's no retainer. We only earn when your products sell.
+
+For a brand where {{other sellers control your Amazon listings}} it usually looks like this. We buy inventory from you at wholesale and become the authorized seller on Amazon, Walmart and the other channels you'd rather not run yourself. You get one seller on your listings and pricing that stays in line with your site.
+
+We work this way with about 50 brands today.
+
+If that sounds like a fit, reply and I'll set up a call.` },
+    { label: 'They sell on Amazon (Model 2)', subj: 'How this would work for {{Lumen & Rye}}', body: `
+Hi {{Maya}},
+
+A quick note on how we'd work together since that's usually the next question.
+
+There's no retainer. We're paid a share of margin, so we only do well when you do.
+
+Since you already sell on Amazon we'd run the account alongside you: listings, ads, inventory planning and expansion to Walmart and TikTok Shop. Your audit showed {{3 of 10 top searches on page one}}, so search is where we'd start.
+
+We fully manage 15 brands this way today.
+
+If that sounds like a fit, reply and I'll set up a call.` }] },
+  case: { why: 'Proof from a similar brand. Needs real case studies from us before it can run.', variants: [{ label: 'Case study', subj: 'What this looked like for [[a skincare brand like yours]]', body: `
+Hi {{Maya}},
+
+[[Partner brand]] came to us with [[the same starting point as yours: resellers undercutting their site price on Amazon]].
+
+In [[12 months]] we [[consolidated their listings to one seller, brought Amazon pricing back in line with their site and grew Amazon sales by X%]].
+
+Your audit showed {{a similar gap on your Vitamin C Serum}}, which is why I thought of them.
+
+Happy to share more if it's helpful.` }] },
+  rank9: { why: 'The scanner re-checks their rankings the day before. It only reports real moves; if nothing moved it sends the channel note instead.', variants: [
+    { label: 'Rankings moved', subj: 'Since we sent your audit', body: `
+Hi {{Maya}},
+
+I re-ran your Amazon search rankings this week. Since your audit on {{Nov 30}}:
+- Dropped: {{"vitamin c serum" (52,000 searches a month) went from #31 to #52, off the first page}}
+- Improved: {{"brightening serum" moved from #61 to #44}}
+- Holding: {{"vitamin c serum for face" steady at #9}}
+
+The drop lines up with {{a new seller taking the Buy Box on your 1 oz size}}. That's the first thing we'd fix since it pulls your ranking down for everyone selling the listing.
+
+Want me to walk you through it?` },
+    { label: 'Nothing moved (channel note)', subj: 'Where else {{Lumen & Rye}} could be selling', body: `
+Hi {{Maya}},
+
+Your Amazon rankings held steady since the audit, so a different thought.
+
+Right now you're on {{your site and Amazon}}. {{Walmart and TikTok Shop}} are where we see brands like yours pick up new customers without discounting. We run both for partners today and can launch them without you adding staff.
+
+Worth a conversation?` }] },
+  check15: { why: 'A free Amazon re-check gives them something new. If nothing changed it stays short.', variants: [
+    { label: 'Something changed', subj: 'A new seller on your {{Vitamin C Serum}}', body: `
+Hi {{Maya}},
+
+Since your audit {{a new seller started offering your Vitamin C Serum on Amazon at $28.99}}. That's {{$9 under your site price}} and they {{now hold the Buy Box}}.
+
+This is the pattern we fix first for brands we work with. Happy to show you how if it's useful.` },
+    { label: 'Nothing changed', subj: 'Quick check-in on your audit', body: `
+Hi {{Maya}},
+
+Checking in on the audit I sent. Did anything in it surprise you or raise questions?
+
+Happy to talk it through whenever works.` }] },
+  close: { why: 'The last touch. Ends with value and leaves the door open without another follow-up.', variants: [{ label: 'Close-out', subj: 'Three weeks since your audit', body: `
+Hi {{Maya}},
+
+I'll keep this short. In the three weeks since your audit:
+- {{You're on the first page for 2 of your 10 biggest searches, down from 3}}
+- {{"vitamin c serum" is at #58 (52,000 searches a month)}}
+- {{Two sellers are still offering your products below your site price}}
+
+I won't keep filling your inbox. If the timing changes, reply here and we'll pick it up from your audit.` }] },
+};
+const FLV = {};   // selected variant per step
+
+function mailHtml(text) {
+  const inline = t => esc(t).replace(/\{\{(.+?)\}\}/g, '<mark class="fl-m">$1</mark>').replace(/\[\[(.+?)\]\]/g, '<mark class="fl-need">$1</mark>');
+  const out = []; let list = [];
+  const flush = () => { if (list.length) { out.push(`<ul>${list.map(l => `<li>${inline(l)}</li>`).join('')}</ul>`); list = []; } };
+  for (const block of text.trim().split(/\n\s*\n/)) {
+    const lines = block.split('\n');
+    const head = lines.filter(l => !l.startsWith('- ')), items = lines.filter(l => l.startsWith('- '));
+    if (head.length) out.push(`<p>${head.map(inline).join('<br>')}</p>`);
+    list.push(...items.map(l => l.slice(2))); flush();
+  }
+  return out.join('');
+}
+function mailCard(stepId) {
+  const e = FLOW_EMAILS[stepId]; if (!e) return '';
+  const v = e.variants[FLV[stepId] || 0];
+  const inline = t => esc(t).replace(/\{\{(.+?)\}\}/g, '<mark class="fl-m">$1</mark>').replace(/\[\[(.+?)\]\]/g, '<mark class="fl-need">$1</mark>');
+  return `${e.variants.length > 1 ? `<div class="fl-var">${e.variants.map((x, i) => `<button class="${(FLV[stepId] || 0) === i ? 'on' : ''}" onclick="FLV['${stepId}']=${i};renderFlowEmails()">${esc(x.label)}</button>`).join('')}</div>` : ''}
+    <div class="fl-mail"><div class="fl-mail-hd"><span>From</span><b>${esc(FLOW_FROM)}</b><span>To</span><b>${inline(FLOW_TO)}</b><div class="subj">${inline(v.subj)}</div></div>
+    <div class="fl-mail-body">${mailHtml(v.body)}${FLOW_SIG}</div></div>`;
+}
+const FLOW_KEY = '<span><mark class="fl-m">Green</mark> fills in from the lead and their audit</span><span><mark class="fl-need">Orange</mark> needs real content from us</span><span>Sample lead: Maya at Lumen &amp; Rye, a made-up skincare brand</span>';
+function renderFlowEmails() {
+  if (FL.view === 'emails') {
+    $('fl-key').innerHTML = FLOW_KEY;
+    $('fl-all').innerHTML = FLOW.filter(st => FLOW_EMAILS[st.id]).map(st => `<div class="fl-all-step"><div class="tick">${esc(st.tick)}<span>${esc(st.title)}</span></div>
+      <div><div class="fl-why">${esc(FLOW_EMAILS[st.id].why)}</div>${mailCard(st.id)}</div></div>`).join('');
+  } else renderFlowStep();
+}
+function setFlowView(v) { FL.view = v; renderFlow(); }
+
 function flowCost(c) {
   return c.map(x => x === 'api' ? '<i>Amazon API</i>' : x === 'h10:opt' ? '<i class="h10">Helium 10 optional</i>'
     : `<i class="h10">Helium 10 × ${x.split(':')[1]}</i>`).join('');
@@ -921,6 +1086,11 @@ function flowCost(c) {
 const FLOW_STATUS = { built: 'Built', partial: 'Partly built', planned: 'Planned' };
 
 function renderFlow() {
+  FL.view = FL.view || 'map';
+  $('fl-tabs').innerHTML = [['map', 'Flow map'], ['emails', 'Read the emails']].map(([v, l]) => `<button class="${FL.view === v ? 'active' : ''}" onclick="setFlowView('${v}')">${l}</button>`).join('');
+  $('fl-map-wrap').hidden = FL.view !== 'map';
+  $('fl-all-wrap').hidden = FL.view !== 'emails';
+  if (FL.view === 'emails') { renderFlowEmails(); return; }
   const cols = FLOW.map(s => `<div class="fl-tick ${s.cls || ''}"><b>${esc(s.tick)}</b><span>${esc(s.sub)}</span></div>`).join('');
   let grid = `<div class="fl-grid" style="--n:${FLOW.length}"><div></div><div class="fl-axis">${cols}</div>`;
   for (const [lane, name, sub] of FLOW_LANES) {
@@ -952,8 +1122,7 @@ function renderFlowStep() {
     <div class="fl-goal">${esc(s.goal)}</div>
     <div class="fl-sec"><h4>The scanner</h4>${list(s.scanner)}${s.cost.length ? `<div class="fl-cost" style="margin-top:6px">${flowCost(s.cost)}</div>` : ''}</div>
     <div class="fl-sec"><h4>You</h4>${list(s.you)}</div>
-    ${s.lead ? `<div class="fl-sec"><h4>What they receive</h4><div class="fl-email"><div class="subj">${esc(s.lead.subj)}</div>${esc(s.lead.body)}</div>
-      <div class="small muted" style="margin-top:6px">Example wording only. Final copy will match medaltus.com.</div></div>` : ''}`;
+    ${FLOW_EMAILS[s.id] ? `<div class="fl-sec"><h4>What they receive</h4><div class="fl-why">${esc(FLOW_EMAILS[s.id].why)}</div><div class="fl-key">${FLOW_KEY}</div>${mailCard(s.id)}</div>` : ''}`;
 }
 
 /* ───────────── Current brands ───────────── */
