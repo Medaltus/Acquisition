@@ -80,6 +80,8 @@ export const HEADERS = {
   [TABS.CONTACTS]: [
     'brand_id', 'brand_name', 'name', 'title', 'rank', 'email', 'email_source', 'linkedin_url',
     'source', 'source_url', 'evidence', 'found_at',
+    // Hunter.io lookups (find-emails.js)
+    'email_status', 'email_score', 'email_checked_at',
   ],
   // Paste or import the CRM export here, then run /api/import-crm
   [TABS.CRM_IMPORT]: [
