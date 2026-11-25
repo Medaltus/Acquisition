@@ -402,6 +402,57 @@ textarea.input{resize:vertical;min-height:64px;line-height:1.5;}
   .pipeline{grid-template-columns:repeat(2,minmax(0,1fr));}
   input.field[type=search]{min-width:0;flex:1;}
 }
+
+/* ── Inbound flow map ── */
+.fl-wrap{display:flex;flex-direction:column;gap:16px;}
+.fl-map{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:22px 22px 18px;overflow-x:auto;}
+.fl-grid{display:grid;grid-template-columns:110px repeat(var(--n),minmax(108px,1fr));min-width:1100px;}
+.fl-axis{grid-column:2 / -1;display:grid;grid-template-columns:repeat(var(--n),minmax(108px,1fr));position:relative;margin-bottom:6px;}
+.fl-axis::before{content:'';position:absolute;left:0;right:0;top:15px;height:2px;background:var(--bg2);}
+.fl-tick{position:relative;text-align:center;}
+.fl-tick b{display:inline-flex;align-items:center;justify-content:center;min-width:46px;height:32px;padding:0 10px;border-radius:16px;background:var(--white);border:2px solid var(--navy);font-family:var(--font-bold);font-size:12px;position:relative;z-index:1;}
+.fl-tick.d0 b{background:var(--navy);color:#fff;}
+.fl-tick.pre b,.fl-tick.post b{border-style:dashed;border-color:var(--slate);color:var(--slate);}
+.fl-tick span{display:block;font-size:11px;color:var(--muted);margin-top:4px;}
+.fl-lane-name{grid-column:1;display:flex;flex-direction:column;justify-content:center;padding:10px 12px 10px 0;border-top:1px solid var(--border2);}
+.fl-lane-name b{font-size:13px;}
+.fl-lane-name span{font-size:11px;color:var(--muted);line-height:1.35;}
+.fl-cell{border-top:1px solid var(--border2);padding:8px 5px;display:flex;}
+.fl-chip{flex:1;text-align:left;border:1px solid var(--border);background:var(--bg);border-radius:var(--radius-sm);padding:8px 9px;font-size:12px;line-height:1.35;color:var(--text);cursor:pointer;min-height:58px;display:flex;flex-direction:column;gap:5px;}
+.fl-chip:hover{border-color:var(--navy);}
+.fl-chip.sel{border-color:var(--navy);box-shadow:0 0 0 2px var(--navy) inset;background:var(--white);}
+.fl-chip.lane-you{background:#FBF3EC;border-color:rgba(200,125,47,.25);}
+.fl-chip.lane-lead{background:var(--white);}
+.fl-chip.empty{visibility:hidden;}
+.fl-cost{display:flex;gap:4px;flex-wrap:wrap;}
+.fl-cost i{font-style:normal;font-size:10px;padding:1px 6px;border-radius:9px;background:var(--navy-dim);color:var(--navy);}
+.fl-cost i.h10{background:#EDE7FB;color:#4b2a9e;}
+.fl-exit{grid-column:2 / -1;margin-top:12px;border:2px dashed var(--danger);border-radius:var(--radius-sm);padding:9px 12px;font-size:12px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;color:var(--text);}
+.fl-exit b{color:var(--danger);}
+.fl-exit span{background:#fdeceb;border-radius:9px;padding:2px 8px;}
+.fl-legend{display:flex;gap:14px;flex-wrap:wrap;font-size:11px;color:var(--muted);margin-top:14px;}
+.fl-legend span{display:inline-flex;align-items:center;gap:5px;}
+.fl-st{font-size:10px;padding:1px 7px;border-radius:9px;white-space:nowrap;align-self:flex-start;}
+.fl-st.built{background:var(--green-dim);color:var(--green-ink);}
+.fl-st.partial{background:#FBF0E2;color:var(--warn);}
+.fl-st.planned{background:var(--bg2);color:var(--slate);}
+.fl-detail{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:16px;}
+.fl-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:20px 22px;}
+.fl-card h2{font-family:var(--font-header);font-size:20px;font-weight:500;margin:4px 0 2px;}
+.fl-card .when{font-family:var(--font-subheader);font-style:italic;color:var(--slate);font-size:15px;}
+.fl-goal{margin:14px 0 16px;padding:12px 14px;border-left:3px solid var(--green);background:var(--green-dim);border-radius:0 var(--radius-sm) var(--radius-sm) 0;font-size:14px;}
+.fl-sec{margin-top:14px;}
+.fl-sec h4{font-family:var(--font-header);font-size:13px;font-weight:500;margin-bottom:6px;}
+.fl-sec ul{padding-left:18px;}
+.fl-sec li{margin-bottom:4px;}
+.fl-email{background:var(--bg);border-radius:var(--radius-sm);padding:12px 14px;font-size:13px;line-height:1.6;}
+.fl-email .subj{font-family:var(--font-bold);margin-bottom:6px;}
+.fl-q{display:flex;flex-direction:column;gap:10px;}
+.fl-q li{list-style:none;padding:10px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);}
+.fl-q li b{display:block;margin-bottom:2px;}
+.fl-q li.done{opacity:.6;}
+.fl-mobile{display:none;}
+@media (max-width:1100px){.fl-detail{grid-template-columns:1fr;}}
 @media (prefers-reduced-motion:reduce){*{transition:none !important;}}
 </style>
 </head>
@@ -438,6 +489,9 @@ textarea.input{resize:vertical;min-height:64px;line-height:1.5;}
     <div class="nav-section">Growth</div>
     <button class="nav-btn" data-page="inbound" onclick="showPage('inbound')">
       <svg viewBox="0 0 16 16"><path d="M1.5 9.5h3.5l1 2h4l1-2h3.5"/><path d="M1.5 9.5L3.5 3h9l2 6.5v4a1 1 0 01-1 1h-11a1 1 0 01-1-1z"/></svg>Inbound Leads<span class="nav-badge" id="nb-inbound">–</span>
+    </button>
+    <button class="nav-btn" data-page="flow" onclick="showPage('flow')">
+      <svg viewBox="0 0 16 16"><circle cx="3" cy="8" r="1.8"/><circle cx="13" cy="8" r="1.8"/><circle cx="8" cy="8" r="1.8"/><path d="M4.8 8h1.4M9.8 8h1.4"/></svg>Inbound Flow
     </button>
     <button class="nav-btn" data-page="prospects" onclick="showPage('prospects')">
       <svg viewBox="0 0 16 16"><circle cx="7" cy="7" r="5"/><path d="M10.7 10.7L14.5 14.5"/></svg>Future Prospects<span class="nav-badge" id="nb-prospects">–</span>
@@ -504,6 +558,20 @@ textarea.input{resize:vertical;min-height:64px;line-height:1.5;}
     <div class="filters"><div class="seg" id="ib-seg"></div></div>
     <div class="card"><div class="table-wrap" id="inbound-table"><div class="loading">Loading leads…</div></div></div>
     <div id="inbound-unmatched"></div>
+  </section>
+
+  <!-- ══ INBOUND FLOW (planning map) ══ -->
+  <section class="page" id="page-flow">
+    <div class="page-hd">
+      <div>
+        <div class="page-title">Inbound Flow</div>
+        <div class="page-sub">What happens to an inbound lead from the form to the close-out, who does each part, and what each touch is for. Click any box for the detail.</div>
+      </div>
+    </div>
+    <div class="fl-wrap">
+      <div class="fl-map" id="fl-map"></div>
+      <div class="fl-detail"><div class="fl-card" id="fl-step"></div><div class="fl-card" id="fl-open"></div></div>
+    </div>
   </section>
 
   <!-- ══ PROSPECTS ══ -->
@@ -653,7 +721,7 @@ textarea.input{resize:vertical;min-height:64px;line-height:1.5;}
 const KEY_STORE = 'medaltus_portfolio_key';
 let DATA = null;
 const UI = { currentRows: [], retiredRows: [], stage: '', az: '', shown: 60, open: null, productCache: {}, missingOnly: {}, currentSort: 'sign_date' };
-const PAGE_TITLES = { current: 'Current Brands', retired: 'Retired Brands', inbound: 'Inbound Leads', prospects: 'Future Prospects', audit: 'Audit Builder' };
+const PAGE_TITLES = { current: 'Current Brands', retired: 'Retired Brands', inbound: 'Inbound Leads', flow: 'Inbound Flow', prospects: 'Future Prospects', audit: 'Audit Builder' };
 
 // rank = order for "Sort: best fit" (best prospects first)
 const AZ = [
@@ -749,7 +817,143 @@ function showPage(page) {
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.toggle('active', b.dataset.page === page));
   $('topbar-title').textContent = PAGE_TITLES[page];
   history.replaceState(null, '', '#' + page);
+  if (page === 'flow') renderFlow();
   document.querySelector('.main').scrollTop = 0;
+}
+
+
+/* ───────────── Inbound flow map (planning view) ───────────── */
+// status: built | partial | planned. h10 = Helium 10 calls per lead; api = free Amazon API checks.
+const FLOW = [
+  { id: 'form', tick: 'Form', sub: 'they submit', cls: 'pre', status: 'built',
+    title: 'They fill out the form', when: 'Any time, on medaltus.com',
+    goal: 'Capture the lead the moment it comes in, and start the work before anyone has to touch it.',
+    scanner: ['Receives the Webflow form (once the webhook is turned on after Monday’s review)', 'Matches the brand to an existing prospect or creates one', 'Guesses the website from what they typed or their email domain', 'Skips current partners and duplicate submissions', 'Starts the fast-track scan'],
+    you: ['Nothing yet'],
+    lead: null,
+    chips: { scanner: 'Match brand, start scan', you: '', lead: '' },
+    cost: ['api'] },
+  { id: 'confirm', tick: 'Same day', sub: 'confirmation', cls: 'pre', status: 'partial',
+    title: 'Confirmation and questions', when: 'Within a few hours of the form',
+    goal: 'Show them a real person read it, and get the four answers that make the audit sharper.',
+    scanner: ['Drafts the confirmation email', 'Saves their answers when you paste them into Their answers, and re-runs the scan if they named products or a seller'],
+    you: ['Send the confirmation', 'Paste their reply into Their answers'],
+    lead: { subj: 'Got it, your marketplace audit is underway', body: 'Thanks for reaching out. We’re building a free audit of where your brand shows up across Amazon, Walmart, Target+ and TikTok Shop. Four quick answers make it sharper: your top 3 products, your Amazon seller name (if you sell there), other channels you’re on, and a rough annual revenue range.' },
+    chips: { scanner: 'Draft confirmation', you: 'Send it, paste answers', lead: 'Confirmation + 4 questions' },
+    cost: [] },
+  { id: 'audit', tick: 'Day 0', sub: 'audit sent', cls: 'd0', status: 'built',
+    title: 'The audit', when: 'Due 2 business days after the form. Sending it starts the clock.',
+    goal: 'Show them problems on their own listings they didn’t know they had, with numbers they can check.',
+    scanner: ['Amazon API: listings, sellers, Buy Box, prices vs their site, hero listing scorecard (auto-verified)', 'Helium 10 Cerebro: keyword ranks and search volume for each hero product family, plus last month for movement', 'Web research: Walmart, Target+, TikTok Shop, social, competitors (needs your check)', 'Ranks the findings and suggests the PDF cards', 'Saves the keyword baseline to Rank Snapshots'],
+    you: ['Review the flagged data and pick the findings', 'Export the PDF and send it', 'Click Mark sent'],
+    lead: { subj: 'Your Marketplace Gap Audit', body: 'Two pages: where you sell today, what’s costing you on Amazon (pricing, sellers, listings, search), and the three moves we’d make first.' },
+    chips: { scanner: 'Amazon + Cerebro + web, findings', you: 'Review, send PDF, Mark sent', lead: 'Audit PDF' },
+    cost: ['h10:4', 'api'] },
+  { id: 'how', tick: '+2', sub: 'days', status: 'planned',
+    title: 'How partnering works', when: '2 days after the audit',
+    goal: 'Answer “what would this cost me” before they have to ask.',
+    scanner: ['Picks the model from the audit: Model 1 (we buy inventory and sell on channels they don’t run) if they don’t sell their own Amazon listings, Model 2 (we run their account for a share of margin) if they do', 'Drafts the email with their brand and top finding'],
+    you: ['Review and send'],
+    lead: { subj: 'How this would work for [brand]', body: '$0 retainer either way: we only earn when you sell. For a brand where resellers hold your Buy Box, that usually means…' },
+    chips: { scanner: 'Pick model, draft', you: 'Review, send', lead: 'How partnering works' },
+    cost: [] },
+  { id: 'case', tick: '+5', sub: 'days', status: 'planned',
+    title: 'Case study', when: '5 days after the audit',
+    goal: 'Proof from a brand like theirs.',
+    scanner: ['Matches a partner case study by category (skincare, nail, wellness, haircare)', 'Drafts the email'],
+    you: ['Review and send', 'Supply the case studies we can name, with real numbers (needed before this step can run)'],
+    lead: { subj: 'What this looked like for a brand like yours', body: 'A short before and after from a partner in the same category.' },
+    chips: { scanner: 'Match case study, draft', you: 'Review, send', lead: 'Case study' },
+    cost: [] },
+  { id: 'rank9', tick: '+9', sub: 'days', status: 'planned',
+    title: 'Rank check', when: '9 days after the audit (re-scan runs the day before)',
+    goal: 'Give them a reason to reply that a generic check-in can’t: what changed on their own listings since the audit.',
+    scanner: ['Re-pulls Cerebro on the same hero products', 'Compares to the baseline: dropped, improved, steady', 'Only counts real moves: 1,000+ searches a month, and 5+ spots or crossing page 1', 'Writes 2–3 next steps tied to the audit findings', 'If nothing moved, drafts the channel note instead of forcing a ranking story'],
+    you: ['Review the change report and send'],
+    lead: { subj: 'Since we sent your audit', body: 'You dropped from #6 to #19 for “quick dry nail polish” (40K searches a month), which takes you off page 1. Here’s what we’d look at first…' },
+    chips: { scanner: 'Re-scan, change report', you: 'Review, send', lead: 'What changed since the audit' },
+    cost: ['h10:1'] },
+  { id: 'check15', tick: '+15', sub: 'days', status: 'planned',
+    title: 'Check-in with something new', when: '15 days after the audit',
+    goal: 'A fresh reason to reply, at no Helium 10 cost.',
+    scanner: ['Re-checks sellers, Buy Box and prices through the Amazon API (free)', 'Flags anything new: a new reseller, a price below their site, the Buy Box changing hands', 'If nothing changed, drafts a short check-in'],
+    you: ['Review and send'],
+    lead: { subj: 'A new seller on your listing', body: 'Since your audit, a new seller started selling your Hot Pink kit at $4 under your site price…' },
+    chips: { scanner: 'Amazon re-check', you: 'Review, send', lead: 'New change, or short check-in' },
+    cost: ['api'] },
+  { id: 'close', tick: '+23', sub: 'days', status: 'planned',
+    title: 'Close-out', when: '23 days after the audit (re-scan runs the day before)',
+    goal: 'End with value and leave the door open.',
+    scanner: ['Second Cerebro re-pull: three weeks of movement since the audit', 'Drafts the close-out with the summary and a call offer', 'If no reply, moves the lead to Nurture'],
+    you: ['Review and send'],
+    lead: { subj: 'Three weeks since your audit', body: 'Where your rankings moved, what that likely cost, and an open offer to walk through it whenever the timing is right.' },
+    chips: { scanner: 'Re-scan, 3-week recap', you: 'Review, send', lead: 'Recap + open door' },
+    cost: ['h10:1'] },
+  { id: 'nurture', tick: 'After', sub: 'no reply', cls: 'post', status: 'planned',
+    title: 'Nurture', when: 'After the close-out, if they haven’t replied',
+    goal: 'Stay useful without chasing.',
+    scanner: ['Option: a quarterly rank check as a reason to reconnect (about 1–2 Helium 10 calls each)', 'Otherwise the lead rests in Future Prospects'],
+    you: ['Decide whether quarterly check-ins are worth it'],
+    lead: null,
+    chips: { scanner: 'Quarterly check (optional)', you: '', lead: '' },
+    cost: ['h10:opt'] },
+];
+const FLOW_LANES = [
+  ['scanner', 'Scanner', 'Runs on its own'],
+  ['you', 'You', 'Review and send'],
+  ['lead', 'They receive', 'The email'],
+];
+const FLOW_EXITS = ['They reply → In Conversation', 'A deal is created in HubSpot', 'Not interested or asks to be removed', 'Email bounces'];
+const FLOW_OPEN = [
+  ['Steps and timing', 'Do the seven touches and the +2 / +5 / +9 / +15 / +23 spacing feel right, or should the flow be shorter?'],
+  ['Knowing they replied', 'A Replied button on this dashboard, the HubSpot sync reading logged emails, or reading your Gmail later on.'],
+  ['Who sends', 'You send from your own inbox, copying drafts from here. Later, the scanner could create the drafts in Gmail for you. Nothing would send on its own.'],
+  ['Nurture', 'Quarterly rank checks for leads that go quiet, or stop at the close-out.'],
+  ['Case studies', 'Which partner brands we can name, and with what numbers. The +5 step needs these.'],
+  ['Webflow webhook', 'Turning on the form notification after Monday’s review, with your approval (GTM, Analytics and ad conversions stay untouched).'],
+];
+const FL = { sel: 'audit' };
+
+function flowCost(c) {
+  return c.map(x => x === 'api' ? '<i>Amazon API</i>' : x === 'h10:opt' ? '<i class="h10">Helium 10 optional</i>'
+    : `<i class="h10">Helium 10 × ${x.split(':')[1]}</i>`).join('');
+}
+const FLOW_STATUS = { built: 'Built', partial: 'Partly built', planned: 'Planned' };
+
+function renderFlow() {
+  const cols = FLOW.map(s => `<div class="fl-tick ${s.cls || ''}"><b>${esc(s.tick)}</b><span>${esc(s.sub)}</span></div>`).join('');
+  let grid = `<div class="fl-grid" style="--n:${FLOW.length}"><div></div><div class="fl-axis">${cols}</div>`;
+  for (const [lane, name, sub] of FLOW_LANES) {
+    grid += `<div class="fl-lane-name"><b>${name}</b><span>${sub}</span></div>`;
+    for (const s of FLOW) {
+      const label = s.chips[lane];
+      grid += `<div class="fl-cell">${label ? `<button class="fl-chip lane-${lane}${FL.sel === s.id ? ' sel' : ''}" onclick="selectFlow('${s.id}')">
+        <span>${esc(label)}</span>${lane === 'scanner' ? `<span class="fl-cost">${flowCost(s.cost)}</span><span class="fl-st ${s.status}">${FLOW_STATUS[s.status]}</span>` : ''}</button>`
+        : '<div class="fl-chip empty"></div>'}</div>`;
+    }
+  }
+  grid += `<div></div><div class="fl-exit"><b>Stops the flow at any point:</b>${FLOW_EXITS.map(e => `<span>${esc(e)}</span>`).join('')}</div></div>`;
+  const h10 = FLOW.flatMap(s => s.cost).filter(c => /^h10:\d/.test(c)).reduce((a, c) => a + Number(c.split(':')[1]), 0);
+  $('fl-map').innerHTML = grid + `<div class="fl-legend">
+    <span><span class="fl-st built">Built</span> works today</span>
+    <span><span class="fl-st partial">Partly built</span> pieces in place</span>
+    <span><span class="fl-st planned">Planned</span> to build</span>
+    <span>About ${h10} Helium 10 calls per lead through the close-out (1,000 a month shared across the account)</span></div>`;
+  renderFlowStep();
+  $('fl-open').innerHTML = `<div class="when">To settle at Monday’s review</div><h2>Open decisions</h2>
+    <ul class="fl-q" style="margin-top:14px">${FLOW_OPEN.map(([t, d]) => `<li><b>${esc(t)}</b>${esc(d)}</li>`).join('')}</ul>`;
+}
+function selectFlow(id) { FL.sel = id; renderFlow(); }
+function renderFlowStep() {
+  const s = FLOW.find(x => x.id === FL.sel) || FLOW[0];
+  const list = a => `<ul>${a.map(x => `<li>${esc(x)}</li>`).join('')}</ul>`;
+  $('fl-step').innerHTML = `<div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start">
+      <div><div class="when">${esc(s.when)}</div><h2>${esc(s.title)}</h2></div><span class="fl-st ${s.status}">${FLOW_STATUS[s.status]}</span></div>
+    <div class="fl-goal">${esc(s.goal)}</div>
+    <div class="fl-sec"><h4>The scanner</h4>${list(s.scanner)}${s.cost.length ? `<div class="fl-cost" style="margin-top:6px">${flowCost(s.cost)}</div>` : ''}</div>
+    <div class="fl-sec"><h4>You</h4>${list(s.you)}</div>
+    ${s.lead ? `<div class="fl-sec"><h4>What they receive</h4><div class="fl-email"><div class="subj">${esc(s.lead.subj)}</div>${esc(s.lead.body)}</div>
+      <div class="small muted" style="margin-top:6px">Example wording only. Final copy will match medaltus.com.</div></div>` : ''}`;
 }
 
 /* ───────────── Current brands ───────────── */
