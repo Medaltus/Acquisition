@@ -175,3 +175,23 @@ export async function logRun(entry) {
     console.error('Run Log write failed:', e.message);
   }
 }
+
+/** Delete whole rows (sheet row numbers, 1-based) from a tab. Deletes bottom-up so row numbers stay valid. */
+export async function deleteRows(tab, rowNumbers) {
+  const rowsDesc = [...new Set(rowNumbers)].filter(n => n > 1).sort((a, b) => b - a);
+  if (!rowsDesc.length) return 0;
+  const meta = await gfetch('?fields=sheets.properties(sheetId,title)');
+  const props = (meta.sheets || []).map(s => s.properties).find(p => p.title === tab);
+  if (!props) throw new Error(`Tab "${tab}" not found`);
+  // Group consecutive rows into ranges: [10, 9, 8, 4] -> 8-10, 4
+  const ranges = [];
+  for (const n of rowsDesc) {
+    const last = ranges[ranges.length - 1];
+    if (last && last.start === n + 1) last.start = n; else ranges.push({ start: n, end: n });
+  }
+  const requests = ranges.map(r => ({ deleteDimension: { range: { sheetId: props.sheetId, dimension: 'ROWS', startIndex: r.start - 1, endIndex: r.end } } }));
+  for (let i = 0; i < requests.length; i += 100) {
+    await gfetch(':batchUpdate', { method: 'POST', body: JSON.stringify({ requests: requests.slice(i, i + 100) }) });
+  }
+  return rowsDesc.length;
+}
