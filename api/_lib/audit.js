@@ -159,6 +159,7 @@ export function buildFacts(rows) {
     refs: ['name', 'channels', 'amazon_reviews', 'est_monthly_revenue'].map(k => `competitor.${i}.${k}`).filter(k => by[k]),
   })).filter(c => c.name);
 
+  f.visibility = parseJ(val('visibility.summary'));             // Helium 10 Cerebro summary, when it ran
   f.keywords = live.filter(r => /^visibility\.kw\.\d+\.rank$/.test(r.field)).map(r => ({
     keyword: val(r.field.replace('.rank', '.keyword')), rank: r.value, ref: r.field,
     refs: [r.field, r.field.replace('.rank', '.keyword')],
@@ -419,8 +420,65 @@ export const FINDINGS = [
     },
   },
   {
+    id: 'missed_keyword', category: 'visibility', model: 'either',
+    test: f => {
+      const k = f.visibility?.missed;
+      if (!k) return null;
+      return {
+        big: k.rank ? `#${k.rank}` : 'Unranked', score: 70, refs: ['visibility.summary'],
+        claim: `for “${k.phrase}”, ${fmtK(k.volume)} Amazon searches a month.`,
+        detail: k.rank ? 'Most shoppers buy from the first page of results.' : 'Your listings don’t rank for it at all.',
+        fix: 'Rebuild the listing around it and support it with PPC.',
+        step: `Rank for “${k.phrase}”`,
+      };
+    },
+  },
+  {
+    id: 'page1_share', category: 'visibility', model: 'either',
+    test: f => {
+      const v = f.visibility;
+      if (!v || v.top10Count < 5 || v.page1Count > Math.floor(v.top10Count * 0.3)) return null;
+      return {
+        big: `${v.page1Count} of ${v.top10Count}`, score: 65, refs: ['visibility.summary'],
+        claim: 'of your biggest non-branded keywords put you on page 1.',
+        detail: 'Shoppers who don’t know your name yet aren’t finding you.',
+        fix: 'Keyword-led listing rebuild plus targeted PPC.',
+        step: 'Win page 1 for your core keywords',
+      };
+    },
+  },
+  {
+    id: 'rank_slipping', category: 'visibility', model: 'either',
+    test: f => {
+      const k = f.visibility?.slipping;
+      if (!k) return null;
+      return {
+        big: `#${k.lastMonthRank} → #${k.rank}`, score: 62, refs: ['visibility.summary'],
+        claim: `for “${k.phrase}” over the past month.`,
+        detail: `${fmtK(k.volume)} searches a month, and the listing is losing ground.`,
+        fix: 'Find what changed (price, stock, reviews, ads) and recover the rank.',
+        step: `Recover your rank for “${k.phrase}”`,
+      };
+    },
+  },
+  {
+    id: 'brand_name_ads', category: 'visibility', model: 'either',
+    test: f => {
+      const k = f.visibility?.brandAds;
+      if (!k || k.sponsoredAds < 10 || k.volume < 100) return null;
+      return {
+        big: String(k.sponsoredAds), score: 52, refs: ['visibility.summary'],
+        claim: `sponsored products show when shoppers search “${k.phrase}”.`,
+        detail: 'Shoppers already looking for you see other products first.',
+        fix: 'Defend your brand terms with your own ads and Brand Registry.',
+        step: 'Defend searches for your brand name',
+      };
+    },
+  },
+  {
     id: 'keyword_not_ranking', category: 'visibility', model: 'either',
     test: f => {
+      if (f.visibility) return null;   // Cerebro findings above replace this
       const unranked = r => /not|unranked|none/i.test(String(r));
       const k = f.keywords.find(x => unranked(x.rank) || num(x.rank) > 100);
       if (!k) return null;
