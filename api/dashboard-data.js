@@ -15,7 +15,7 @@ const PROSPECT_FIELDS = [
   'amazon_asin_count', 'amazon_upc_matches', 'amazon_max_sellers', 'amazon_price_gap',
   'amazon_checked_at', 'amazon_notes', 'amazon_seller_id', 'amazon_brand_buybox', 'hubspot_company_id', 'hubspot_url', 'hubspot_owner', 'hubspot_stage', 'hubspot_synced_at', 'outreach_status', 'outreach_owner', 'outreach_updated',
   'next_step', 'outreach_notes', 'contact_name', 'contact_title', 'contact_email', 'contact_linkedin',
-  'scan_status', 'scan_completed_at', 'audit_status',
+  'scan_status', 'scan_completed_at', 'audit_status', 'role_emails', 'warm_intros', 'contacts_checked_at', 'hubspot_company_id',
 ];
 const HIDDEN = [STATUS.DUPLICATE];
 
@@ -25,11 +25,16 @@ const pick = (row, fields) => Object.fromEntries(fields.map(f => [f, row[f] ?? '
 export default async function handler(req, res) {
   if (!isDashboardAuthorized(req)) return res.status(401).json({ error: 'Wrong or missing dashboard password' });
   try {
-    const [partners, brands, products] = await Promise.all([
+    const [partners, brands, products, contacts] = await Promise.all([
       readTab(TABS.PARTNERS).catch(() => ({ rows: [] })),
       readTab(TABS.BRANDS),
       readTab(TABS.PRODUCTS),
+      readTab(TABS.CONTACTS).catch(() => ({ rows: [] })),
     ]);
+    const contactsBy = {};
+    for (const c of contacts.rows) (contactsBy[c.brand_id] ||= []).push({
+      name: c.name, title: c.title, rank: Number(c.rank) || 9, email: c.email, email_source: c.email_source,
+      linkedin_url: c.linkedin_url, source: c.source, source_url: c.source_url, evidence: c.evidence });
 
     // Per-brand product rollups
     const stats = {};
@@ -49,6 +54,7 @@ export default async function handler(req, res) {
         return {
           ...pick(b, PROSPECT_FIELDS),
           _row: b._row,
+          contacts: (contactsBy[b.brand_id] || []).sort((x, y) => x.rank - y.rank),
           stats: s ? { variants: s.variants, products: s.titles.size, withUpc: s.withUpc,
             onAmazon: s.onAmazon, notOnAmazon: s.notOnAmazon } : null,
         };
