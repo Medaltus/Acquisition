@@ -15,6 +15,9 @@ websites, and captures their DTC product catalog and UPCs into Google Sheets.
 | `api/dashboard-data.js`, `api/brand-products.js`, `api/dashboard-update.js` | Dashboard read/write endpoints (password protected) | — |
 | `api/import-crm.js` | One-time import of the old CRM export from the CRM Import tab | Manual |
 | `api/audit-scan.js`, `api/audit-data.js`, `api/audit-update.js`, `audit_template.js` | Gap audit builder (see below) | Manual, from the dashboard |
+| `api/sync-hubspot.js` | One-way HubSpot -> sheet sync: contacts, outreach stage, owner, last activity, won deals | Hourly (:05) |
+| `api/find-contacts.js` | Free contact finding: brand About/Team/Press/Contact pages + one web search; ranks people by title into the Contacts tab | Hourly (:30), 5 brands |
+| `api/match-linkedin.js` | Matches LinkedIn connections exports (tabs named "LinkedIn - <Name>") to prospects for warm intros | Daily 12:15 UTC |
 | `api/amazon-check.js` | Looks up UPCs + brand name on Amazon (SP-API), pulls offers/Buy Box, classifies each brand | Hourly (:50), 5 brands |
 | `api/_lib/*` | Shared helpers (Sheets client, Claude, site parsing, product/UPC extraction, schema) | — |
 
@@ -34,6 +37,7 @@ websites, and captures their DTC product catalog and UPCs into Google Sheets.
 | `SP_SELLER_ID` | Optional. That account's seller ID; flags brands a Medaltus account already sells |
 | `SP_MARKETPLACE_ID` | Optional. Defaults to `ATVPDKIKX0DER` (US) |
 | `AUDIT_MODEL` | Optional. Model for audit research and copy; defaults to `claude-opus-5-5` |
+| `HUBSPOT_TOKEN` | HubSpot private app (or service key) access token, read scopes for companies, contacts, deals, owners |
 | `DASHBOARD_PASSWORD` | Optional. Leave unset for an open dashboard; set it to require a sign-in password |
 
 No leading or trailing spaces. Redeploy after adding or changing any variable.
@@ -162,3 +166,25 @@ and "Does the brand sell its own Amazon listings?" whenever Amazon blocks the se
 
 **Export:** Preview and export → Export PDF opens the print dialog. Save as PDF, Letter, margins None,
 Background graphics on.
+
+## HubSpot sync (one-way, HubSpot -> sheet)
+
+`api/sync-hubspot.js` runs hourly. HubSpot companies are matched to Partner Brands, then Brands, by domain, then name.
+Linked prospects get their outreach stage, owner, primary contact, next step, and last activity from HubSpot, and
+those fields are read-only on the dashboard (notes stay editable). Pipeline companies not yet in the sheet are added
+as prospects (source "HubSpot"). A won deal adds the brand to Partner Brands. Companies whose lifecycle stage is
+"customer" but aren't in Partner Brands are listed in the Run Log instead of added, since they may not be brands.
+
+Stage mapping lives in the **HubSpot Stage Map** tab. Each new deal stage, lead status, or lifecycle stage is added
+with a suggested dashboard stage. Change `dashboard_stage` to remap it, or clear it to ignore that value.
+Priority: deal stage, then lead status, then lifecycle stage.
+
+## Contacts (free sources)
+
+- `find-contacts` reads each prospect's About / Team / Story / Press / Contact / Wholesale pages and runs one web search
+  for the founder and senior ecommerce/marketing/digital people. Everyone found goes to the **Contacts** tab, ranked
+  1 Founder/CEO, 2 C-level, 3 VP/Head, 4 Director, 5 Manager. Emails are only saved if published; ones found only in
+  research are labeled "verify before sending". Role emails (hello@, press@, wholesale@) go to the brand's role_emails.
+  The top person fills the brand's primary contact if it's blank and the brand isn't managed in HubSpot.
+- `match-linkedin`: import a LinkedIn Connections.csv into a tab named `LinkedIn - <Name>` (one tab per person).
+  Connections whose company matches a prospect become warm intros on the dashboard and contacts with LinkedIn links.
