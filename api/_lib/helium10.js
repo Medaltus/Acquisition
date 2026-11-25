@@ -23,6 +23,7 @@ const READ_TOOLS = [/keywords?_by_asin/i, /reverse_asin/i, /cerebro/i, /mcp_usag
 let session = null;
 let nextId = 1;
 let cached = null;
+let gatewaySession = '';   // Helium 10 asks for its session_id on every call after the first
 
 async function accessToken(force = false) {
   cached = cached || await getSetting(TOKEN_KEY);
@@ -110,9 +111,14 @@ export async function listTools() {
 export async function callTool(name, args) {
   if (!READ_TOOLS.some(re => re.test(name))) throw new Error(`Helium 10 tool "${name}" is not on the scanner's read-only list`);
   await connect();
-  const r = await rpc('tools/call', { name, arguments: args });
-  if (r?.structuredContent) return r.structuredContent;
-  const text = (r?.content || []).filter(c => c.type === 'text').map(c => c.text).join('\n');
+  const full = { context: 'Medaltus Brand Scanner audit of a prospect brand', ...args };
+  if (gatewaySession) full.session_id = gatewaySession;
+  const r = await rpc('tools/call', { name, arguments: full });
+  let text = (r?.content || []).filter(c => c.type === 'text').map(c => c.text).join('\n');
+  const meta = text.match(/\[gateway-meta\][^\n]*session_id=([^\s\]]+)/);
+  if (meta) gatewaySession = meta[1];
+  text = text.split('\n').filter(l => !l.trim().startsWith('[gateway-meta]')).join('\n').trim();
   if (r?.isError) throw new Error(`Helium 10 ${name}: ${text.slice(0, 300)}`);
+  if (r?.structuredContent) return r.structuredContent;
   try { return JSON.parse(text); } catch { return text; }
 }
