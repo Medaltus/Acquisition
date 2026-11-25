@@ -2209,7 +2209,7 @@ function renderInbound() {
         const got = [p.hero_products && 'Top products', p.amazon_seller_id && 'Seller ID', a.channels && 'Channels', p.est_revenue].filter(Boolean);
         const email = String(p.contact_email || '').trim();
         return `<tr>
-        <td><div class="brand-cell">${brandMark(p.brand_name, p.logo_url)}<div><div class="brand-name">${esc(p.brand_name)}</div>${siteLink(p.website_url)}</div></div></td>
+        <td><div class="brand-cell">${brandMark(p.brand_name, p.logo_url)}<div><div class="brand-name">${esc(p.brand_name)}${/inbound-test/.test(p.lead_source) ? ' <span class="pill st-warn">Test</span>' : ''}</div>${siteLink(p.website_url)}</div></div></td>
         <td>${esc(p.contact_name) || '<span class="muted">—</span>'}${email ? `<div class="small"><a class="brand-site" href="mailto:${esc(email)}">${esc(email)}</a></div>` : ''}</td>
         <td class="nowrap">${relTime(p.inbound_at)}<div class="ib-msg">${esc(p.form_message)}</div></td>
         <td>${ibStatusCell(p)}</td>
