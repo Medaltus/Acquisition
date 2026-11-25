@@ -159,6 +159,14 @@ input.field[type=search]{min-width:220px;}
 tr.row{cursor:pointer;}
 tr.row:hover td{background:rgba(36,233,163,0.05);}
 tr.row.open td{background:rgba(36,233,163,0.08);}
+.warm-chip{display:inline-block;margin-left:6px;font-size:9px;font-weight:700;color:#0a66c2;background:rgba(10,102,194,.10);border-radius:8px;padding:1px 6px;vertical-align:middle;}
+.contacts-box{margin-bottom:20px;}
+.contacts-tbl td{vertical-align:top;}
+.warm-box{background:rgba(10,102,194,.06);border-radius:var(--radius-sm);padding:10px 12px;font-size:12px;margin-bottom:10px;line-height:1.6;}
+.warm-box b{display:block;color:#0a66c2;font-size:11px;letter-spacing:.03em;}
+.li-link{display:inline-block;font-size:9.5px;font-weight:700;letter-spacing:.03em;color:#0a66c2;background:rgba(10,102,194,.10);border-radius:10px;padding:2px 7px;text-decoration:none;}
+.li-link:hover{background:rgba(10,102,194,.2);}
+.warn-text{color:var(--warn);}
 .hs-stage{display:flex;align-items:center;gap:8px;}
 .outreach-locked{font-size:11.5px;color:var(--navy);border:1px dashed var(--border);border-radius:var(--radius-sm);padding:5px 8px;white-space:nowrap;}
 .hs-link{display:inline-block;font-size:9.5px;font-weight:700;letter-spacing:.03em;color:#ff7a59;background:rgba(255,122,89,.12);border-radius:10px;padding:2px 7px;text-decoration:none;}
@@ -500,6 +508,8 @@ textarea.input{resize:vertical;min-height:64px;line-height:1.5;}
         <option value="name">Sort: name</option>
       </select>
       <label class="toggle"><input type="checkbox" id="f-hidefit" checked onchange="onFilter()"> Hide brands marked not a fit</label>
+      <label class="toggle"><input type="checkbox" id="f-warm" onchange="onFilter()"> Only warm intros</label>
+      <label class="toggle"><input type="checkbox" id="f-hascontact" onchange="onFilter()"> Only with a contact</label>
       <span class="result-count" id="result-count"></span>
     </div>
     <div class="card"><div class="table-wrap" id="prospect-table"><div class="loading">Loading prospects…</div></div></div>
@@ -909,6 +919,8 @@ function filteredProspects() {
   const q = $('f-search').value.trim().toLowerCase();
   if (q) list = list.filter(p => [p.brand_name, p.website_url, p.amazon_brand_name].some(v => String(v).toLowerCase().includes(q)));
   const cat = $('f-category').value; if (cat) list = list.filter(p => p.category === cat);
+  if ($('f-warm').checked) list = list.filter(p => p.warm_intros);
+  if ($('f-hascontact').checked) list = list.filter(p => p.contact_name || (p.contacts || []).length);
   const src = $('f-source').value; if (src) list = list.filter(p => splitList(p.sources).includes(src));
   const sort = $('f-sort').value;
   const num = v => Number(v) || 0;
@@ -978,7 +990,7 @@ function renderProspects() {
     <tr class="row${UI.open === p.brand_id ? ' open' : ''}" onclick="toggleDetail('${esc(p.brand_id)}')" tabindex="0" onkeydown="if(event.key==='Enter')toggleDetail('${esc(p.brand_id)}')">
       <td><div class="brand-cell">${brandMark(p.brand_name, p.logo_url)}<div>${p.scan_completed_at
         ? `<button class="brand-name brand-btn" title="Open scorecard" onclick="event.stopPropagation();openScorecard('${esc(p.brand_id)}')">${esc(p.brand_name)}</button><span class="sc-chip">Scorecard</span>`
-        : `<div class="brand-name">${esc(p.brand_name)}</div>`}${siteLink(p.website_url)}</div></div></td>
+        : `<div class="brand-name">${esc(p.brand_name)}</div>`}${p.warm_intros ? `<span class="warm-chip" title="${esc(p.warm_intros)}">Warm intro</span>` : ''}${siteLink(p.website_url)}</div></div></td>
       <td>${esc(p.category) ? `<span class="chip">${esc(p.category)}</span>` : '<span class="muted">—</span>'}</td>
       <td style="max-width:220px">${splitList(p.sources).map(s => `<span class="chip">${esc(s)}</span>`).join('')}</td>
       <td>${amazonCell(p)}</td>
@@ -1055,6 +1067,7 @@ function detailHtml(p) {
         <div class="form-actions"><span class="small muted">${p.outreach_updated ? 'Last updated ' + esc(relTime(p.outreach_updated)) : ''}</span>${p.website_url ? `<button class="btn btn-ghost btn-sm" type="button" onclick="buildAudit('${id}')">Build audit</button>` : ''}<button class="btn btn-primary btn-sm" type="submit">${p.hubspot_company_id ? 'Save notes' : 'Save outreach'}</button></div>
       </form>
     </div>
+    ${contactsBlock(p)}
     <div class="products-hd">
       <div class="detail-hd" style="margin:0">Products on their website</div>
       <label class="toggle"><input type="checkbox" ${UI.missingOnly[p.brand_id] ? 'checked' : ''} onchange="UI.missingOnly['${id}']=this.checked;renderProductTable('${id}')"> Only products missing on Amazon</label>
@@ -1111,6 +1124,40 @@ function bbSellerCell(v) {
 async function saveSellerInfo(e, id) {
   e.preventDefault();
   await postOutreach(id, Object.fromEntries(new FormData(e.target).entries()));
+}
+/* ───── Contacts found for a prospect (site + research + LinkedIn connections) ───── */
+const RANK_LABEL = { 1: 'Founder / CEO', 2: 'C-level', 3: 'VP / Head', 4: 'Director', 5: 'Manager' };
+function contactsBlock(p) {
+  const cs = p.contacts || [];
+  const intros = splitList(p.warm_intros);
+  const roles = splitList(p.role_emails);
+  const primary = normalizeKey(p.contact_name);
+  const body = cs.length ? `<div class="table-wrap"><table class="data-table plain contacts-tbl"><thead><tr><th>Person</th><th>Level</th><th>Email</th><th>LinkedIn</th><th>Found</th><th></th></tr></thead><tbody>
+    ${cs.map((c, i) => {
+      const verify = /verify/i.test(c.email_source || '');
+      const src = safeUrl(c.source_url), li = safeUrl(c.linkedin_url);
+      const isPrimary = primary && normalizeKey(c.name) === primary;
+      return `<tr>
+        <td><b>${esc(c.name)}</b>${isPrimary ? ' <span class="st st-ok">Primary</span>' : ''}<div class="small muted">${esc(c.title) || 'Title unknown'}</div></td>
+        <td class="nowrap">${RANK_LABEL[c.rank] ? `<span class="st ${c.rank <= 2 ? 'st-ok' : 'st-na'}">${RANK_LABEL[c.rank]}</span>` : '<span class="small muted">Other</span>'}</td>
+        <td>${c.email ? `<a href="mailto:${esc(c.email)}">${esc(c.email)}</a><div class="small ${verify ? 'warn-text' : 'muted'}">${esc(c.email_source || '')}</div>` : '<span class="small muted">Not published</span>'}</td>
+        <td>${li ? `<a class="li-link" href="${esc(li)}" target="_blank" rel="noopener">LinkedIn</a>` : `<a class="small" href="https://www.linkedin.com/search/results/people/?keywords=${encodeURIComponent(c.name + ' ' + p.brand_name)}" target="_blank" rel="noopener">Search</a>`}</td>
+        <td class="small" style="max-width:260px">${src ? `<a href="${esc(src)}" target="_blank" rel="noopener">${esc(c.source || 'Source')}</a>` : esc(c.source || '')}${c.evidence ? `<div class="muted">${esc(c.evidence)}</div>` : ''}</td>
+        <td class="nowrap">${!p.hubspot_company_id && !isPrimary ? `<button class="btn-link" onclick="makePrimary('${esc(p.brand_id)}', ${i})">Make primary</button>` : ''}</td>
+      </tr>`; }).join('')}</tbody></table></div>`
+    : `<div class="small muted" style="padding:8px 0">${p.contacts_checked_at ? 'No named people found on their site or in research. Try the LinkedIn search or a paid lookup later.' : 'Contact search runs hourly (best prospects first). This brand is in the queue.'}</div>`;
+  return `<div class="contacts-box">
+    <div class="products-hd"><div class="detail-hd" style="margin:0">Contacts</div>
+      <a class="small" href="https://www.linkedin.com/search/results/people/?keywords=${encodeURIComponent(p.brand_name)}" target="_blank" rel="noopener">Search LinkedIn for ${esc(p.brand_name)}</a></div>
+    ${intros.length ? `<div class="warm-box"><b>Warm intros</b>${intros.map(t => `<div>${esc(t)}</div>`).join('')}</div>` : ''}
+    ${body}
+    ${roles.length ? `<div class="small muted" style="margin-top:8px">Role emails on their site: ${roles.map(e => `<a href="mailto:${esc(e)}">${esc(e)}</a>`).join(', ')}</div>` : ''}
+  </div>`;
+}
+const normalizeKey = s => String(s || '').toLowerCase().replace(/[^a-z]/g, '');
+async function makePrimary(id, i) {
+  const p = DATA.prospects.find(x => x.brand_id === id); const c = p?.contacts?.[i]; if (!c) return;
+  await postOutreach(id, { contact_name: c.name, contact_title: c.title || '', contact_email: c.email || '', contact_linkedin: c.linkedin_url || '' });
 }
 async function setOutreach(id, status) {
   await postOutreach(id, { outreach_status: status });
