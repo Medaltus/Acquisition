@@ -57,7 +57,7 @@ export const HEADERS = {
     'audit_status', 'pdf_url',
     // Inbound (website form). inbound_step tracks the fast-track scan; audit_sent_at starts the follow-up clock.
     'inbound_at', 'inbound_step', 'inbound_updated', 'inbound_attempts', 'inbound_note', 'inbound_answers',
-    'audit_sent_at',
+    'audit_sent_at', 'audit_due',
   ],
   [TABS.PRODUCTS]: [
     'brand_id', 'brand_name', 'product_title', 'variant_title', 'sku', 'upc', 'upc_source',
