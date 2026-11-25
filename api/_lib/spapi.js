@@ -144,6 +144,8 @@ export async function getOffers(asins) {
         sellerCount: new Set(offers.map(o => o.SellerId)).size,
         buyBoxPrice: bb?.ListingPrice?.Amount ?? winner?.ListingPrice?.Amount ?? '',
         buyBoxFba: winner ? (winner.IsFulfilledByAmazon ? 'FBA' : 'FBM') : '',
+        buyBoxSellerId: winner?.SellerId || '',
+        sellerIds: [...new Set(offers.map(o => o.SellerId).filter(Boolean))],
         medaltusSells: me ? offers.some(o => o.SellerId === me) : false,
       });
     }
@@ -203,7 +205,7 @@ export async function getCatalogDetails(asins) {
     const batch = asins.slice(i, i + 20);
     const qs = new URLSearchParams({
       identifiers: batch.join(','), identifiersType: 'ASIN', marketplaceIds: MARKETPLACE_ID,
-      includedData: 'summaries,images,attributes,salesRanks', pageSize: '20',
+      includedData: 'summaries,images,attributes,salesRanks,relationships', pageSize: '20',
     });
     const data = await sp(`/catalog/2022-04-01/items?${qs}`);
     for (const item of data.items || []) {
@@ -214,8 +216,11 @@ export async function getCatalogDetails(asins) {
       const bullets = (attrs.bullet_point || []).map(b => String(b.value || '').trim()).filter(Boolean);
       const description = (attrs.product_description || []).map(d => String(d.value || '')).join(' ').trim();
       const mainImage = (imgSet.images || []).filter(im => im.variant === 'MAIN').sort((a, b) => (b.width || 0) - (a.width || 0))[0]?.link || '';
+      const rel = (item.relationships || []).find(r => r.marketplaceId === MARKETPLACE_ID) || item.relationships?.[0] || {};
+      const parentAsin = (rel.relationships || []).flatMap(r => r.parentAsins || [])[0] || '';
       out.set(item.asin, {
         ...base,
+        parentAsin,
         imageCount: variants.size,
         mainImage,
         bulletCount: bullets.length,
