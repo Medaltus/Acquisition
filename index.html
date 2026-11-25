@@ -590,6 +590,40 @@ mark.fl-need{background:#FBF0E2;border-bottom:1px dashed var(--warn);padding:0 2
 .gp-oq li span{color:var(--muted);font-size:11.5px;}
 @media(max-width:1000px){.gp-vs{grid-template-columns:1fr;}.gp-arrow{transform:rotate(90deg);padding:6px 0;}.gp-chs,.gp-found,.gp-steps{grid-template-columns:1fr 1fr;}.gp-detail{grid-template-columns:1fr;}.gp-frow{grid-template-columns:110px 1fr;}.gp-frow .rate{grid-column:2;}.gp-oq{grid-template-columns:1fr;}}
 
+.gp-engine{margin-top:14px;border-radius:var(--radius);background:var(--navy);color:#fff;padding:18px 20px;display:grid;grid-template-columns:1.2fr 1fr;gap:20px;}
+.gp-engine .gp-h{color:#fff;font-size:17px;}
+.gp-engine .gp-eyebrow{color:var(--green);}
+.gp-engine p{font-size:12px;opacity:.85;margin-top:6px;}
+.gp-engine .feeds{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;}
+.gp-engine .feeds span{font-size:11px;background:rgba(36,233,163,.16);color:var(--green);padding:2px 9px;border-radius:10px;}
+.gp-engine .gp-built{color:#fff;}
+.gp-engine .gp-built em.n{background:rgba(255,255,255,.12);color:#fff;}
+.gp-types{display:flex;gap:16px;flex-wrap:wrap;font-size:11.5px;color:var(--muted);margin:16px 0 10px;}
+.gp-types span{display:flex;align-items:center;gap:6px;}
+.gp-types i{width:12px;height:12px;border-radius:3px;display:inline-block;}
+.t-in{--tc:#24E9A3;--tbg:rgba(36,233,163,.13);--tink:#139a6b;}
+.t-out{--tc:#001F60;--tbg:rgba(0,31,96,.07);--tink:#001F60;}
+.t-seen{--tc:#C87D2F;--tbg:#FBF0E2;--tink:#A3621F;}
+.gp-types i.t-in,.gp-types i.t-out,.gp-types i.t-seen{background:var(--tc);}
+.gp-list{display:flex;flex-direction:column;gap:10px;}
+.gp-crow{border:1px solid var(--border);border-left:5px solid var(--tc);border-radius:0 var(--radius) var(--radius) 0;background:var(--white);transition:border-color .13s;}
+.gp-crow.sel{box-shadow:0 0 0 1px var(--tc);}
+.gp-crow-hd{width:100%;border:none;background:none;cursor:pointer;text-align:left;display:grid;grid-template-columns:44px 1.25fr 1fr 22px 1fr 120px;gap:14px;align-items:center;padding:14px 18px 14px 14px;}
+.gp-crow-hd:hover{background:var(--bg);}
+.gp-rank{width:32px;height:32px;border-radius:50%;background:var(--tbg);color:var(--tink);display:flex;align-items:center;justify-content:center;font-family:var(--font-bold);font-size:14px;}
+.gp-cname h4{font-family:var(--font-header);font-weight:500;font-size:16px;color:var(--navy);margin:0;}
+.gp-cname p{font-size:11px;color:var(--muted);margin-top:1px;}
+.gp-tag{display:inline-block;font-size:9.5px;text-transform:uppercase;letter-spacing:.07em;background:var(--tbg);color:var(--tink);padding:1px 7px;border-radius:8px;margin-bottom:3px;}
+.gp-cell{font-size:12px;color:var(--navy);}
+.gp-cell small{display:block;font-size:9.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:2px;}
+.gp-cell.could{color:var(--tink);font-family:var(--font-header);}
+.gp-carrow{color:var(--tc);font-size:16px;text-align:center;}
+.gp-cstat{display:flex;flex-direction:column;align-items:flex-end;gap:6px;}
+.gp-cstat .gp-meter{width:100%;}
+.gp-cstat .gp-meter i.on{background:var(--tc);}
+.gp-crow .gp-detail{margin:0 18px 18px 72px;}
+@media(max-width:1100px){.gp-crow-hd{grid-template-columns:44px 1fr 120px;}.gp-crow-hd .gp-cell,.gp-crow-hd .gp-carrow{display:none;}.gp-crow .gp-detail{margin-left:18px;}.gp-engine{grid-template-columns:1fr;}}
+
 </style>
 </head>
 <body>
@@ -1024,74 +1058,107 @@ const GP_FOUND = [
     built: [['n', 'Scorecard in HubSpot'], ['n', 'Scorecard page on this dashboard']],
     q: 'Who reviews it weekly, and does leadership want it in the Medaltus Hub?' },
 ];
+// type: in = brands come to us · out = we go to them · seen = gets us seen
+const GP_TYPES = { in: 'Brands come to us', out: 'We go to them', seen: 'Gets us seen' };
+const GP_ENGINE = {
+  today: 'The scanner and Audit Builder are built: Amazon API, Helium 10 Cerebro, web research and a 2-page PDF. No live analyses sent yet.',
+  could: 'Every inbound lead, outbound prospect and event brand gets a growth and gap analysis, so the first conversation starts with their own numbers.',
+  feeds: ['Inbound', 'Outbound', 'Events', 'LinkedIn teardowns'],
+  built: [['y', 'Brand Scanner and Future Prospects'], ['y', 'Audit Builder and PDF export'], ['y', 'Rank Snapshots for follow-up re-scans'], ['n', 'First live analyses']],
+  q: 'Who builds the analyses? Each one takes brand manager time away from current brands.',
+};
 const GP_CH = [
-  { id: 'ref', ts: 'Informal word of mouth, untracked', cs: '15–20 referral leads a month', n: 1, name: 'Referral and partner program', s: 1, meter: 1,
-    why: 'Our only proven channel, with the highest close rate.',
-    today: 'Every partner so far came from word of mouth. Informal and untracked.',
-    could: '15–20 qualified referral leads a month by month 4, from current brands and 10 active referral partners.',
-    how: ['Pick an incentive per audience: referral bonus, fee credit or 12-month revenue share', 'Brand managers ask their happiest brands at the next check-in, then send the forwardable sheet', 'List 30 referral partners (manufacturers, formulators, packaging, PR, fractional CMOs, 3PLs); contact 5–10 a month', 'Tell the referrer within 48 hours, thank them when the brand signs'],
-    what: ['“Who we’re looking for” one-pager', 'Referral form on medaltus.com with a required Referred by field', 'HubSpot: Referral – Client and Referral – Partner sources, Partner Name property', 'Referral Partner Program page (Phase 2)'],
-    built: [['n', 'Incentive decided'], ['n', 'One-pager'], ['n', 'Referral form and HubSpot tracking']],
-    q: 'What incentive can we offer, and who approves payouts?' },
-  { id: 'out', ts: 'Scanner and Audit Builder built, no live audits yet', cs: '20–30 audits a week, 5–8 calls a month', n: 2, name: 'Data-driven outbound (Gap Audit)', s: 1, meter: 2,
+  { id: 'inb', type: 'in', name: 'Inbound', sub: 'Contact form, free analysis offer, welcome and follow-up emails', s: 1, meter: 2,
+    why: 'These brands already want help, so they convert best early on. Every other channel sends people here.',
+    ts: 'A contact form; replies are manual and untracked', cs: 'Personal welcome in minutes, analysis in 2 days, follow-ups automatic',
+    today: 'The contact form works, but replies are manual and nothing is tracked. The full inbound flow is designed and written, waiting on HubSpot setup and the form webhook.',
+    could: 'Every form submission gets a personal welcome within minutes, a growth and gap analysis in 2 days and timed follow-ups, all sent and logged in HubSpot.',
+    how: ['Set up HubSpot: your user, inbox and calendar, then the forms and emails from the setup doc', 'Turn on the Webflow webhook after approval (the form itself stays untouched)', 'Send the first analyses within 2 business days of each form', 'Add a Free Growth and Gap Analysis page as the main call to action across the site', 'Contact page: what happens after you submit, the meetings link, who we’re a fit for'],
+    what: ['Inbound Flow (designed on this dashboard)', 'HubSpot forms and 4 automated emails', 'Free analysis landing page and How We Partner page', 'Case studies for the Day 7 email'],
+    built: [['y', 'Inbound flow and email copy'], ['y', 'HubSpot setup guide'], ['p', 'HubSpot forms, emails, calendar'], ['n', 'Webflow webhook (awaiting approval)'], ['n', 'Free analysis page']],
+    q: 'Should the free analysis become the main call to action on the site and in ads?' },
+  { id: 'out', type: 'out', name: 'Outbound', sub: 'Gap analysis-led emails and LinkedIn messages to brands we choose', s: 1, meter: 1,
     why: 'Our biggest untapped edge: we can show a brand its problems before the first call.',
-    today: 'The scanner and Audit Builder are built (Amazon API, Helium 10 Cerebro, web research, 2-page PDF). No live audits sent yet.',
-    could: '20–30 personalized audits a week from month 2, and 5–8 discovery calls a month by month 4.',
-    how: ['Run the first live scans on 1–2 prospects already in Future Prospects', 'Build target lists by segment: US indie beauty, wellness, K-beauty and international', 'Find the decision maker (founder, CEO, head of ecommerce)', '4-touch sequence over 3 weeks: the problem, more findings, a case study, close the loop', 'Deliver the audit on a 20-minute call, then a proposal with the recommended model'],
-    what: ['Gap Audit (built), proposal template, “Two ways to partner” one-pager', 'HubSpot sequence per segment (needs Sales Hub Starter)', 'Outbound – Audit lead source and a Trigger property', 'Case studies for touch 3'],
-    built: [['y', 'Brand Scanner and Future Prospects'], ['y', 'Audit Builder and PDF export'], ['n', 'First live audits'], ['n', 'Outbound sequence in HubSpot']],
-    q: 'Who builds the audits? Each one takes brand manager time away from current brands.' },
-  { id: 'mkt', ts: 'Amazon SPN only; Walmart unconfirmed', cs: 'Listed on Amazon, Walmart and TikTok Shop', n: 3, name: 'Marketplace partner programs', s: 1, meter: 1,
-    why: 'Passive leads, plus badges that add credibility to the site and proposals.',
+    ts: 'Prospect list and analysis tool built; nothing sent', cs: '20–30 personalized analyses a week, 5–8 calls a month',
+    today: 'Future Prospects holds the target list and the analysis tool is built. No outreach has gone out.',
+    could: '20–30 personalized analyses a week from month 2, and 5–8 discovery calls a month by month 4.',
+    how: ['Build target lists by segment: US indie beauty, wellness, K-beauty and international', 'Find the decision maker: founder, CEO or head of ecommerce', '4-touch sequence over 3 weeks: the problem, more findings, a case study, close the loop', 'Walk through the analysis on a 20-minute call, then a proposal with the recommended model'],
+    what: ['HubSpot sequence per segment (needs Sales Hub Starter)', 'Proposal template and “Two ways to partner” one-pager', 'Outbound lead source and a Trigger property'],
+    built: [['y', 'Future Prospects list'], ['y', 'Analysis builder'], ['n', 'Outbound sequence'], ['n', 'Proposal template']],
+    q: 'Do we start outbound before inbound is running smoothly, or after?' },
+  { id: 'ref', type: 'in', name: 'Referrals and partners', sub: 'Current brands and referral partners who send brands our way', s: 1, meter: 1,
+    why: 'Where every partner so far came from, with the highest close rate. Today it happens by luck.',
+    ts: 'Word of mouth, untracked', cs: '15–20 referral leads a month, 10 active partners',
+    today: 'Every partner so far came from word of mouth. Nothing is asked for on purpose or tracked.',
+    could: '15–20 qualified referral leads a month by month 4, from current brands and 10 active referral partners.',
+    how: ['Pick an incentive per audience: referral bonus, fee credit or revenue share', 'Brand managers ask their happiest brands at the next check-in, then send a forwardable one-pager', 'List 30 referral partners (manufacturers, formulators, packaging, PR, 3PLs) and contact 5–10 a month', 'Tell the referrer within 48 hours, thank them when the brand signs'],
+    what: ['“Who we’re looking for” one-pager', 'Referral form with a required Referred by field', 'Referral lead sources in HubSpot', 'Referral Partner Program page'],
+    built: [['n', 'Incentive'], ['n', 'One-pager'], ['n', 'Referral tracking']],
+    q: 'What incentive can we offer, and who approves payouts?' },
+  { id: 'li', type: 'seen', name: 'LinkedIn', sub: 'Organic posts from the company page and leadership profiles', s: 1, meter: 1,
+    why: 'Keeps Medaltus in front of founders between conversations, and warms up outbound.',
+    ts: 'Posting regularly, about what we do', cs: 'Proof posts 2–3 times a week, from leadership too',
+    today: 'Posting is running, mostly about what we do. Clicks and leads aren’t tracked.',
+    could: '2–3 posts a week, mostly from leadership profiles: mini case studies, listing teardowns, policy updates and the two models, every link tracked.',
+    how: ['One proof post a week once case studies exist', 'Listing teardowns using anonymized or public examples', 'Policy and compliance updates for beauty brands', 'Behind the scenes: the warehouse, peak season, the dashboards', 'UTM links on every post so leads show in HubSpot'],
+    what: ['Case study posts and carousels', 'A posting calendar', 'LinkedIn – Organic lead source'],
+    built: [['y', 'Posting running'], ['n', 'Proof content'], ['n', 'Tracking']],
+    q: 'Who posts from their personal profile?' },
+  { id: 'ads', type: 'seen', name: 'Advertising', sub: 'Paid LinkedIn campaigns, retargeting, other paid channels later', s: 1, meter: 1,
+    why: 'Puts proof and the free analysis in front of exactly the founders we want, on demand.',
+    ts: 'LinkedIn ads running; spend and results unknown', cs: 'Proof and free-analysis ads, every lead in HubSpot',
+    today: 'LinkedIn ads are running. Spend, cost per lead and where they point aren’t tracked in one place.',
+    could: '5+ qualified leads a month by month 4, with ads promoting case studies and the free analysis and every lead landing in HubSpot.',
+    how: ['Baseline first: spend, audience, cost per lead, landing page', 'Connect LinkedIn Ads to HubSpot so lead forms create tagged contacts', 'Target founders and ecommerce leads at beauty and wellness brands (2–200 employees)', 'Switch creative to proof and the free analysis; retarget site visitors', 'Show ads to the outbound list as a matched audience'],
+    what: ['LinkedIn Insight Tag and HubSpot connection', 'Proof-based creative', 'LinkedIn – Ads lead source'],
+    built: [['y', 'Ads running'], ['n', 'Baseline numbers'], ['n', 'HubSpot connection'], ['n', 'Proof creative']],
+    q: 'What are current spend and cost per lead, and where do the ads point?' },
+  { id: 'seo', type: 'in', name: 'Organic search (SEO)', sub: 'Rankings, content and pages that bring brands in from Google and AI search', s: 1, meter: 1,
+    why: 'Slow to build but compounds: brands searching for a marketplace partner find us without ad spend.',
+    ts: 'Site rebuilt; technical gaps open, no content rhythm', cs: 'Ranking for beauty marketplace terms, 2 pieces a month',
+    today: 'The site is rebuilt and SEO metadata is in place. Technical gaps (sitemap) are open and there’s no regular content.',
+    could: 'Ranking for beauty marketplace searches, with industry pages, a K-beauty entry page and 2 insight pieces a month.',
+    how: ['Technical fixes: sitemap, indexing, Search Console', 'Phase 2 pages: Beauty and Wellness, US entry for international and K-beauty brands, Technology and Reporting, About and Team', 'Insights hub with 2 pieces a month: case studies, teardowns, policy updates', 'FAQ and Who We Work With pages (also help AI search)'],
+    what: ['Search Console tracking', 'Content calendar', 'Organic Search lead source'],
+    built: [['y', 'Site rebuilt, SEO metadata'], ['y', 'Case study template'], ['n', 'Sitemap and technical fixes'], ['n', 'Content rhythm']],
+    q: 'Who writes the 2 pieces a month?' },
+  { id: 'mkt', type: 'in', name: 'Marketplace directories', sub: 'Amazon SPN, Walmart, TikTok Shop and Target+ partner listings', s: 1, meter: 1,
+    why: 'Brands look for help inside the marketplaces’ own directories, and the badges add credibility.',
+    ts: 'Amazon SPN active; Walmart unconfirmed', cs: 'Listed on all three, leads routed to HubSpot',
     today: 'Amazon SPN active. Walmart believed set up but unconfirmed. TikTok Shop not started. Target+ unknown.',
-    could: 'Listed in all three by month 2, each directory routing leads into HubSpot with its own source, badges on the site.',
-    how: ['Refresh the Amazon SPN listing: beauty and wellness first, both models, proof points', 'Confirm the Walmart Solution Provider listing and categories', 'Apply to the TikTok Shop Partner program with brand examples and GMV', 'Ask our Target+ contact about a partner directory', 'Badges on the homepage trust bar, channel pages and proposals'],
+    could: 'Listed in all three by month 2, each routing leads into HubSpot with its own source, badges on the site.',
+    how: ['Refresh the Amazon SPN listing: beauty and wellness first, both models, proof', 'Confirm the Walmart Solution Provider listing', 'Apply to the TikTok Shop Partner program', 'Ask our Target+ contact about a partner directory', 'Badges on the homepage, channel pages and proposals'],
     what: ['A dedicated inbox or form per directory', 'Directory lead sources in HubSpot', 'Partner badges'],
-    built: [['y', 'Amazon SPN membership'], ['p', 'Walmart listing (to confirm)'], ['n', 'TikTok Shop application'], ['n', 'Directory lead tracking']],
+    built: [['y', 'Amazon SPN'], ['p', 'Walmart (to confirm)'], ['n', 'TikTok Shop application']],
     q: 'Who manages our Walmart account access, to confirm the listing?' },
-  { id: 'li', ts: 'Posts and ads running, results untracked', cs: '5+ qualified leads a month', n: 4, name: 'LinkedIn (organic and ads)', s: 1, meter: 1,
-    why: 'Already running; it needs proof content and tracking to show results.',
-    today: 'Posts and ads are running. Spend, cost per lead and where ads point aren’t tracked in one place.',
-    could: '5+ qualified leads a month by month 4. Ads promoting case studies and the free audit, every lead landing in HubSpot.',
-    how: ['Baseline first: current spend, audience, cost per lead, where ads land', 'Connect LinkedIn Ads to HubSpot so lead forms create tagged contacts', 'Tighten targeting to founders and ecommerce leads at beauty and wellness brands (2–200 employees)', 'Switch creative to proof and the audit offer; retarget site visitors', 'Organic: 2–3 posts a week, mostly from leadership profiles: mini case studies, listing teardowns, policy updates, the two models'],
-    what: ['UTM links on every post and ad', 'LinkedIn – Organic and LinkedIn – Ads lead sources', 'Case study posts and carousels', 'Outbound list uploaded as a matched audience'],
-    built: [['y', 'Posting and ads running'], ['n', 'Baseline numbers'], ['n', 'HubSpot connection'], ['n', 'Proof-based creative']],
-    q: 'What are current LinkedIn ad spend and cost per lead, and where do the ads point?' },
-  { id: 'web', ts: 'Site rebuilt; inbound flow waiting on HubSpot', cs: 'Personal reply and analysis for every form', n: 5, name: 'Website, SEO and inbound flow', s: 1, meter: 2,
-    why: 'Every other channel sends people here; it has to prove results and turn visitors into conversations.',
-    today: 'Site rebuilt. Case study template built. Inbound flow designed (welcome, analysis, follow-ups) and waiting on HubSpot setup and the form webhook.',
-    could: 'Every form submission gets a personal welcome within minutes and a growth and gap analysis in 2 days. How We Partner, Free Audit and Case Studies pages live in month 1.',
-    how: ['Set up HubSpot forms and emails, then turn on the Webflow webhook (after approval)', 'Phase 1 pages: How We Partner, Free Marketplace Gap Audit, Case Studies hub', 'Homepage: two ways to partner, badges, 3 testimonials, audit call to action', 'Contact page: what happens next, meetings link, who we’re a fit for', 'Technical fixes: sitemap, SEO gaps; 2 insight pieces a month later on'],
-    what: ['Inbound Flow (designed on this dashboard)', 'HubSpot forms on audit, contact, referral and guide pages; tracking code site-wide', 'Phase 2 and 3 pages: Beauty and Wellness, K-Beauty entry, Technology and Reporting, About, FAQ'],
-    built: [['y', 'Site rebuilt'], ['y', 'Inbound flow designed, emails written'], ['p', 'HubSpot forms and emails'], ['p', 'Case study template, first story staged'], ['n', 'How We Partner and Free Audit pages']],
-    q: 'Should the free audit become the main call to action across the site and the LinkedIn ads?' },
-  { id: 'ev', ts: 'Not started', cs: 'First show by month 3, then one a quarter', n: 6, name: 'Trade shows and events', s: 0, meter: 0,
-    why: 'Where emerging beauty and wellness brands gather.',
+  { id: 'ev', type: 'out', name: 'Events', sub: 'Trade shows where emerging beauty and wellness brands gather', s: 0, meter: 0,
+    why: 'Face to face with many brands at once, each with an analysis finding in hand.',
+    ts: 'Not started', cs: 'First show by month 3, then one a quarter',
     today: 'Not started.',
     could: 'First show booked by month 3, then one a quarter, each producing 10+ qualified conversations. Walk the floor first, booth later.',
-    how: ['Six weeks out: screen the exhibitor list, Helium 10 check on the top 30', 'Four weeks out: book 10–15 meetings with a finding for each brand', 'At the show: one-pager and printed sample audits, log every conversation in HubSpot', 'Within a week: follow up with a personalized audit; post a recap'],
-    what: ['Shortlist: Cosmoprof North America, Indie Beauty Expo, Expo West, Glossy Summit, Beauty Connect LA', 'Event lead source and a campaign per event', 'Printed sample audits'],
-    built: [['n', 'Event shortlist with dates and costs'], ['n', 'First show booked']],
-    q: 'Which show first, and what budget is there for travel?' },
+    how: ['Six weeks out: screen the exhibitor list, check the top 30 in the scanner', 'Four weeks out: book 10–15 meetings with a finding for each brand', 'At the show: one-pager and printed sample analyses; log every conversation in HubSpot', 'Within a week: follow up with a personalized analysis'],
+    what: ['Shortlist: Cosmoprof North America, Indie Beauty Expo, Expo West, Glossy Summit, Beauty Connect LA', 'Event lead source and a campaign per event'],
+    built: [['n', 'Shortlist with dates and costs'], ['n', 'First show booked']],
+    q: 'Which show first, and what travel budget is there?' },
 ];
 const GP_NEXT = [
-  ['Run the first live Gap Audits', 'One or two prospects already in Future Prospects. Tests the builder and gives real audits to show next to the case studies.'],
-  ['Set up HubSpot', 'Your user, inbox and calendar, the forms and emails from the setup doc; Starter plan when it proves out. Inbound and outbound both depend on it.'],
-  ['Finish 3–4 case studies', 'Washington compliance, the Buy Box story, the Cloud Cafe series and one Dazzle Dry story, then publish the collection once approved.'],
-  ['Turn on the inbound flow', 'More valuable than outbound early on: these brands already want help. The form-triggered analysis plus case studies make a strong first reply.'],
-  ['Turn on outbound', 'The 4-touch audit sequence, with case studies supplying the similar-brand email and LinkedIn posts.'],
-  ['Small website tasks, anytime', 'Sitemap, TikTok Shop partner registration, confirming the Walmart listing.'],
+  ['Run the first live gap analyses', 'One or two prospects already in Future Prospects. Tests the builder and gives real analyses to show next to the case studies.'],
+  ['Set up HubSpot and turn on inbound', 'Your user, inbox and calendar, the forms and emails from the setup doc, then the Webflow webhook. Brands who fill out the form already want help.'],
+  ['Finish 3–4 case studies', 'Washington compliance, the Buy Box story, the Cloud Cafe series and one Dazzle Dry story. They feed the Day 7 email, outbound and LinkedIn.'],
+  ['Turn on outbound', 'The 4-touch analysis sequence to the Future Prospects list, with case studies for the similar-brand email.'],
+  ['Start referral asks', 'Pick the incentive, then brand managers ask their happiest brands at the next check-in.'],
+  ['LinkedIn and ads on proof', 'Get the ads baseline, connect them to HubSpot and switch posts and creative to case studies and the free analysis.'],
 ];
 const GP_OPEN = [
   ['Who owns sales follow-up?', 'The plan assumes one named owner for HubSpot and the weekly pipeline review.'],
-  ['How many brands do we have today?', 'The plan says about 25 (10 resale or 3PL, 15 fully managed) in one place and 65 in another. Which number do we use as the baseline?'],
   ['Minimums for each model', 'Revenue, margin and SKU count for Model 1 and Model 2, and the revenue fit floor for inbound.'],
   ['LinkedIn baseline', 'Current spend, cost per lead and where the ads point, before changing anything.'],
   ['Who builds the audits?', 'Brand managers have the Helium 10 skills, but every audit takes time from current brands.'],
   ['Referral incentive', 'What we can offer each audience, and who approves payouts.'],
   ['Capacity', 'Can onboarding and account management absorb 2 new brands a month, especially fully managed ones?'],
+  ['Referrals: build on them or grow past them?', 'Referrals built Medaltus. Do we create a formal program around what has worked, or focus on the new channels to reduce our dependence on referrals, since we’ve already capitalized on them?'],
 ];
-const GP = { f: null, c: 'out' };
+const GP = { f: null, c: 'inb', e: false };
 
 function gpLive() {
   const cur = DATA?.current || [], pros = DATA?.prospects || [];
@@ -1121,16 +1188,16 @@ function renderGrowth() {
         <li>Almost every partner came from word of mouth and referrals</li>
         <li>No published case studies yet; competitors show 25–50</li>
         <li>Leads aren’t tracked by source, so we can’t see what works</li>
-        <li>Pieces are built: scanner and Gap Audit (${has ? L.prospects : '—'} prospects), inbound flow designed, LinkedIn running, Amazon SPN member</li>
+        <li>Pieces are built: the analysis builder (${has ? L.prospects : '—'} prospects), inbound flow designed, LinkedIn posts and ads running, Amazon SPN member</li>
       </ul></div>
     <div class="gp-arrow">→</div>
     <div class="gp-side could"><div class="gp-eyebrow">Where we could be</div>
       <div class="gp-big">
         <div class="gp-stat"><b>2 a month</b><span>new brand partners, 24 a year</span></div>
-        <div class="gp-stat"><b>6 channels</b><span>feeding one HubSpot pipeline</span></div>
+        <div class="gp-stat"><b>8 channels</b><span>feeding one HubSpot pipeline</span></div>
       </div>
       <ul class="gp-pts">
-        <li>Referrals turned from luck into a system, plus 5 new channels</li>
+        <li>Inbound and outbound led by the growth and gap analysis, referrals turned into a system</li>
         <li>5+ case studies live, one new story a month</li>
         <li>Every lead tracked by source, reviewed weekly</li>
         <li>Each brand gets a personal reply and a growth and gap analysis before the first call</li>
@@ -1147,7 +1214,7 @@ function renderGrowth() {
     <div class="gp-lead">A realistic ramp: 1 new brand a month by month 6, 2 a month by months 9–12.</div>
     <div class="gp-tl">
       <div class="gp-ph p1"><span class="m">Month 1</span><b>Foundation</b><ul><li>HubSpot</li><li>3 case studies</li><li>Phase 1 pages</li></ul></div>
-      <div class="gp-ph p2"><span class="m">Month 2</span><b>Turn on</b><ul><li>Referral asks</li><li>Outbound audits</li><li>LinkedIn proof ads</li></ul></div>
+      <div class="gp-ph p2"><span class="m">Month 2</span><b>Turn on</b><ul><li>Referral asks</li><li>Inbound flow live</li><li>LinkedIn proof ads</li></ul></div>
       <div class="gp-ph p3"><span class="m">Month 3</span><b>Measure</b><ul><li>First channel review</li><li>5 case studies</li><li>Book a show</li></ul></div>
       <div class="gp-ph p4"><span class="m">Months 4–6</span><b>Build out</b><ul><li>Phase 2 pages</li><li>2 content pieces a month</li><li>First event</li></ul></div>
       <div class="gp-ph p5"><span class="m">Months 7–12</span><b>Scale</b><ul><li>More outbound volume and partners</li><li>One event a quarter</li><li>Reset targets with our own data</li></ul></div>
@@ -1160,15 +1227,25 @@ function renderGrowth() {
     ${GP.f ? gpDetail(GP_FOUND.find(f => f.id === GP.f), true) : ''}`;
 
   $('gp-chans').innerHTML = `<div class="gp-eyebrow">The channels, in priority order</div><div class="gp-h">Today, could be, and the path for each</div>
-    <div class="gp-chs">${GP_CH.map(c => `<button class="gp-ch${GP.c === c.id ? ' sel' : ''}" onclick="GP.c=GP.c==='${c.id}'?null:'${c.id}';renderGrowth()">
-      <div class="top"><span style="display:flex;gap:8px;align-items:center"><span class="gp-num">${c.n}</span></span>${gpSt(c.s)}</div>
-      <h4>${esc(c.name)}</h4>
-      <div class="gp-row2"><div><small>Today</small>${esc(c.ts)}</div><div><small>Could be</small>${esc(c.cs)}</div></div>
-      ${gpMeter(c.meter)}</button>`).join('')}</div>
-    ${GP.c ? gpDetail(GP_CH.find(c => c.id === GP.c)) : ''}`;
+    <div class="gp-lead">Click a channel for how we get there, what it takes and what’s already built.</div>
+    <div class="gp-engine"><div><div class="gp-eyebrow">The engine behind them</div><div class="gp-h">The growth and gap analysis</div>
+      <p>${esc(GP_ENGINE.today)}</p><p>${esc(GP_ENGINE.could)}</p>
+      <div class="feeds">${GP_ENGINE.feeds.map(f => `<span>Powers ${esc(f)}</span>`).join('')}</div></div>
+      <div>${gpBuilt(GP_ENGINE.built)}<div class="gp-q" style="margin-top:12px;color:var(--navy)"><b>To decide</b>${esc(GP_ENGINE.q)}</div></div></div>
+    <div class="gp-types">${Object.entries(GP_TYPES).map(([k, v]) => `<span><i class="t-${k}"></i>${v}</span>`).join('')}</div>
+    <div class="gp-list">${GP_CH.map((c, i) => `<div class="gp-crow t-${c.type}${GP.c === c.id ? ' sel' : ''}">
+      <button class="gp-crow-hd" onclick="GP.c=GP.c==='${c.id}'?null:'${c.id}';renderGrowth()">
+        <span class="gp-rank">${i + 1}</span>
+        <span class="gp-cname"><span class="gp-tag">${GP_TYPES[c.type]}</span><h4>${esc(c.name)}</h4><p>${esc(c.sub)}</p></span>
+        <span class="gp-cell"><small>Today</small>${esc(c.ts)}</span>
+        <span class="gp-carrow">→</span>
+        <span class="gp-cell could"><small>Could be</small>${esc(c.cs)}</span>
+        <span class="gp-cstat">${gpSt(c.s)}${gpMeter(c.meter)}</span>
+      </button>
+      ${GP.c === c.id ? gpDetail({ ...c, n: i + 1 }) : ''}</div>`).join('')}</div>`;
 
   $('gp-next').innerHTML = `<div class="gp-eyebrow">A sensible order from here</div><div class="gp-h">Next moves</div>
-    <div class="gp-lead">Most pieces are built or in progress. HubSpot is what connects them into one system.</div>
+    <div class="gp-lead">Follows the channel priorities: the analysis first, then inbound. HubSpot is what connects them into one system.</div>
     <ol class="gp-steps">${GP_NEXT.map(([t, d]) => `<li><b>${esc(t)}</b>${esc(d)}</li>`).join('')}</ol>`;
 
   $('gp-open').innerHTML = `<div class="gp-eyebrow">For the discussion</div><div class="gp-h">Open questions</div>
