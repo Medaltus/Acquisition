@@ -35,6 +35,15 @@
     },
     "api/import-crm.js": {
       "maxDuration": 120
+    },
+    "api/sync-hubspot.js": {
+      "maxDuration": 300
+    },
+    "api/find-contacts.js": {
+      "maxDuration": 300
+    },
+    "api/match-linkedin.js": {
+      "maxDuration": 120
     }
   },
   "crons": [
@@ -53,6 +62,18 @@
     {
       "path": "/api/amazon-check",
       "schedule": "50 * * * *"
+    },
+    {
+      "path": "/api/sync-hubspot",
+      "schedule": "5 * * * *"
+    },
+    {
+      "path": "/api/find-contacts",
+      "schedule": "30 * * * *"
+    },
+    {
+      "path": "/api/match-linkedin",
+      "schedule": "15 12 * * *"
     }
   ],
   "rewrites": [
