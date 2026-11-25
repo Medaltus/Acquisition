@@ -18,6 +18,7 @@ export const TABS = {
   AUDIT_BUILDS: 'Audit Builds',
   HUBSPOT_MAP: 'HubSpot Stage Map',
   CONTACTS: 'Contacts',
+  INBOUND: 'Inbound Log',
 };
 
 export const HEADERS = {
@@ -54,6 +55,9 @@ export const HEADERS = {
     // System (dashboard)
     'logo_url', 'scan_status', 'scan_requested_at', 'scan_completed_at', 'snapshot_count',
     'audit_status', 'pdf_url',
+    // Inbound (website form). inbound_step tracks the fast-track scan; audit_sent_at starts the follow-up clock.
+    'inbound_at', 'inbound_step', 'inbound_updated', 'inbound_attempts', 'inbound_note', 'inbound_answers',
+    'audit_sent_at',
   ],
   [TABS.PRODUCTS]: [
     'brand_id', 'brand_name', 'product_title', 'variant_title', 'sku', 'upc', 'upc_source',
@@ -83,6 +87,11 @@ export const HEADERS = {
     // Hunter.io lookups (find-emails.js)
     'email_status', 'email_score', 'email_checked_at',
   ],
+  // Every website form submission, kept as received (one row each), with what the scanner did with it.
+  [TABS.INBOUND]: [
+    'received_at', 'submission_id', 'form_name', 'page', 'name', 'email', 'brand_text', 'requests',
+    'website_guess', 'brand_id', 'outcome', 'raw',
+  ],
   // Paste or import the CRM export here, then run /api/import-crm
   [TABS.CRM_IMPORT]: [
     'brand_name', 'category', 'stage', 'services', 'date_signed', 'where_met', 'notes',
@@ -105,6 +114,11 @@ export const HEADERS = {
 };
 
 export const AUDIT_STAGES = ['amazon', 'web', 'findings'];
+
+// Inbound fast-track scan, in order. Each step runs in its own function call.
+export const INBOUND_STEPS = ['enrich', 'products', 'amazon', 'contacts', 'audit_amazon', 'audit_web', 'audit_findings'];
+// Where a lead ends up: review = audit scanned and waiting for Jaclyn; sent = audit sent (follow-up clock running).
+export const INBOUND_DONE = { REVIEW: 'review', SENT: 'sent', NEEDS_WEBSITE: 'needs_website', NOT_A_FIT: 'not_a_fit', FAILED: 'failed' };
 
 export const OUTREACH_STAGES = [
   'Not Contacted', 'Researching', 'Audit Ready', 'Contacted', 'In Conversation', 'Proposal Sent', 'Signed',
