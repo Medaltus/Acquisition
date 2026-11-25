@@ -1301,7 +1301,9 @@ function scorecardHtml(d) {
     ${SC_CHECKS.map(([k, label, good, target]) => `<tr><td>${label}</td>${heroes.map(a => { const v = val(`score.${a}.${k}`); return `<td>${v ? `<span class="cellv ${good(v) ? 'g' : 'y'}">${esc(v)}</span>` : '<span class="cellv q">Check</span>'}</td>`; }).join('')}<td class="muted small">${target}</td></tr>`).join('')}
     </tbody></table></div>` : '<div class="small muted">No hero listings in this scan.</div>';
 
-  const kws = [1, 2, 3, 4, 5].map(i => ({ k: val(`visibility.kw.${i}.keyword`), r: val(`visibility.kw.${i}.rank`) })).filter(x => x.k);
+  const kws = [1, 2, 3, 4, 5].map(i => ({ k: val(`visibility.kw.${i}.keyword`), r: val(`visibility.kw.${i}.rank`), v: val(`visibility.kw.${i}.volume`),
+    n: (rows.find(r => r.field === `visibility.kw.${i}.rank`) || {}).notes || '' })).filter(x => x.k);
+  const vis = parseJ(val('visibility.summary'));
   const comps = [1, 2, 3].map(i => ({ n: val(`competitor.${i}.name`), ch: val(`competitor.${i}.channels`), rv: val(`competitor.${i}.amazon_reviews`), s: val(`competitor.${i}.est_monthly_revenue`) })).filter(x => x.n);
   const rank = parseJ(val('amazon.best_rank'));
   const num = v => v && !isNaN(Number(v)) ? Number(v).toLocaleString('en-US') : v;
@@ -1315,7 +1317,8 @@ function scorecardHtml(d) {
       <div class="small muted" style="margin-top:8px">${[noOffer ? `${noOffer} listing${noOffer === 1 ? '' : 's'} with nobody selling` : '', miss?.missing ? `${miss.missing} of ${miss.checked} site products not on Amazon` : '', rank ? `best rank #${Number(rank.rank).toLocaleString('en-US')} in ${esc(rank.category)}` : ''].filter(Boolean).join(' · ')}</div></div>
     <div class="sc-card"><h3>Hero listing scorecard</h3>${matrix}</div>
     <div class="sc-2">
-      <div class="sc-card"><h3>Search keywords</h3>${kws.length ? `<table class="sc-tbl"><thead><tr><th>Keyword</th><th>Their rank</th><th></th></tr></thead><tbody>${kws.map(x => `<tr><td>${esc(x.k)}</td><td>${x.r ? esc(x.r) : '<span class="cellv q">Needs Helium 10</span>'}</td><td><a href="https://www.amazon.com/s?k=${encodeURIComponent(x.k)}" target="_blank" rel="noopener">Search</a></td></tr>`).join('')}</tbody></table>` : '<div class="small muted">No keywords yet.</div>'}</div>
+      <div class="sc-card"><h3>Search keywords${vis ? ' <span class="small muted">· Helium 10 Cerebro</span>' : ''}</h3>${kws.length ? `<table class="sc-tbl"><thead><tr><th>Keyword</th>${vis ? '<th>Searches/mo</th>' : ''}<th>Their rank</th><th></th></tr></thead><tbody>${kws.map(x => `<tr><td>${esc(x.k)}</td>${vis ? `<td>${esc(num(x.v))}</td>` : ''}<td>${x.r ? `${esc(/^\d+$/.test(x.r) ? '#' + x.r : x.r)}${x.n ? `<span class="sub">${esc(x.n)}</span>` : ''}` : '<span class="cellv q">Needs Helium 10</span>'}</td><td><a href="https://www.amazon.com/s?k=${encodeURIComponent(x.k)}" target="_blank" rel="noopener">Search</a></td></tr>`).join('')}</tbody></table>` : '<div class="small muted">No keywords yet.</div>'}
+        ${vis ? `<div class="small muted" style="margin-top:8px">Page 1 for ${vis.page1Count} of their top ${vis.top10Count} non-branded keywords · ${num(String(vis.brandedVolume))} monthly searches for their brand name${vis.brandAds ? ` · ${vis.brandAds.sponsoredAds} ads on “${esc(vis.brandAds.phrase)}”` : ''}</div>` : ''}</div>
       <div class="sc-card"><h3>Closest competitors</h3>${comps.length ? `<table class="sc-tbl"><thead><tr><th>Competitor</th><th>Ratings</th><th>Channels</th><th>Monthly sales</th></tr></thead><tbody>${comps.map(x => `<tr><td>${esc(x.n)}</td><td>${esc(num(x.rv)) || '—'}</td><td class="small">${esc(x.ch)}</td><td>${x.s ? '$' + esc(num(x.s)) : '<span class="cellv q">Needs Helium 10</span>'}</td></tr>`).join('')}</tbody></table>` : '<div class="small muted">No competitors yet.</div>'}
         <div class="small muted" style="margin-top:8px">${[val('social.tiktok_followers') ? `TikTok ${num(val('social.tiktok_followers'))}` : '', val('social.instagram_followers') ? `Instagram ${num(val('social.instagram_followers'))}` : ''].filter(Boolean).join(' · ')}</div></div>
     </div>`;
@@ -1334,6 +1337,18 @@ const CTA_STORE = 'medaltus_audit_cta';
 const audRows = () => AUD.data?.rows || [];
 const audRow = f => audRows().find(r => r.field === f);
 const parseJ = v => { try { return JSON.parse(v); } catch { return null; } };
+/** Helium 10 Cerebro summary for the data inspector. */
+function visSummaryHtml(j) {
+  const n = v => Number(v || 0).toLocaleString('en-US');
+  const kw = k => `“${esc(k.phrase)}” (${n(k.volume)}/mo) ${k.rank ? '#' + k.rank : 'not ranked'}${k.lastMonthRank ? `, #${k.lastMonthRank} last month` : ''}`;
+  return `Page 1 for ${j.page1Count} of ${j.top10Count} top non-branded keywords<span class="sub">${[
+    `${n(j.keywordsFound)} keywords found`,
+    `${n(j.brandedVolume)} monthly searches for the brand name`,
+    j.missed ? `Biggest miss: ${kw(j.missed)}` : '',
+    j.slipping ? `Slipping: ${kw(j.slipping)}` : '',
+    j.brandAds ? `${j.brandAds.sponsoredAds} sponsored products on “${esc(j.brandAds.phrase)}”` : '',
+  ].filter(Boolean).join('<br>')}</span>`;
+}
 const isJsonVal = v => /^[\[{]/.test(String(v || '').trim());
 const fmtMoney = n => Number.isFinite(Number(n)) ? '$' + Number(n).toFixed(2).replace(/\.00$/, '') : '';
 const fmtGap = g => `${g > 0 ? '+' : g < 0 ? '−' : ''}${Math.abs(Math.round(g * 100))}%`;
@@ -1503,6 +1518,7 @@ function fmtRowValue(r) {
   }
   if (r.field === 'amazon.missing_products' && j) return missingProductsHtml(j);
   if (r.field === 'amazon.best_rank' && j) return `#${Number(j.rank).toLocaleString('en-US')} in ${esc(j.category)}<span class="sub">${esc(j.product)}</span>`;
+  if (r.field === 'visibility.summary' && j) return visSummaryHtml(j);
   if (Array.isArray(j)) return j.length ? esc(j.join(', ')) : '<span class="muted">None</span>';
   return esc(v);
 }
@@ -1569,6 +1585,7 @@ function shortValue(r) {
   if (r.field.startsWith('pricing.') && j) return `${fmtMoney(j.bb_price)} vs ${fmtMoney(j.site_price)} <b>${fmtGap(j.gap)}</b>`;
   if (r.field === 'amazon.missing_products' && j) return `${j.missing} of ${j.checked} not on Amazon`;
   if (r.field === 'amazon.best_rank' && j) return `#${Number(j.rank).toLocaleString('en-US')} in ${esc(j.category)}`;
+  if (r.field === 'visibility.summary' && j) return `Page 1 for ${j.page1Count} of ${j.top10Count} top keywords`;
   if (Array.isArray(j)) return j.length ? `${j.length} item${j.length === 1 ? '' : 's'}` : '<span class="muted">None</span>';
   const s = String(v);
   return esc(s.length > 70 ? s.slice(0, 68) + '…' : s);
