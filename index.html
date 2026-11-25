@@ -500,6 +500,96 @@ mark.fl-need{background:#FBF0E2;border-bottom:1px dashed var(--warn);padding:0 2
 .fl-key{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin-bottom:14px;}
 @media (max-width:1100px){.fl-detail{grid-template-columns:1fr;}}
 @media (prefers-reduced-motion:reduce){*{transition:none !important;}}
+/* ── Growth Plan ── */
+.gp-wrap{display:flex;flex-direction:column;gap:18px;max-width:1240px;}
+.gp-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:22px 24px;}
+.gp-eyebrow{font-family:var(--font-subheader);font-style:italic;color:var(--slate);font-size:15px;}
+.gp-h{font-family:var(--font-header);font-size:20px;font-weight:500;margin:2px 0 4px;color:var(--navy);}
+.gp-lead{color:var(--muted);font-size:12.5px;max-width:80ch;}
+.gp-vs{display:grid;grid-template-columns:1fr 56px 1fr;gap:0;align-items:stretch;}
+.gp-side{border-radius:var(--radius);padding:20px 22px;}
+.gp-side.today{background:var(--bg2);}
+.gp-side.could{background:var(--navy);color:#fff;}
+.gp-side.could .gp-eyebrow{color:var(--green);}
+.gp-arrow{display:flex;align-items:center;justify-content:center;color:var(--green-ink);font-size:26px;}
+.gp-big{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin:14px 0 4px;}
+.gp-stat b{display:block;font-family:var(--font-subheader);font-size:30px;line-height:1.05;letter-spacing:-.5px;}
+.gp-stat span{font-size:11.5px;opacity:.75;}
+.gp-side.could .gp-stat b{color:var(--green);}
+.gp-pts{list-style:none;margin-top:12px;display:flex;flex-direction:column;gap:6px;font-size:12.5px;}
+.gp-pts li{padding-left:16px;position:relative;}
+.gp-pts li:before{content:'';position:absolute;left:0;top:7px;width:7px;height:7px;border-radius:2px;background:var(--slate);}
+.gp-side.could .gp-pts li:before{background:var(--green);}
+.gp-live{font-size:10px;color:var(--green-ink);background:var(--green-dim);padding:1px 7px;border-radius:9px;margin-left:6px;font-style:normal;font-family:var(--font);}
+.gp-funnel{display:flex;flex-direction:column;gap:8px;margin-top:16px;}
+.gp-frow{display:grid;grid-template-columns:150px 1fr 150px;gap:14px;align-items:center;}
+.gp-frow .lbl{font-family:var(--font-header);font-size:13px;}
+.gp-frow .rate{font-size:11.5px;color:var(--muted);}
+.gp-bar{height:34px;border-radius:6px;background:var(--navy);color:#fff;display:flex;align-items:center;padding:0 12px;font-family:var(--font-bold);font-size:14px;margin:0 auto;min-width:64px;justify-content:center;}
+.gp-frow:last-child .gp-bar{background:var(--green);color:var(--navy);}
+.gp-note{font-size:11.5px;color:var(--muted);margin-top:12px;}
+.gp-tl{display:grid;grid-template-columns:repeat(12,1fr);gap:3px;margin-top:16px;}
+.gp-ph{border-radius:6px;padding:10px 10px 12px;font-size:11.5px;min-height:118px;}
+.gp-ph b{display:block;font-family:var(--font-header);font-weight:500;font-size:13px;margin-bottom:2px;}
+.gp-ph .m{font-size:10px;text-transform:uppercase;letter-spacing:.07em;opacity:.7;}
+.gp-ph ul{list-style:none;margin-top:6px;display:flex;flex-direction:column;gap:3px;}
+.gp-ph.p1{grid-column:1/2;background:var(--sand);}
+.gp-ph.p2{grid-column:2/3;background:#E8EEF8;}
+.gp-ph.p3{grid-column:3/4;background:#DDE6F4;}
+.gp-ph.p4{grid-column:4/7;background:#CFDCF0;}
+.gp-ph.p5{grid-column:7/13;background:var(--navy);color:#fff;}
+.gp-goalrow{display:grid;grid-template-columns:repeat(12,1fr);gap:3px;margin-top:6px;}
+.gp-goal{border-radius:6px;padding:6px 8px;font-size:11px;font-family:var(--font-bold);text-align:center;}
+.gp-goal.g1{grid-column:6/7;background:var(--green-dim);color:var(--green-ink);}
+.gp-goal.g2{grid-column:9/13;background:var(--green);color:var(--navy);}
+.gp-goal.g0{grid-column:1/6;background:var(--bg2);color:var(--muted);font-family:var(--font);}
+.gp-goal.gm{grid-column:7/9;background:var(--bg2);color:var(--muted);font-family:var(--font);}
+.gp-found{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:14px;}
+.gp-f{border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;cursor:pointer;background:var(--white);text-align:left;transition:border-color .13s;}
+.gp-f:hover,.gp-ch:hover{border-color:var(--slate);}
+.gp-f.sel,.gp-ch.sel{border-color:var(--navy);box-shadow:0 0 0 1px var(--navy);}
+.gp-f h4,.gp-ch h4{font-family:var(--font-header);font-weight:500;font-size:14px;margin:4px 0;color:var(--navy);}
+.gp-f p,.gp-ch p{font-size:11.5px;color:var(--muted);}
+.gp-chs{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:14px;}
+.gp-ch{border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px 12px;cursor:pointer;background:var(--white);text-align:left;display:flex;flex-direction:column;gap:6px;transition:border-color .13s;}
+.gp-ch .top{display:flex;justify-content:space-between;align-items:center;gap:8px;}
+.gp-num{width:22px;height:22px;border-radius:50%;background:var(--navy);color:#fff;font-size:11px;display:inline-flex;align-items:center;justify-content:center;font-family:var(--font-bold);}
+.gp-row2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:2px;}
+.gp-row2 div{font-size:11.5px;color:var(--navy);}
+.gp-row2 small{display:block;font-size:9.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:1px;}
+.gp-meter{display:flex;gap:3px;margin-top:4px;}
+.gp-meter i{flex:1;height:5px;border-radius:3px;background:var(--bg2);}
+.gp-meter i.on{background:var(--green);}
+.gp-st{font-size:10px;padding:1px 8px;border-radius:9px;white-space:nowrap;}
+.gp-st.s0{background:var(--bg2);color:var(--slate);}
+.gp-st.s1{background:#FBF0E2;color:var(--warn);}
+.gp-st.s2{background:var(--green-dim);color:var(--green-ink);}
+.gp-detail{margin-top:16px;border-top:1px solid var(--border);padding-top:18px;display:grid;grid-template-columns:1.1fr 1fr;gap:22px;}
+.gp-detail h5{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:0 0 8px;font-weight:600;}
+.gp-detail ol,.gp-detail ul{padding-left:18px;display:flex;flex-direction:column;gap:5px;font-size:12.5px;}
+.gp-tc{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
+.gp-tc div{border-radius:8px;padding:10px 12px;font-size:12px;}
+.gp-tc .t{background:var(--bg2);}
+.gp-tc .c{background:var(--green-dim);}
+.gp-tc small{display:block;font-size:9.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:3px;}
+.gp-built{display:flex;flex-direction:column;gap:5px;font-size:12px;}
+.gp-built span{display:flex;gap:8px;align-items:flex-start;}
+.gp-built em{font-style:normal;font-size:9.5px;padding:1px 7px;border-radius:9px;white-space:nowrap;margin-top:1px;}
+.gp-built em.y{background:var(--green-dim);color:var(--green-ink);}
+.gp-built em.p{background:#FBF0E2;color:var(--warn);}
+.gp-built em.n{background:var(--bg2);color:var(--slate);}
+.gp-q{margin-top:14px;background:var(--sand);border-radius:8px;padding:10px 12px;font-size:12px;}
+.gp-q b{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.07em;margin-bottom:2px;}
+.gp-steps{counter-reset:s;list-style:none;margin-top:14px;display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+.gp-steps li{counter-increment:s;border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px 14px 50px;position:relative;font-size:12px;color:var(--muted);}
+.gp-steps li:before{content:counter(s);position:absolute;left:14px;top:13px;width:26px;height:26px;border-radius:50%;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-family:var(--font-bold);font-size:12px;}
+.gp-steps li b{display:block;color:var(--navy);font-family:var(--font-header);font-weight:500;font-size:13px;margin-bottom:3px;}
+.gp-oq{list-style:none;margin-top:12px;display:grid;grid-template-columns:1fr 1fr;gap:8px 18px;}
+.gp-oq li{font-size:12.5px;padding:8px 0;border-bottom:1px solid var(--border2);}
+.gp-oq li b{display:block;font-family:var(--font-header);font-weight:500;}
+.gp-oq li span{color:var(--muted);font-size:11.5px;}
+@media(max-width:1000px){.gp-vs{grid-template-columns:1fr;}.gp-arrow{transform:rotate(90deg);padding:6px 0;}.gp-chs,.gp-found,.gp-steps{grid-template-columns:1fr 1fr;}.gp-detail{grid-template-columns:1fr;}.gp-frow{grid-template-columns:110px 1fr;}.gp-frow .rate{grid-column:2;}.gp-oq{grid-template-columns:1fr;}}
+
 </style>
 </head>
 <body>
@@ -525,6 +615,10 @@ mark.fl-need{background:#FBF0E2;border-bottom:1px dashed var(--warn);padding:0 2
     <div class="sb-brand-sub">Brand Portfolio</div>
   </div>
   <nav>
+    <div class="nav-section">Strategy</div>
+    <button class="nav-btn" data-page="plan" onclick="showPage('plan')">
+      <svg viewBox="0 0 16 16"><path d="M1.5 14.5h13"/><path d="M3 12l3.5-4 3 2.5L14 4"/><path d="M10.5 4H14v3.5"/></svg>Growth Plan
+    </button>
     <div class="nav-section">Partners</div>
     <button class="nav-btn active" data-page="current" onclick="showPage('current')">
       <svg viewBox="0 0 16 16"><circle cx="8" cy="5.5" r="3"/><path d="M2.5 14.5c.8-2.8 3-4.3 5.5-4.3s4.7 1.5 5.5 4.3"/></svg>Current Brands<span class="nav-badge" id="nb-current">–</span>
@@ -604,6 +698,25 @@ mark.fl-need{background:#FBF0E2;border-bottom:1px dashed var(--warn);padding:0 2
     <div class="filters"><div class="seg" id="ib-seg"></div></div>
     <div class="card"><div class="table-wrap" id="inbound-table"><div class="loading">Loading leads…</div></div></div>
     <div id="inbound-unmatched"></div>
+  </section>
+
+  <!-- ══ GROWTH PLAN (discussion view) ══ -->
+  <section class="page" id="page-plan">
+    <div class="page-hd">
+      <div>
+        <div class="page-title">Growth Plan</div>
+        <div class="page-sub">Where brand acquisition stands today, where it could be, and the path for each channel to get there. Click any foundation or channel for the how and the what.</div>
+      </div>
+    </div>
+    <div class="gp-wrap">
+      <div class="gp-card" id="gp-vs"></div>
+      <div class="gp-card" id="gp-funnel"></div>
+      <div class="gp-card" id="gp-roll"></div>
+      <div class="gp-card" id="gp-founds"></div>
+      <div class="gp-card" id="gp-chans"></div>
+      <div class="gp-card" id="gp-next"></div>
+      <div class="gp-card" id="gp-open"></div>
+    </div>
   </section>
 
   <!-- ══ INBOUND FLOW (planning map) ══ -->
@@ -782,7 +895,7 @@ mark.fl-need{background:#FBF0E2;border-bottom:1px dashed var(--warn);padding:0 2
 const KEY_STORE = 'medaltus_portfolio_key';
 let DATA = null;
 const UI = { currentRows: [], retiredRows: [], stage: '', az: '', shown: 60, open: null, productCache: {}, missingOnly: {}, currentSort: 'sign_date' };
-const PAGE_TITLES = { current: 'Current Brands', retired: 'Retired Brands', inbound: 'Inbound Leads', flow: 'Inbound Flow', prospects: 'Future Prospects', audit: 'Audit Builder' };
+const PAGE_TITLES = { plan: 'Growth Plan', current: 'Current Brands', retired: 'Retired Brands', inbound: 'Inbound Leads', flow: 'Inbound Flow', prospects: 'Future Prospects', audit: 'Audit Builder' };
 
 // rank = order for "Sort: best fit" (best prospects first)
 const AZ = [
@@ -870,7 +983,7 @@ async function load(manual = false) {
     }
   }
 }
-function renderAll() { renderCurrent(); renderRetired(); renderInbound(); renderPipeline(); renderAzSeg(); renderProspects(); }
+function renderAll() { if ($('page-plan').classList.contains('active')) renderGrowth(); renderCurrent(); renderRetired(); renderInbound(); renderPipeline(); renderAzSeg(); renderProspects(); }
 
 /* ───────────── Navigation ───────────── */
 function showPage(page) {
@@ -879,9 +992,204 @@ function showPage(page) {
   $('topbar-title').textContent = PAGE_TITLES[page];
   history.replaceState(null, '', '#' + page);
   if (page === 'flow') renderFlow();
+  if (page === 'plan') renderGrowth();
   document.querySelector('.main').scrollTop = 0;
 }
 
+
+/* ───────────── Growth Plan (discussion view) ───────────── */
+// s: 0 not started · 1 in progress · 2 working. meter: 0–4 progress toward "could be".
+// built: y = built, p = in progress, n = not started.
+const GP_STATUS = ['Not started', 'In progress', 'Working'];
+const GP_FOUND = [
+  { id: 'proof', name: 'Case studies and proof', s: 1, meter: 1,
+    today: 'No published case studies. One story staged on webflow.io; the CMS collection, page template and fill-in template are built.',
+    could: '3 stories live in month 1, 5 by month 3, then 1 new story a month. Testimonials on the homepage.',
+    why: 'Every channel needs proof: outbound, LinkedIn, the website, partner pitches and proposals.',
+    how: ['Pick the first stories by trigger: Washington compliance, the Buy Box story, the Cloud Cafe series, one Dazzle Dry story', 'Get written permission per brand (name, logo, which numbers), or anonymize', 'Write each with the fill-in template, check the numbers with the brand manager', 'Publish in the Case Studies collection; add each to the Case Studies tab so emails can use it', 'Turn each story into three formats: web page, one-page PDF, LinkedIn post', 'Add a quarterly story harvest to brand manager check-ins'],
+    built: [['y', 'Case Studies CMS collection and page template (Webflow)'], ['y', 'Fill-in-the-blank case study template'], ['p', 'Black Friday story, staged on webflow.io'], ['y', 'Case Studies tab feeding the Day 7 email'], ['n', 'Testimonials collected'], ['n', 'Case Studies listing page']],
+    q: 'Which brands do we already know would say yes to being featured?' },
+  { id: 'hubspot', name: 'One sales process in HubSpot', s: 1, meter: 1,
+    today: 'Free plan. Brand Partnerships pipeline and the hourly sheet sync are live. No calendar link, no tracked lead sources, emails not sending from HubSpot yet.',
+    could: 'Every lead from every channel in one pipeline with a source, an owner and a next step. Inbound and outbound emails sending from HubSpot.',
+    why: 'Both the inbound flow and the outbound sequence send through it, and it is how we will know which channels work.',
+    how: ['Your own HubSpot user, inbox and calendar connected; meetings link in every email', 'Lead Source, Trigger and Model properties on every deal', 'Forms and automated emails from the setup doc', 'Upgrade to the Starter plan once it is proving itself (removes HubSpot branding)', 'Speed-to-lead rule: inbound within 24 hours, referrals same day'],
+    built: [['y', 'Brand Partnerships pipeline and hourly sync'], ['y', 'Setup guide: forms, properties, emails'], ['p', 'Your HubSpot user, inbox and calendar'], ['n', 'Lead Source values for each channel'], ['n', 'Starter plan']],
+    q: 'Who owns sales follow-up day to day, and runs the weekly pipeline review?' },
+  { id: 'score', name: 'Weekly pipeline scorecard', s: 0, meter: 0,
+    today: 'No scorecard. Leads aren’t counted by channel, so there is no way to tell what is working.',
+    could: 'One view each week: leads by source, calls, audits, proposals, signed brands, and whether we’re on pace for 2 a month.',
+    why: 'The funnel targets are agency benchmarks. After 90 days we replace them with our own numbers.',
+    how: ['Build it from HubSpot reports: deal stage funnel, leads by source, deals by model', 'Mirror it as a page here or in the Medaltus Hub if leadership wants it alongside the brand dashboards', 'Weekly 30-minute review; monthly channel review with one decision', 'Track onboarding load next to the pipeline so 2 a month is absorbable'],
+    built: [['n', 'Scorecard in HubSpot'], ['n', 'Scorecard page on this dashboard']],
+    q: 'Who reviews it weekly, and does leadership want it in the Medaltus Hub?' },
+];
+const GP_CH = [
+  { id: 'ref', ts: 'Informal word of mouth, untracked', cs: '15–20 referral leads a month', n: 1, name: 'Referral and partner program', s: 1, meter: 1,
+    why: 'Our only proven channel, with the highest close rate.',
+    today: 'Every partner so far came from word of mouth. Informal and untracked.',
+    could: '15–20 qualified referral leads a month by month 4, from current brands and 10 active referral partners.',
+    how: ['Pick an incentive per audience: referral bonus, fee credit or 12-month revenue share', 'Brand managers ask their happiest brands at the next check-in, then send the forwardable sheet', 'List 30 referral partners (manufacturers, formulators, packaging, PR, fractional CMOs, 3PLs); contact 5–10 a month', 'Tell the referrer within 48 hours, thank them when the brand signs'],
+    what: ['“Who we’re looking for” one-pager', 'Referral form on medaltus.com with a required Referred by field', 'HubSpot: Referral – Client and Referral – Partner sources, Partner Name property', 'Referral Partner Program page (Phase 2)'],
+    built: [['n', 'Incentive decided'], ['n', 'One-pager'], ['n', 'Referral form and HubSpot tracking']],
+    q: 'What incentive can we offer, and who approves payouts?' },
+  { id: 'out', ts: 'Scanner and Audit Builder built, no live audits yet', cs: '20–30 audits a week, 5–8 calls a month', n: 2, name: 'Data-driven outbound (Gap Audit)', s: 1, meter: 2,
+    why: 'Our biggest untapped edge: we can show a brand its problems before the first call.',
+    today: 'The scanner and Audit Builder are built (Amazon API, Helium 10 Cerebro, web research, 2-page PDF). No live audits sent yet.',
+    could: '20–30 personalized audits a week from month 2, and 5–8 discovery calls a month by month 4.',
+    how: ['Run the first live scans on 1–2 prospects already in Future Prospects', 'Build target lists by segment: US indie beauty, wellness, K-beauty and international', 'Find the decision maker (founder, CEO, head of ecommerce)', '4-touch sequence over 3 weeks: the problem, more findings, a case study, close the loop', 'Deliver the audit on a 20-minute call, then a proposal with the recommended model'],
+    what: ['Gap Audit (built), proposal template, “Two ways to partner” one-pager', 'HubSpot sequence per segment (needs Sales Hub Starter)', 'Outbound – Audit lead source and a Trigger property', 'Case studies for touch 3'],
+    built: [['y', 'Brand Scanner and Future Prospects'], ['y', 'Audit Builder and PDF export'], ['n', 'First live audits'], ['n', 'Outbound sequence in HubSpot']],
+    q: 'Who builds the audits? Each one takes brand manager time away from current brands.' },
+  { id: 'mkt', ts: 'Amazon SPN only; Walmart unconfirmed', cs: 'Listed on Amazon, Walmart and TikTok Shop', n: 3, name: 'Marketplace partner programs', s: 1, meter: 1,
+    why: 'Passive leads, plus badges that add credibility to the site and proposals.',
+    today: 'Amazon SPN active. Walmart believed set up but unconfirmed. TikTok Shop not started. Target+ unknown.',
+    could: 'Listed in all three by month 2, each directory routing leads into HubSpot with its own source, badges on the site.',
+    how: ['Refresh the Amazon SPN listing: beauty and wellness first, both models, proof points', 'Confirm the Walmart Solution Provider listing and categories', 'Apply to the TikTok Shop Partner program with brand examples and GMV', 'Ask our Target+ contact about a partner directory', 'Badges on the homepage trust bar, channel pages and proposals'],
+    what: ['A dedicated inbox or form per directory', 'Directory lead sources in HubSpot', 'Partner badges'],
+    built: [['y', 'Amazon SPN membership'], ['p', 'Walmart listing (to confirm)'], ['n', 'TikTok Shop application'], ['n', 'Directory lead tracking']],
+    q: 'Who manages our Walmart account access, to confirm the listing?' },
+  { id: 'li', ts: 'Posts and ads running, results untracked', cs: '5+ qualified leads a month', n: 4, name: 'LinkedIn (organic and ads)', s: 1, meter: 1,
+    why: 'Already running; it needs proof content and tracking to show results.',
+    today: 'Posts and ads are running. Spend, cost per lead and where ads point aren’t tracked in one place.',
+    could: '5+ qualified leads a month by month 4. Ads promoting case studies and the free audit, every lead landing in HubSpot.',
+    how: ['Baseline first: current spend, audience, cost per lead, where ads land', 'Connect LinkedIn Ads to HubSpot so lead forms create tagged contacts', 'Tighten targeting to founders and ecommerce leads at beauty and wellness brands (2–200 employees)', 'Switch creative to proof and the audit offer; retarget site visitors', 'Organic: 2–3 posts a week, mostly from leadership profiles: mini case studies, listing teardowns, policy updates, the two models'],
+    what: ['UTM links on every post and ad', 'LinkedIn – Organic and LinkedIn – Ads lead sources', 'Case study posts and carousels', 'Outbound list uploaded as a matched audience'],
+    built: [['y', 'Posting and ads running'], ['n', 'Baseline numbers'], ['n', 'HubSpot connection'], ['n', 'Proof-based creative']],
+    q: 'What are current LinkedIn ad spend and cost per lead, and where do the ads point?' },
+  { id: 'web', ts: 'Site rebuilt; inbound flow waiting on HubSpot', cs: 'Personal reply and analysis for every form', n: 5, name: 'Website, SEO and inbound flow', s: 1, meter: 2,
+    why: 'Every other channel sends people here; it has to prove results and turn visitors into conversations.',
+    today: 'Site rebuilt. Case study template built. Inbound flow designed (welcome, analysis, follow-ups) and waiting on HubSpot setup and the form webhook.',
+    could: 'Every form submission gets a personal welcome within minutes and a growth and gap analysis in 2 days. How We Partner, Free Audit and Case Studies pages live in month 1.',
+    how: ['Set up HubSpot forms and emails, then turn on the Webflow webhook (after approval)', 'Phase 1 pages: How We Partner, Free Marketplace Gap Audit, Case Studies hub', 'Homepage: two ways to partner, badges, 3 testimonials, audit call to action', 'Contact page: what happens next, meetings link, who we’re a fit for', 'Technical fixes: sitemap, SEO gaps; 2 insight pieces a month later on'],
+    what: ['Inbound Flow (designed on this dashboard)', 'HubSpot forms on audit, contact, referral and guide pages; tracking code site-wide', 'Phase 2 and 3 pages: Beauty and Wellness, K-Beauty entry, Technology and Reporting, About, FAQ'],
+    built: [['y', 'Site rebuilt'], ['y', 'Inbound flow designed, emails written'], ['p', 'HubSpot forms and emails'], ['p', 'Case study template, first story staged'], ['n', 'How We Partner and Free Audit pages']],
+    q: 'Should the free audit become the main call to action across the site and the LinkedIn ads?' },
+  { id: 'ev', ts: 'Not started', cs: 'First show by month 3, then one a quarter', n: 6, name: 'Trade shows and events', s: 0, meter: 0,
+    why: 'Where emerging beauty and wellness brands gather.',
+    today: 'Not started.',
+    could: 'First show booked by month 3, then one a quarter, each producing 10+ qualified conversations. Walk the floor first, booth later.',
+    how: ['Six weeks out: screen the exhibitor list, Helium 10 check on the top 30', 'Four weeks out: book 10–15 meetings with a finding for each brand', 'At the show: one-pager and printed sample audits, log every conversation in HubSpot', 'Within a week: follow up with a personalized audit; post a recap'],
+    what: ['Shortlist: Cosmoprof North America, Indie Beauty Expo, Expo West, Glossy Summit, Beauty Connect LA', 'Event lead source and a campaign per event', 'Printed sample audits'],
+    built: [['n', 'Event shortlist with dates and costs'], ['n', 'First show booked']],
+    q: 'Which show first, and what budget is there for travel?' },
+];
+const GP_NEXT = [
+  ['Run the first live Gap Audits', 'One or two prospects already in Future Prospects. Tests the builder and gives real audits to show next to the case studies.'],
+  ['Set up HubSpot', 'Your user, inbox and calendar, the forms and emails from the setup doc; Starter plan when it proves out. Inbound and outbound both depend on it.'],
+  ['Finish 3–4 case studies', 'Washington compliance, the Buy Box story, the Cloud Cafe series and one Dazzle Dry story, then publish the collection once approved.'],
+  ['Turn on the inbound flow', 'More valuable than outbound early on: these brands already want help. The form-triggered analysis plus case studies make a strong first reply.'],
+  ['Turn on outbound', 'The 4-touch audit sequence, with case studies supplying the similar-brand email and LinkedIn posts.'],
+  ['Small website tasks, anytime', 'Sitemap, TikTok Shop partner registration, confirming the Walmart listing.'],
+];
+const GP_OPEN = [
+  ['Who owns sales follow-up?', 'The plan assumes one named owner for HubSpot and the weekly pipeline review.'],
+  ['How many brands do we have today?', 'The plan says about 25 (10 resale or 3PL, 15 fully managed) in one place and 65 in another. Which number do we use as the baseline?'],
+  ['Minimums for each model', 'Revenue, margin and SKU count for Model 1 and Model 2, and the revenue fit floor for inbound.'],
+  ['LinkedIn baseline', 'Current spend, cost per lead and where the ads point, before changing anything.'],
+  ['Who builds the audits?', 'Brand managers have the Helium 10 skills, but every audit takes time from current brands.'],
+  ['Referral incentive', 'What we can offer each audience, and who approves payouts.'],
+  ['Capacity', 'Can onboarding and account management absorb 2 new brands a month, especially fully managed ones?'],
+];
+const GP = { f: null, c: 'out' };
+
+function gpLive() {
+  const cur = DATA?.current || [], pros = DATA?.prospects || [];
+  const now = new Date(), yearAgo = new Date(now.getTime() - 365 * 864e5);
+  const signed12 = cur.filter(p => { const d = parseDate(p.sign_date); return d && d >= yearAgo; }).length;
+  return {
+    partners: cur.length, managed: cur.filter(p => /fully managed/i.test(p.partnership_model)).length,
+    signed12, pace: signed12 / 12,
+    inbound: pros.filter(p => p.inbound_at && !/^test-/i.test(p.brand_id || '')).length,
+    prospects: pros.filter(p => p.discovery_status !== 'Not a Fit').length,
+  };
+}
+const gpMeter = n => `<div class="gp-meter">${[0, 1, 2, 3].map(i => `<i class="${i < n ? 'on' : ''}"></i>`).join('')}</div>`;
+const gpSt = s => `<span class="gp-st s${s}">${GP_STATUS[s]}</span>`;
+const gpBuilt = b => `<div class="gp-built">${b.map(([k, t]) => `<span><em class="${k}">${k === 'y' ? 'Built' : k === 'p' ? 'In progress' : 'Not started'}</em>${esc(t)}</span>`).join('')}</div>`;
+
+function renderGrowth() {
+  const L = gpLive(), has = !!DATA;
+  const pace = L.pace >= 1 ? L.pace.toFixed(1) : L.pace.toFixed(2).replace(/^0/, '');
+  $('gp-vs').innerHTML = `<div class="gp-vs">
+    <div class="gp-side today"><div class="gp-eyebrow">Where we are today${has ? '<em class="gp-live">live</em>' : ''}</div>
+      <div class="gp-big">
+        <div class="gp-stat"><b>${has ? L.partners : '—'}</b><span>active partners${has ? `, ${L.managed} fully managed` : ''}</span></div>
+        <div class="gp-stat"><b>${has ? L.signed12 : '—'}</b><span>signed in the last 12 months${has ? ` (about ${pace} a month)` : ''}</span></div>
+      </div>
+      <ul class="gp-pts">
+        <li>Almost every partner came from word of mouth and referrals</li>
+        <li>No published case studies yet; competitors show 25–50</li>
+        <li>Leads aren’t tracked by source, so we can’t see what works</li>
+        <li>Pieces are built: scanner and Gap Audit (${has ? L.prospects : '—'} prospects), inbound flow designed, LinkedIn running, Amazon SPN member</li>
+      </ul></div>
+    <div class="gp-arrow">→</div>
+    <div class="gp-side could"><div class="gp-eyebrow">Where we could be</div>
+      <div class="gp-big">
+        <div class="gp-stat"><b>2 a month</b><span>new brand partners, 24 a year</span></div>
+        <div class="gp-stat"><b>6 channels</b><span>feeding one HubSpot pipeline</span></div>
+      </div>
+      <ul class="gp-pts">
+        <li>Referrals turned from luck into a system, plus 5 new channels</li>
+        <li>5+ case studies live, one new story a month</li>
+        <li>Every lead tracked by source, reviewed weekly</li>
+        <li>Each brand gets a personal reply and a growth and gap analysis before the first call</li>
+      </ul></div></div>`;
+
+  const F = [['Qualified leads', '~50', '~30% book a call'], ['Discovery calls', '~15', '~50% get a proposal'], ['Proposals sent', '7–8', '25–30% close'], ['Signed brands', '2', 'the goal']];
+  const W = [100, 56, 34, 18];
+  $('gp-funnel').innerHTML = `<div class="gp-eyebrow">The math</div><div class="gp-h">What 2 brands a month takes</div>
+    <div class="gp-lead">Agency benchmarks, every month. We replace them with our own numbers after 90 days of HubSpot data.</div>
+    <div class="gp-funnel">${F.map(([l, v, r], i) => `<div class="gp-frow"><div class="lbl">${l}</div><div><div class="gp-bar" style="width:${W[i]}%">${v}</div></div><div class="rate">${r}</div></div>`).join('')}</div>
+    <div class="gp-note">Today we have no count for any of these stages. Getting them is the scorecard’s first job.</div>`;
+
+  $('gp-roll').innerHTML = `<div class="gp-eyebrow">The ramp</div><div class="gp-h">Month 1 to month 12</div>
+    <div class="gp-lead">A realistic ramp: 1 new brand a month by month 6, 2 a month by months 9–12.</div>
+    <div class="gp-tl">
+      <div class="gp-ph p1"><span class="m">Month 1</span><b>Foundation</b><ul><li>HubSpot</li><li>3 case studies</li><li>Phase 1 pages</li></ul></div>
+      <div class="gp-ph p2"><span class="m">Month 2</span><b>Turn on</b><ul><li>Referral asks</li><li>Outbound audits</li><li>LinkedIn proof ads</li></ul></div>
+      <div class="gp-ph p3"><span class="m">Month 3</span><b>Measure</b><ul><li>First channel review</li><li>5 case studies</li><li>Book a show</li></ul></div>
+      <div class="gp-ph p4"><span class="m">Months 4–6</span><b>Build out</b><ul><li>Phase 2 pages</li><li>2 content pieces a month</li><li>First event</li></ul></div>
+      <div class="gp-ph p5"><span class="m">Months 7–12</span><b>Scale</b><ul><li>More outbound volume and partners</li><li>One event a quarter</li><li>Reset targets with our own data</li></ul></div>
+    </div>
+    <div class="gp-goalrow"><div class="gp-goal g0">Building the engine</div><div class="gp-goal g1">1 a month</div><div class="gp-goal gm">Ramping</div><div class="gp-goal g2">2 a month</div></div>`;
+
+  $('gp-founds').innerHTML = `<div class="gp-eyebrow">Before the channels</div><div class="gp-h">Three foundations every channel depends on</div>
+    <div class="gp-found">${GP_FOUND.map(f => `<button class="gp-f${GP.f === f.id ? ' sel' : ''}" onclick="GP.f=GP.f==='${f.id}'?null:'${f.id}';renderGrowth()">
+      <div class="top" style="display:flex;justify-content:space-between">${gpSt(f.s)}</div><h4>${esc(f.name)}</h4><p>${esc(f.why)}</p>${gpMeter(f.meter)}</button>`).join('')}</div>
+    ${GP.f ? gpDetail(GP_FOUND.find(f => f.id === GP.f), true) : ''}`;
+
+  $('gp-chans').innerHTML = `<div class="gp-eyebrow">The channels, in priority order</div><div class="gp-h">Today, could be, and the path for each</div>
+    <div class="gp-chs">${GP_CH.map(c => `<button class="gp-ch${GP.c === c.id ? ' sel' : ''}" onclick="GP.c=GP.c==='${c.id}'?null:'${c.id}';renderGrowth()">
+      <div class="top"><span style="display:flex;gap:8px;align-items:center"><span class="gp-num">${c.n}</span></span>${gpSt(c.s)}</div>
+      <h4>${esc(c.name)}</h4>
+      <div class="gp-row2"><div><small>Today</small>${esc(c.ts)}</div><div><small>Could be</small>${esc(c.cs)}</div></div>
+      ${gpMeter(c.meter)}</button>`).join('')}</div>
+    ${GP.c ? gpDetail(GP_CH.find(c => c.id === GP.c)) : ''}`;
+
+  $('gp-next').innerHTML = `<div class="gp-eyebrow">A sensible order from here</div><div class="gp-h">Next moves</div>
+    <div class="gp-lead">Most pieces are built or in progress. HubSpot is what connects them into one system.</div>
+    <ol class="gp-steps">${GP_NEXT.map(([t, d]) => `<li><b>${esc(t)}</b>${esc(d)}</li>`).join('')}</ol>`;
+
+  $('gp-open').innerHTML = `<div class="gp-eyebrow">For the discussion</div><div class="gp-h">Open questions</div>
+    <ul class="gp-oq">${GP_OPEN.map(([t, d]) => `<li><b>${esc(t)}</b><span>${esc(d)}</span></li>`).join('')}</ul>`;
+}
+function gpDetail(x, isFound) {
+  if (!x) return '';
+  const list = (a, tag = 'ol') => `<${tag}>${a.map(i => `<li>${esc(i)}</li>`).join('')}</${tag}>`;
+  return `<div class="gp-detail">
+    <div>
+      <div class="gp-h" style="font-size:17px">${isFound ? '' : `${x.n}. `}${esc(x.name)}</div>
+      <div class="gp-lead" style="margin-bottom:12px">${esc(x.why)}</div>
+      <div class="gp-tc"><div class="t"><small>Today</small>${esc(x.today)}</div><div class="c"><small>Could be</small>${esc(x.could)}</div></div>
+      <h5>How we get there</h5>${list(x.how)}
+    </div>
+    <div>
+      ${x.what ? `<h5>What it takes</h5>${list(x.what, 'ul')}<div style="height:14px"></div>` : ''}
+      <h5>What’s built</h5>${gpBuilt(x.built)}
+      ${x.q ? `<div class="gp-q"><b>To decide</b>${esc(x.q)}</div>` : ''}
+    </div></div>`;
+}
 
 /* ───────────── Inbound flow map (planning view) ───────────── */
 // status: built | partial | planned. h10 = Helium 10 calls per lead; api = free Amazon API checks.
