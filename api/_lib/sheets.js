@@ -124,6 +124,12 @@ export async function updateRows(tab, headers, updates) {
   }
 }
 
+/** Raw cell values of a tab (no header handling), for user-imported files like LinkedIn exports. */
+export async function readValues(tab) {
+  const data = await gfetch(`/values/${rangeOf(tab)}?valueRenderOption=FORMATTED_VALUE`);
+  return data.values || [];
+}
+
 export async function listTabs() {
   const meta = await gfetch('?fields=sheets.properties.title');
   return (meta.sheets || []).map(s => s.properties.title);
