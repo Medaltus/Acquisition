@@ -12,6 +12,8 @@ import { readTab, appendRows, updateRows } from './_lib/sheets.js';
 import { isAuthorized, isDashboardAuthorized, nowIso, cleanGtin, parseSellerIds } from './_lib/util.js';
 import { lookupCodes, searchBrand, getOfferDetails, getCatalogDetails, getSellerNames } from './_lib/spapi.js';
 import { askClaude, parseJson } from './_lib/claude.js';
+import { helium10Ready } from './_lib/helium10.js';
+import { scanVisibility, snapshotRows, PAGE1_RANK } from './_lib/cerebro.js';
 import {
   isNonBeauty, judgeComparison, sellerIsBrand, buildFacts, evaluateFindings, suggestSelections,
   copyIsGrounded, fmtPct, fmtMoney,
@@ -29,14 +31,21 @@ const heroKey = t => String(t || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').t
 const answersOf = brand => { try { return JSON.parse(brand.inbound_answers || '{}'); } catch { return {}; } };
 const dpUrl = asin => `https://www.amazon.com/dp/${asin}`;
 
-/** Build one Audit Data row. */
+/**
+ * Build one Audit Data row.
+ * Facts read straight from Amazon's API by ASIN are verified on arrival (they can still be edited or unchecked).
+ * AI research, scraped prices and anything flagged 'Needs check' still wait for a person.
+ */
 function dp(ctx, section, field, label, value, o = {}) {
+  const method = o.method || 'auto';
+  const confidence = o.confidence || (method === 'ai' ? 'Needs check' : method === 'needed' ? 'Missing' : 'High');
+  const fromApi = method === 'auto' && confidence === 'High' && (o.trusted || /^Amazon SP-API/.test(o.source || ''));
   return {
     brand_id: ctx.brand.brand_id, scan_id: ctx.scanId, section, field, label,
     value: value === null || value === undefined ? '' : String(value),
-    source: o.source || '', source_url: o.url || '', method: o.method || 'auto',
-    confidence: o.confidence || (o.method === 'ai' ? 'Needs check' : o.method === 'needed' ? 'Missing' : 'High'),
-    verified: '', verified_by: '', captured_at: ctx.stamp, notes: o.notes || '',
+    source: o.source || '', source_url: o.url || '', method, confidence,
+    verified: fromApi ? 'Y' : '', verified_by: fromApi ? 'auto (Amazon API)' : '',
+    captured_at: ctx.stamp, notes: o.notes || '',
   };
 }
 
@@ -147,7 +156,7 @@ async function stageAmazon(ctx) {
   }
   const brandSeller = anyBrand ? 'Yes' : (!sellerSummary.size ? 'No listings with offers' : anyUnknown ? 'Unknown' : 'No');
   rows.push(dp(ctx, 'Listing control', 'control.brand_seller', 'Does the brand sell its own Amazon listings?', brandSeller,
-    { source: brandIds.length ? "Brand's seller ID (entered on the dashboard)" : 'Seller names vs brand name', confidence: brandSeller === 'Unknown' ? 'Needs check' : 'High',
+    { source: brandIds.length ? "Brand's seller ID (entered on the dashboard)" : 'Seller names vs brand name', trusted: brandIds.length > 0, confidence: brandSeller === 'Unknown' ? 'Needs check' : 'High',
       notes: brandSeller === 'Unknown' ? 'Some seller names were blocked by Amazon. Open the listings and check the Sold by line, then edit this to Yes or No.' : '' }));
   rows.push(dp(ctx, 'Listing control', 'control.no_offer_asins', 'Listings with nobody selling', J(noOffer.map(n => n.asin)),
     { source: 'Amazon SP-API offers', notes: noOffer.map(n => n.title.slice(0, 60)).join('; ') }));
@@ -196,7 +205,11 @@ async function stageAmazon(ctx) {
       J({ rank: best.rankNumber, category: String(best.salesRank).replace(/^#[\d,]+ in /, ''), product: best.title, asin: best.asin }),
       { source: 'Amazon SP-API catalog', url: dpUrl(best.asin), notes: best.salesRank }));
   }
-  const heroes = [...new Set([...heroAsins, ...withRank.map(x => x.asin), ...detailAsins])].filter(a => catalog.has(a)).slice(0, HERO_COUNT);
+  // One hero per product family (shades/sizes of the same product share a parent ASIN)
+  const seenFamily = new Set();
+  const heroes = [...new Set([...heroAsins, ...withRank.map(x => x.asin), ...detailAsins])].filter(a => catalog.has(a))
+    .filter(a => { const fam = catalog.get(a).parentAsin || a; if (seenFamily.has(fam)) return false; seenFamily.add(fam); return true; })
+    .slice(0, HERO_COUNT);
   for (const asin of heroes) {
     const c = catalog.get(asin);
     const src = { source: 'Amazon SP-API catalog', url: dpUrl(asin) };
@@ -210,7 +223,32 @@ async function stageAmazon(ctx) {
   }
 
   ctx.heroes = heroes.map(a => ({ asin: a, title: catalog.get(a)?.title || '' }));
-  return { rows, notes, summary: `${all.size} listings, ${sellerSummary.size} sellers, brand seller: ${brandSeller}` };
+
+  // Search visibility from Helium 10 Cerebro (falls back to web research keywords if unavailable)
+  let snapshots = [];
+  if (ctx.heroes.length && await helium10Ready()) {
+    try {
+      const vis = await scanVisibility(ctx.heroes, [brand.amazon_brand_name, brand.brand_name]);
+      const S = vis.summary;
+      const src = { source: 'Helium 10 Cerebro (reverse ASIN)', trusted: true };
+      rows.push(dp(ctx, 'Search visibility', 'visibility.summary', 'Search visibility summary', J(S),
+        { ...src, notes: `${S.keywordsFound} keywords across ${vis.families.length} hero product${vis.families.length === 1 ? '' : 's'}` }));
+      S.genericTop.forEach((k, idx) => {
+        const i = idx + 1, at = { ...src, url: `https://www.amazon.com/s?k=${encodeURIComponent(k.phrase)}` };
+        rows.push(dp(ctx, 'Search visibility', `visibility.kw.${i}.keyword`, `Top keyword ${i}`, k.phrase, at));
+        rows.push(dp(ctx, 'Search visibility', `visibility.kw.${i}.rank`, `Brand's rank for “${k.phrase}”`, k.rank ?? 'Not ranked',
+          { ...at, notes: [k.lastMonthRank ? `#${k.lastMonthRank} last month` : '', k.rank && k.rank <= PAGE1_RANK ? 'page 1' : ''].filter(Boolean).join(', ') }));
+        rows.push(dp(ctx, 'Search visibility', `visibility.kw.${i}.volume`, `Monthly searches for “${k.phrase}”`, k.volume, at));
+      });
+      rows.push(dp(ctx, 'Growth signals', 'demand.branded_searches', 'Monthly Amazon searches for the brand name', S.brandedVolume,
+        { ...src, notes: S.brandedTop ? `Top: “${S.brandedTop.phrase}” (${S.brandedTop.volume.toLocaleString('en-US')}/mo)` : '' }));
+      snapshots = snapshotRows(vis.families, { taken_at: ctx.stamp, brand_id: brand.brand_id, scan_id: ctx.scanId, kind: 'baseline' });
+      notes.push(`Helium 10: ${vis.calls} call${vis.calls === 1 ? '' : 's'}, ${S.keywordsFound} keywords`);
+    } catch (e) {
+      notes.push(`Helium 10 Cerebro failed, using web research keywords instead: ${e.message}`);
+    }
+  }
+  return { rows, notes, snapshots, summary: `${all.size} listings, ${sellerSummary.size} sellers, brand seller: ${brandSeller}` };
 }
 
 /* ───────────── Stage 2: web research (Claude + web search) ───────────── */
@@ -312,7 +350,9 @@ async function stageWeb(ctx, scanRows) {
       rows.push(dp(ctx, 'Competitors', `competitor.${i}.est_monthly_revenue`, `${c.name}: est. monthly Amazon sales ($)`, '',
         { method: 'needed', source: 'Helium 10 X-Ray or Black Box', notes: 'Add from Helium 10 to use this competitor in the callout with a dollar figure.' }));
     });
-    (l.keywords || []).slice(0, 5).forEach((k, idx) => {
+    // Keywords come from Helium 10 Cerebro when it ran; Claude's suggestions are only the fallback
+    const hasCerebro = scanRows.some(r => r.field === 'visibility.summary');
+    (hasCerebro ? [] : (l.keywords || []).slice(0, 5)).forEach((k, idx) => {
       rows.push(dp(ctx, 'Search visibility', `visibility.kw.${idx + 1}.keyword`, `Core keyword ${idx + 1}`, k, A));
       rows.push(dp(ctx, 'Search visibility', `visibility.kw.${idx + 1}.rank`, `Brand's rank for “${k}”`, '',
         { method: 'needed', source: 'Helium 10 Cerebro or Keyword Tracker', notes: 'Enter a rank number, or "Not ranked" if outside the top 100.' }));
@@ -402,6 +442,10 @@ export default async function handler(req, res) {
     if (stage === 'amazon') {
       result = await stageAmazon(ctx);
       await appendRows(TABS.AUDIT_DATA, dataTab.headers, result.rows);
+      if (result.snapshots?.length) {
+        const ranks = await readTab(TABS.RANKS);
+        await appendRows(TABS.RANKS, ranks.headers, result.snapshots);
+      }
       await setBrand({ scan_status: 'Scanning: web research' });
     } else if (stage === 'web') {
       const existingFields = new Set(scanRows().map(r => r.field));
