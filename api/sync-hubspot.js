@@ -13,6 +13,12 @@
  * suggested dashboard stage, which you can change. A blank dashboard_stage means "ignore".
  * Manual: /api/sync-hubspot (Authorization: Bearer <CRON_SECRET>)
  *
+ * Which HubSpot companies count (company Type property):
+ *   Vendor, Reseller, Other  -> skipped
+ *   Partner                  -> matched to Partner Brands only; reported if missing there, never added as a prospect
+ *   Prospect                 -> matched to Brands, or added as a new prospect
+ *   (no Type)                -> matched if already in the sheet; added only if it has a deal
+ *
  * Preview mode: nothing is written to the sheet unless HUBSPOT_SYNC_ENABLED=yes is set in Vercel.
  * Until then every run (hourly cron or manual) only reports what it WOULD do, with example names.
  * ?preview=1 forces a preview even after the sync is turned on. HubSpot itself is never written to.
@@ -22,11 +28,12 @@ import { readTab, appendRows, updateRows, logRun } from './_lib/sheets.js';
 import { isAuthorized, nowIso, normalizeName, normalizeDomain, slugify } from './_lib/util.js';
 import { listCompanies, batchRead, getDealStages, getOwners, getPortalId, suggestStage } from './_lib/hubspot.js';
 
-const COMPANY_PROPS = ['name', 'domain', 'website', 'lifecyclestage', 'hs_lead_status', 'hubspot_owner_id',
+const COMPANY_PROPS = ['name', 'domain', 'website', 'type', 'lifecyclestage', 'hs_lead_status', 'hubspot_owner_id',
   'notes_last_contacted', 'hs_last_sales_activity_timestamp', 'notes_last_updated', 'hs_lastmodifieddate'];
 const CONTACT_PROPS = ['firstname', 'lastname', 'jobtitle', 'email', 'hs_linkedin_url', 'lastmodifieddate', 'notes_last_contacted'];
 const DEAL_PROPS = ['dealname', 'dealstage', 'pipeline', 'closedate', 'hs_next_step', 'hs_lastmodifieddate', 'hubspot_owner_id'];
-const IMPORT_LIFECYCLES = ['lead', 'marketingqualifiedlead', 'salesqualifiedlead', 'opportunity'];
+// HubSpot company Type: Vendor / Reseller / Other are never brands, so they're skipped.
+const SKIP_TYPES = ['VENDOR', 'RESELLER', 'OTHER'];
 
 const toDate = v => { const d = v ? new Date(/^\d+$/.test(v) ? Number(v) : v) : null; return d && !isNaN(d) ? d.toISOString() : ''; };
 const latest = (...vals) => vals.map(toDate).filter(Boolean).sort().pop() || '';
@@ -102,7 +109,9 @@ export default async function handler(req, res) {
       if (!name) continue;
       const domain = normalizeDomain(p.domain || p.website);
       const nName = normalizeName(name);
-      if ((domain && excludedDomains.has(domain)) || excludedNames.has(nName)) { skipped.push(name); continue; }
+      const hsType = String(p.type || '').toUpperCase();
+      if ((domain && excludedDomains.has(domain)) || excludedNames.has(nName)) { skipped.push(`${name} (Exclusions tab)`); continue; }
+      if (SKIP_TYPES.includes(hsType)) { skipped.push(`${name} (Type: ${hsType.toLowerCase()})`); continue; }
       const url = portalId ? `https://app.hubspot.com/contacts/${portalId}/record/0-2/${id}` : '';
       const owner = owners.get(String(p.hubspot_owner_id || '')) || '';
 
@@ -141,9 +150,12 @@ export default async function handler(req, res) {
         continue;
       }
 
+      // Type Partner but not in Partner Brands: report it, never treat a partner as a prospect
+      if (hsType === 'PARTNER') { if (!partnerNames.has(nName)) unmatchedCustomers.push(name); continue; }
+
       let brand = findBrand(id, domain, nName);
       if (!brand) {
-        const inPipeline = deal || IMPORT_LIFECYCLES.includes(String(p.lifecyclestage).toLowerCase()) || p.hs_lead_status;
+        const inPipeline = hsType === 'PROSPECT' || Boolean(deal);
         // A won deal for a brand not in the sheet: add it straight to Partner Brands
         if (dealStage === 'Signed') {
           if (!partnerNames.has(nName)) {
