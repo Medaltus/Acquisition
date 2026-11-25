@@ -62,6 +62,14 @@ export function nameFromDomain(url) {
   return label ? label.charAt(0).toUpperCase() + label.slice(1) : '';
 }
 
+/** YYYY-MM-DD, n business days (Mon-Fri) after `from`. */
+export function bizDaysFrom(from, n) {
+  const d = new Date(from);
+  let left = n;
+  while (left > 0) { d.setUTCDate(d.getUTCDate() + 1); const w = d.getUTCDay(); if (w !== 0 && w !== 6) left--; }
+  return d.toISOString().slice(0, 10);
+}
+
 export function baseUrl(req) {
   const prod = (process.env.VERCEL_PROJECT_PRODUCTION_URL || '').trim();
   if (prod) return `https://${prod}`;
