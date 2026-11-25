@@ -37,9 +37,14 @@ export default async function handler(req, res) {
   if (!(process.env.HUBSPOT_TOKEN || '').trim()) return res.status(200).json({ ok: true, skipped: 'HUBSPOT_TOKEN not set yet' });
   const stamp = nowIso();
   try {
-    const [brands, partners, stageMap] = await Promise.all([
+    const [brands, partners, stageMap, exclusions] = await Promise.all([
       readTab(TABS.BRANDS), readTab(TABS.PARTNERS), readTab(TABS.HUBSPOT_MAP),
+      readTab(TABS.EXCLUSIONS).catch(() => ({ rows: [] })),
     ]);
+    // Never import Medaltus itself, or anything on the Exclusions tab (agencies, vendors, not-a-fit brands)
+    const excludedDomains = new Set(['medaltus.com', ...exclusions.rows.map(e => normalizeDomain(e.domain))].filter(Boolean));
+    const excludedNames = new Set(['medaltus', ...exclusions.rows.map(e => normalizeName(e.brand_name))].filter(Boolean));
+    const skipped = [];
     const [companies, stages, owners, portalId] = await Promise.all([
       listCompanies(COMPANY_PROPS), getDealStages(), getOwners(), getPortalId(),
     ]);
@@ -76,7 +81,12 @@ export default async function handler(req, res) {
       }
       return (id, domain, name) => byHs.get(id) || (domain && byDomain.get(domain)) || byName.get(name);
     };
-    const findPartner = index(partners.rows);
+    const findPartnerExact = index(partners.rows);
+    // Partners also match on a shortened name ("Cosmette" vs "Cosmette Skincare"); the partner list is short enough to be safe
+    const findPartner = (id, domain, name) => findPartnerExact(id, domain, name) || partners.rows.find(r => {
+      const n = normalizeName(r.brand_name);
+      return n.length >= 5 && name.length >= 5 && (name.startsWith(n) || n.startsWith(name));
+    });
     const findBrand = index(brands.rows);
     const ids = new Set(brands.rows.map(b => b.brand_id));
     const partnerNames = new Set(partners.rows.map(p => normalizeName(p.brand_name)));
@@ -92,6 +102,7 @@ export default async function handler(req, res) {
       if (!name) continue;
       const domain = normalizeDomain(p.domain || p.website);
       const nName = normalizeName(name);
+      if ((domain && excludedDomains.has(domain)) || excludedNames.has(nName)) { skipped.push(name); continue; }
       const url = portalId ? `https://app.hubspot.com/contacts/${portalId}/record/0-2/${id}` : '';
       const owner = owners.get(String(p.hubspot_owner_id || '')) || '';
 
@@ -198,6 +209,7 @@ export default async function handler(req, res) {
         wouldUpdateProspects: brandUpdates.map(u => nameOfRow(u.row)),
         wouldAddPartners: newPartners.map(p => p.brand_name),
         wouldUpdatePartners: partnerUpdates.map(u => partners.rows.find(p => p._row === u.row)?.brand_name || `row ${u.row}`),
+        skippedAsExcluded: skipped,
         wouldAddStageMappings: newMapRows.map(m => `${m.hubspot_field}: ${m.hubspot_value} -> ${m.dashboard_stage || '(ignore)'}`),
         customersNotInPartnerBrands: unmatchedCustomers,
       });
