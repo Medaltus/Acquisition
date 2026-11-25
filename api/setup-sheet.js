@@ -5,7 +5,7 @@
  * and seeds the Sources tab with starter sources if it's empty.
  * Run: https://<your-deployment>/api/setup-sheet?key=<CRON_SECRET>
  */
-import { TABS, HEADERS, SEED_SOURCES, SOURCE_UPGRADES } from './_lib/schema.js';
+import { TABS, HEADERS, SEED_SOURCES, SOURCE_UPGRADES, SEED_CASES } from './_lib/schema.js';
 import { listTabs, addTab, readTab, writeHeaderCells, appendRows, updateRows } from './_lib/sheets.js';
 import { isAuthorized } from './_lib/util.js';
 
@@ -23,6 +23,13 @@ export default async function handler(req, res) {
         await writeHeaderCells(tab, headers.length, missing);
         report.push(`"${tab}": added ${missing.length} column(s)`);
       }
+    }
+
+    const cases = await readTab(TABS.CASES);
+    if (!cases.rows.length) {
+      const stamp = new Date().toISOString();
+      await appendRows(TABS.CASES, cases.headers, SEED_CASES.map(c => ({ ...c, updated_at: stamp })));
+      report.push(`Seeded ${SEED_CASES.length} case studies`);
     }
 
     const sources = await readTab(TABS.SOURCES);
