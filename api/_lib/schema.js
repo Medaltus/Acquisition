@@ -20,6 +20,7 @@ export const TABS = {
   CONTACTS: 'Contacts',
   INBOUND: 'Inbound Log',
   SETTINGS: 'Settings',
+  RANKS: 'Rank Snapshots',
 };
 
 export const HEADERS = {
@@ -89,6 +90,11 @@ export const HEADERS = {
     'email_status', 'email_score', 'email_checked_at',
   ],
   // Every website form submission, kept as received (one row each), with what the scanner did with it.
+  // Helium 10 Cerebro keyword ranks per hero product: baseline at audit, re-scans before follow-ups
+  [TABS.RANKS]: [
+    'taken_at', 'brand_id', 'scan_id', 'kind', 'asin', 'period', 'phrase', 'branded', 'search_volume',
+    'organic_rank', 'sponsored_rank', 'sponsored_ads', 'amazon_choice',
+  ],
   // Scanner-managed secrets and connection state (values encrypted). Don't edit by hand.
   [TABS.SETTINGS]: ['key', 'value', 'updated_at'],
   [TABS.INBOUND]: [
