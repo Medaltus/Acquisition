@@ -406,6 +406,24 @@ textarea.input{resize:vertical;min-height:64px;line-height:1.5;}
 /* ── Inbound flow map ── */
 .fl-wrap{display:flex;flex-direction:column;gap:16px;}
 .fl-wrap[hidden]{display:none;}
+.cs-lib{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px;}
+.cs-card{border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px;background:var(--white);display:flex;flex-direction:column;gap:8px;}
+.cs-card h3{font-family:var(--font-header);font-size:16px;font-weight:500;line-height:1.3;}
+.cs-head{font-family:var(--font-bold);font-size:13px;color:var(--green-ink);}
+.cs-meta{font-size:12px;color:var(--muted);}
+.cs-tags{display:flex;gap:4px;flex-wrap:wrap;}
+.cs-tags i{font-style:normal;font-size:11px;padding:1px 8px;border-radius:9px;background:var(--navy-dim);color:var(--navy);}
+.cs-sum{font-size:13px;line-height:1.55;color:var(--text);}
+.cs-pick{display:flex;flex-direction:column;gap:8px;margin:12px 0;}
+.cs-opt{display:flex;gap:10px;align-items:flex-start;border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;cursor:pointer;}
+.cs-opt.on{border-color:var(--navy);box-shadow:0 0 0 1px var(--navy) inset;}
+.cs-opt input{margin-top:3px;}
+.cs-opt b{display:block;font-size:13px;}
+.cs-opt span{font-size:12px;color:var(--muted);}
+.cs-sug{font-size:10px;background:var(--green-dim);color:var(--green-ink);border-radius:9px;padding:1px 7px;margin-left:6px;}
+.cs-split{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:18px;}
+@media (max-width:1000px){.cs-split{grid-template-columns:1fr;}}
+
 .fl-map{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:22px 22px 18px;overflow-x:auto;}
 .fl-grid{display:grid;grid-template-columns:110px repeat(var(--n),minmax(108px,1fr));min-width:1100px;}
 .fl-axis{grid-column:2 / -1;display:grid;grid-template-columns:repeat(var(--n),minmax(108px,1fr));position:relative;margin-bottom:6px;}
@@ -596,6 +614,7 @@ mark.fl-need{background:#FBF0E2;border-bottom:1px dashed var(--warn);padding:0 2
       </div>
       <div class="seg fl-tabs" id="fl-tabs"></div>
     </div>
+    <div class="fl-wrap" id="fl-cases-wrap" hidden><div class="fl-card" id="fl-cases"></div></div>
     <div class="fl-wrap" id="fl-all-wrap" hidden><div class="fl-card"><div class="fl-key" id="fl-key"></div><div class="fl-all" id="fl-all"></div></div></div>
     <div class="fl-wrap" id="fl-map-wrap">
       <div class="fl-map" id="fl-map"></div>
@@ -736,6 +755,18 @@ mark.fl-need{background:#FBF0E2;border-bottom:1px dashed var(--warn);padding:0 2
       <button type="submit" class="btn btn-primary" id="ans-save">Save answers</button>
     </div>
   </form>
+</div>
+
+<div class="modal-bg" id="cs-modal" onclick="if(event.target===this)closeModal('cs-modal')">
+  <div class="modal modal-wide" style="max-width:1100px">
+    <h3 id="cs-title">Case study</h3>
+    <p>The case study the day 7 email shares with this brand. The scanner suggests the one that best matches their audit findings and category; pick another anytime before it goes out.</p>
+    <div class="cs-split"><div><div class="cs-pick" id="cs-pick"></div></div><div id="cs-preview"></div></div>
+    <div class="form-actions">
+      <button type="button" class="btn btn-ghost" onclick="closeModal('cs-modal')">Cancel</button>
+      <button type="button" class="btn btn-primary" id="cs-save" onclick="saveCase()">Use this case study</button>
+    </div>
+  </div>
 </div>
 
 <div class="modal-bg" id="sc-modal" onclick="if(event.target===this)closeModal('sc-modal')">
@@ -881,8 +912,8 @@ const FLOW = [
   { id: 'case', tick: 'Day 7', sub: '5 days after audit', status: 'planned',
     title: 'Case study', when: 'About day 7: 5 days after the audit is sent',
     goal: 'Proof from a brand like theirs.',
-    scanner: ['Matches a partner result by category, using the results published on medaltus.com (skincare, nail care, supplements and wellness)', 'Sends on schedule (automated)'],
-    you: ['Nothing. It stops on its own if they reply'],
+    scanner: ['Picks the case study from the Case Studies tab whose topics best match their audit findings, then their category', 'Sends on schedule (automated)'],
+    you: ['Nothing. You can change the case study from Inbound Leads (Case study button) before it goes out'],
     lead: { subj: 'What this looked like for a brand like yours', body: 'A short before and after from a partner in the same category.' },
     chips: { scanner: 'Match result, send', you: '', lead: 'A partner like them' },
     cost: [] },
@@ -931,7 +962,7 @@ const FLOW_OPEN = [
   ['Sending the automated emails', 'Four emails go out without review, so they need a sending tool: HubSpot sequences (paid Sales Hub), or sending through your Gmail. Until one is connected they sit here as ready-to-send drafts.'],
   ['The three reviewed emails', 'The audit, the day 11 search read and the close-out get a person. Is that the right three?'],
   ['Nurture', 'Quarterly rank checks for leads that go quiet, or stop at the close-out.'],
-  ['Partner results', 'The day 7 email uses the three results already on medaltus.com, without naming the brand. OK to use them this way, or should any be named?'],
+  ['Case studies', 'The library starts with your Black Friday compliance story and the three results on medaltus.com, none naming the brand. Add more rows to the Case Studies tab as you write them, and a full-story link once each is published.'],
   ['Webflow webhook', 'Turning on the form notification after Monday’s review, with your approval (GTM, Analytics and ad conversions stay untouched).'],
 ];
 const FL = { sel: 'confirm' };
@@ -1003,7 +1034,7 @@ Since you already sell on Amazon, we would work alongside your team inside your 
 Our model is a little different from a typical agency. There's no monthly retainer. We invest our own capital in your inventory and advertising, and we only earn when your sales grow. It keeps every recommendation we make focused on what's genuinely best for your brand.
 
 If it would help to talk through what this could look like for you, I'm always happy to.` }] },
-  case: { review: false, why: 'Proof from a partner in the same category, using the results already published on medaltus.com. The scanner picks the closest match.', variants: [
+  case: { review: false, why: 'A story from a partner that matches what their audit found. Each case study on the Case Studies tab is a version below; the scanner suggests one per lead and you can change it.', variants: [
     { label: 'Skincare', subj: 'What partnership has looked like for a skincare brand', body: `
 Hi {{Maya}},
 
@@ -1105,11 +1136,21 @@ function mailHtml(text) {
   }
   return out.join('');
 }
+function mailBox(subj, body, to = FLOW_TO) {
+  const inline = t => esc(t).replace(/\{\{(.+?)\}\}/g, '<mark class="fl-m">$1</mark>').replace(/\[\[(.+?)\]\]/g, '<mark class="fl-need">$1</mark>');
+  return `<div class="fl-mail"><div class="fl-mail-hd"><span>From</span><b>${esc(FLOW_FROM)}</b><span>To</span><b>${inline(to)}</b><div class="subj">${inline(subj)}</div></div>
+    <div class="fl-mail-body">${mailHtml(body)}${FLOW_SIG}</div></div>`;
+}
+function flowVariants(stepId) {
+  if (stepId === 'case' && readyCases().length) return readyCases().map(c => ({ label: c.title, ...caseEmail(c, { shared: [caseTopics(c)[0]].filter(Boolean) }) }));
+  return FLOW_EMAILS[stepId].variants;
+}
 function mailCard(stepId) {
   const e = FLOW_EMAILS[stepId]; if (!e) return '';
-  const v = e.variants[FLV[stepId] || 0];
+  const vars = flowVariants(stepId);
+  const v = vars[Math.min(FLV[stepId] || 0, vars.length - 1)];
   const inline = t => esc(t).replace(/\{\{(.+?)\}\}/g, '<mark class="fl-m">$1</mark>').replace(/\[\[(.+?)\]\]/g, '<mark class="fl-need">$1</mark>');
-  return `${e.variants.length > 1 ? `<div class="fl-var">${e.variants.map((x, i) => `<button class="${(FLV[stepId] || 0) === i ? 'on' : ''}" onclick="FLV['${stepId}']=${i};renderFlowEmails()">${esc(x.label)}</button>`).join('')}</div>` : ''}
+  return `${vars.length > 1 ? `<div class="fl-var">${vars.map((x, i) => `<button class="${(FLV[stepId] || 0) === i ? 'on' : ''}" onclick="FLV['${stepId}']=${i};renderFlowEmails()">${esc(x.label)}</button>`).join('')}</div>` : ''}
     <div class="fl-mail"><div class="fl-mail-hd"><span>From</span><b>${esc(FLOW_FROM)}</b><span>To</span><b>${inline(FLOW_TO)}</b><div class="subj">${inline(v.subj)}</div></div>
     <div class="fl-mail-body">${mailHtml(v.body)}${FLOW_SIG}</div></div>`;
 }
@@ -1131,10 +1172,12 @@ const FLOW_STATUS = { built: 'Built', partial: 'Partly built', planned: 'Planned
 
 function renderFlow() {
   FL.view = FL.view || 'map';
-  $('fl-tabs').innerHTML = [['map', 'Flow map'], ['emails', 'Read the emails']].map(([v, l]) => `<button class="${FL.view === v ? 'active' : ''}" onclick="setFlowView('${v}')">${l}</button>`).join('');
+  $('fl-tabs').innerHTML = [['map', 'Flow map'], ['emails', 'Read the emails'], ['cases', 'Case studies']].map(([v, l]) => `<button class="${FL.view === v ? 'active' : ''}" onclick="setFlowView('${v}')">${l}</button>`).join('');
   $('fl-map-wrap').hidden = FL.view !== 'map';
   $('fl-all-wrap').hidden = FL.view !== 'emails';
+  $('fl-cases-wrap').hidden = FL.view !== 'cases';
   if (FL.view === 'emails') { renderFlowEmails(); return; }
+  if (FL.view === 'cases') { renderCaseLibrary(); return; }
   const tag = id => { const e = FLOW_EMAILS[id]; return e ? `<em class="fl-rv ${e.review ? 'rv' : 'auto'}">${e.review ? 'You review' : 'Automated'}</em>` : ''; };
   const cols = FLOW.map(s => `<div class="fl-tick ${s.cls || ''}"><b>${esc(s.tick)}</b><span>${esc(s.sub)}</span>${tag(s.id)}</div>`).join('');
   let grid = `<div class="fl-grid" style="--n:${FLOW.length}"><div></div><div class="fl-axis">${cols}</div>`;
@@ -1170,6 +1213,114 @@ function renderFlowStep() {
     <div class="fl-sec"><h4>The scanner</h4>${list(s.scanner)}${s.cost.length ? `<div class="fl-cost" style="margin-top:6px">${flowCost(s.cost)}</div>` : ''}</div>
     <div class="fl-sec"><h4>You</h4>${list(s.you)}</div>
     ${FLOW_EMAILS[s.id] ? `<div class="fl-sec"><h4>What they receive <em class="fl-rv ${FLOW_EMAILS[s.id].review ? 'rv' : 'auto'}">${FLOW_EMAILS[s.id].review ? 'You review' : 'Automated'}</em></h4><div class="fl-why">${esc(FLOW_EMAILS[s.id].why)}</div><div class="fl-key">${FLOW_KEY}</div>${mailCard(s.id)}</div>` : ''}`;
+}
+
+
+/* ───────────── Case studies (Case Studies tab) ───────────── */
+// Audit findings mapped onto case study topics, so a lead gets the story closest to what their audit showed.
+const FINDING_TOPICS = {
+  reseller_undercut: 'pricing', reseller_markup: 'pricing', no_brand_seller: 'sellers', crowded_listing: 'sellers',
+  walmart_unauthorized: 'sellers', no_offer_listings: 'listing health', duplicate_listings: 'listing health',
+  brand_spellings: 'listing health', not_on_amazon: 'new channels', missing_products: 'catalog', social_no_shop: 'new channels',
+  competitor_channels: 'new channels', low_listing_score: 'listings', thin_images: 'listings', missing_aplus: 'listings',
+  review_gap: 'reviews', low_rating: 'reviews', missed_keyword: 'search', page1_share: 'search', rank_slipping: 'search',
+  brand_name_ads: 'advertising', keyword_not_ranking: 'search', weak_sales_rank: 'search',
+};
+// How each topic reads in the email ("…since it touches on ___")
+const TOPIC_PHRASE = {
+  pricing: 'how your products are priced on Amazon', sellers: 'who is selling your products on Amazon',
+  'listing health': 'listings that aren’t available to shoppers', compliance: 'keeping your listings live and compliant',
+  listings: 'how your listings present your products', search: 'how shoppers find you in Amazon search',
+  advertising: 'advertising on your brand name', reviews: 'reviews and ratings', 'new channels': 'reaching shoppers on new channels',
+  catalog: 'getting your full catalog in front of shoppers', fulfillment: 'fulfillment and inventory',
+};
+const caseList = () => (DATA?.caseStudies || []);
+const readyCases = () => caseList().filter(c => /^ready$/i.test(String(c.status || '').trim()));
+const caseTopics = c => String(c.topics || '').split(',').map(t => t.trim().toLowerCase()).filter(Boolean);
+
+/** Best case study for a lead: shared topics with their top findings first, then category. */
+function suggestCase(findingIds, category) {
+  const want = [...new Set(findingIds.map(f => FINDING_TOPICS[f]).filter(Boolean))];
+  const cat = String(category || '').toLowerCase();
+  const scored = readyCases().map(c => {
+    const shared = caseTopics(c).filter(t => want.includes(t));
+    const catHit = cat && String(c.category || '').toLowerCase().split(/[^a-z]+/).some(w => w.length > 3 && cat.includes(w));
+    return { c, shared, catHit, score: shared.length * 2 + (catHit ? 1 : 0) };
+  }).sort((a, b) => b.score - a.score);
+  return scored[0] || null;
+}
+
+/** The day 7 email for a lead and a case study. */
+function caseEmail(c, lead = {}) {
+  const first = lead.first || '{{Maya}}', brand = lead.brand || '{{Lumen & Rye}}';
+  const topic = (lead.shared || [])[0];
+  const why = topic ? `since it touches on {{${TOPIC_PHRASE[topic] || topic}}}, something that came up in your audit` : 'since it’s a good picture of what working together looks like day to day';
+  const link = c.full_story_url ? `You can read the full story here: {{${c.full_story_url}}}` : 'I’d be glad to send you the full write-up if you’d like to read more.';
+  return { subj: c.title, body: `
+Hi ${first},
+
+I wanted to share a story from one of our brand partners, ${why}.
+
+{{${c.email_summary}}}
+
+It’s a good example of what we mean when we say we work as an extension of your team. We take on the complexity behind the scenes so you can stay focused on your products and your customers.
+
+${link}
+
+If anything here sounds familiar for ${brand}, I’m always happy to talk it through.` };
+}
+
+function renderCaseLibrary() {
+  const list = caseList();
+  $('fl-cases').innerHTML = `<div class="when">Used by the day 7 email</div><h2>Case study library</h2>
+    <p class="small muted" style="margin:6px 0 16px;max-width:760px">These live on the <b>Case Studies</b> tab of the Medaltus Outbound sheet. Add a row to add a case study; only rows marked <b>Ready</b> are offered. Each lead gets the one whose topics best match their audit findings, and you can change it from Inbound Leads with the Case study button. Topics to tag with: ${esc(Object.keys(TOPIC_PHRASE).join(', '))}.</p>
+    ${list.length ? `<div class="cs-lib">${list.map(c => `<div class="cs-card">
+      <div style="display:flex;justify-content:space-between;gap:8px"><span class="cs-meta">${esc(c.category)}${c.channels ? ` · ${esc(c.channels)}` : ''}</span><span class="fl-st ${/^ready$/i.test(c.status) ? 'built' : 'planned'}">${esc(c.status || 'Draft')}</span></div>
+      <h3>${esc(c.title)}</h3>
+      ${c.headline ? `<div class="cs-head">${esc(c.headline)}</div>` : ''}
+      <div class="cs-meta">${esc(c.brand_size)}</div>
+      <div class="cs-tags">${caseTopics(c).map(t => `<i>${esc(t)}</i>`).join('')}</div>
+      <div class="cs-sum">${esc(c.email_summary)}</div>
+      <div class="cs-meta">${c.full_story_url ? `<a href="${esc(c.full_story_url)}" target="_blank" rel="noopener">Full story</a>` : 'No full story link yet: the email offers to send the write-up'}</div>
+    </div>`).join('')}</div>` : '<div class="small muted">No case studies yet. Run setup-sheet once to add the starter set, then add your own rows to the Case Studies tab.</div>'}`;
+}
+
+// Inbound Leads: pick the case study for one lead
+const CS = { id: '', pick: '', suggested: null };
+async function openCase(id) {
+  const p = DATA.prospects.find(x => x.brand_id === id); if (!p) return;
+  if (!readyCases().length) return toast('No Ready case studies yet. Add them on the Case Studies tab.', true);
+  CS.id = id; CS.pick = p.followup_case || ''; CS.suggested = null;
+  $('cs-title').textContent = `${p.brand_name}: case study`;
+  $('cs-modal').classList.add('open');
+  renderCasePick();
+  try {
+    const d = await api(`/api/audit-data?brand_id=${encodeURIComponent(id)}`);
+    const top = (d.findings || []).slice().sort((a, b) => Number(a.rank) - Number(b.rank)).slice(0, 3).map(f => f.finding_id);
+    CS.suggested = suggestCase(top, p.category);
+  } catch { CS.suggested = suggestCase([], p.category); }
+  if (!CS.pick && CS.suggested) CS.pick = CS.suggested.c.case_id;
+  renderCasePick();
+}
+function renderCasePick() {
+  const p = DATA.prospects.find(x => x.brand_id === CS.id); if (!p) return;
+  const sug = CS.suggested?.c.case_id;
+  $('cs-pick').innerHTML = readyCases().map(c => `<label class="cs-opt${CS.pick === c.case_id ? ' on' : ''}">
+    <input type="radio" name="cs" ${CS.pick === c.case_id ? 'checked' : ''} onchange="CS.pick='${esc(c.case_id)}';renderCasePick()">
+    <div><b>${esc(c.title)}${sug === c.case_id ? '<em class="cs-sug">Suggested</em>' : ''}</b>
+    <span>${esc(c.headline || c.category)}${sug === c.case_id && CS.suggested.shared.length ? ` · matches their audit on ${esc(CS.suggested.shared.join(', '))}` : ''}</span></div></label>`).join('');
+  const c = readyCases().find(x => x.case_id === CS.pick);
+  if (!c) { $('cs-preview').innerHTML = '<div class="small muted">Finding the best match…</div>'; return; }
+  const shared = CS.suggested?.c.case_id === c.case_id ? CS.suggested.shared : caseTopics(c).filter(() => false);
+  const e = caseEmail(c, { first: `{{${(p.contact_name || '').split(' ')[0] || 'there'}}}`, brand: `{{${p.brand_name}}}`, shared });
+  $('cs-preview').innerHTML = mailBox(e.subj, e.body, `{{${p.contact_name || p.brand_name}${p.contact_email ? ` <${p.contact_email}>` : ''}}}`);
+}
+async function saveCase() {
+  const p = DATA.prospects.find(x => x.brand_id === CS.id); if (!p || !CS.pick) return;
+  $('cs-save').disabled = true;
+  try { await ibPost(CS.id, 'case', { case_id: CS.pick }); p.followup_case = CS.pick; closeModal('cs-modal'); renderAll(); toast('Case study saved for the day 7 email'); }
+  catch (e) { toast(e.message, true); }
+  finally { $('cs-save').disabled = false; }
 }
 
 /* ───────────── Current brands ───────────── */
@@ -2610,11 +2761,12 @@ function ibActions(p) {
   const id = esc(p.brand_id), step = p.inbound_step;
   const btn = (label, fn, primary = false) => `<button class="btn ${primary ? 'btn-primary' : 'btn-ghost'} btn-sm" onclick="${fn}">${label}</button>`;
   const ans = btn('Their answers', `openAnswers('${id}')`);
-  if (step === 'review') return btn('Open audit', `buildAudit('${id}')`, true) + ans + btn('Mark sent', `ibMarkSent('${id}')`);
+  const cs = btn(p.followup_case ? 'Case study ✓' : 'Case study', `openCase('${id}')`);
+  if (step === 'review') return btn('Open audit', `buildAudit('${id}')`, true) + ans + btn('Mark sent', `ibMarkSent('${id}')`) + cs;
   if (step === 'needs_website') return btn('Add website', `ibSetWebsite('${id}')`, true) + ans;
   if (step === 'failed') return btn('Retry scan', `ibRescan('${id}', '${['New', 'Needs URL', 'URL Not Found', 'Site Unreachable'].includes(p.discovery_status) ? 'enrich' : 'audit_amazon'}')`, true) + ans;
   if (step === 'not_a_fit') return btn('Scan anyway', `ibRescan('${id}', 'products')`) + ans;
-  if (step === 'sent') return ans + btn('Open audit', `buildAudit('${id}')`) + `<button class="btn-link small" onclick="ibUnsend('${id}')">Undo sent</button>`;
+  if (step === 'sent') return ans + btn('Open audit', `buildAudit('${id}')`) + cs + `<button class="btn-link small" onclick="ibUnsend('${id}')">Undo sent</button>`;
   return ans;
 }
 
