@@ -18,7 +18,7 @@ const PROSPECT_FIELDS = [
   'scan_status', 'scan_completed_at', 'audit_status', 'role_emails', 'warm_intros', 'contacts_checked_at', 'hubspot_company_id',
   // Inbound (website form)
   'form_message', 'hero_products', 'est_revenue', 'inbound_at', 'inbound_step', 'inbound_updated', 'inbound_note',
-  'inbound_answers', 'audit_sent_at',
+  'inbound_answers', 'audit_sent_at', 'audit_due',
 ];
 const INBOUND_UNMATCHED_DAYS = 30;
 const HIDDEN = [STATUS.DUPLICATE];
