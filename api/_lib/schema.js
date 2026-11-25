@@ -21,6 +21,7 @@ export const TABS = {
   INBOUND: 'Inbound Log',
   SETTINGS: 'Settings',
   RANKS: 'Rank Snapshots',
+  CASES: 'Case Studies',
 };
 
 export const HEADERS = {
@@ -59,7 +60,7 @@ export const HEADERS = {
     'audit_status', 'pdf_url',
     // Inbound (website form). inbound_step tracks the fast-track scan; audit_sent_at starts the follow-up clock.
     'inbound_at', 'inbound_step', 'inbound_updated', 'inbound_attempts', 'inbound_note', 'inbound_answers',
-    'audit_sent_at', 'audit_due',
+    'audit_sent_at', 'audit_due', 'followup_case',
   ],
   [TABS.PRODUCTS]: [
     'brand_id', 'brand_name', 'product_title', 'variant_title', 'sku', 'upc', 'upc_source',
@@ -94,6 +95,12 @@ export const HEADERS = {
   [TABS.RANKS]: [
     'taken_at', 'brand_id', 'scan_id', 'kind', 'asin', 'period', 'phrase', 'branded', 'search_volume',
     'organic_rank', 'sponsored_rank', 'sponsored_ads', 'amazon_choice',
+  ],
+  // Case study library for follow-up emails. Edit freely; only status "Ready" rows are offered.
+  // topics: comma list from CASE_TOPICS, used to match a case study to a lead's audit findings.
+  [TABS.CASES]: [
+    'case_id', 'status', 'title', 'category', 'brand_size', 'channels', 'topics', 'headline',
+    'email_summary', 'full_story_url', 'updated_at',
   ],
   // Scanner-managed secrets and connection state (values encrypted). Don't edit by hand.
   [TABS.SETTINGS]: ['key', 'value', 'updated_at'],
@@ -166,6 +173,54 @@ export const CATEGORIES = ['skincare', 'haircare', 'makeup', 'nail', 'wellness',
 //              "search" = Claude web search with the instruction in source_value
 //              "url"    = fetch this directory/exhibitor page and extract brands
 //              "paste"  = brand names pasted into paste_text, one per line (for sites that block bots)
+/** Topics a case study can be tagged with (the dashboard maps audit findings onto these). */
+export const CASE_TOPICS = ['pricing', 'sellers', 'listing health', 'compliance', 'listings', 'search', 'advertising',
+  'reviews', 'new channels', 'catalog', 'fulfillment'];
+
+/** Starter case studies: Jaclyn's compliance story plus the three results published on medaltus.com. */
+export const SEED_CASES = [
+  {
+    case_id: 'compliance-black-friday', status: 'Ready',
+    title: 'Protecting nearly $40,000 a month ahead of Black Friday',
+    category: 'Beauty', brand_size: 'Longtime beauty partner, 250+ products', channels: 'Amazon',
+    topics: 'compliance, listing health', headline: '45+ listings reinstated · nearly $40K a month protected · root cause fixed',
+    email_summary: 'Just weeks before Black Friday, Amazon’s automated compliance screening confused an ingredient found in 98% of one of our beauty partners’ 250+ products with a restricted chemical under Washington State’s cosmetic safety law, a rule that doesn’t even take effect until 2027. Listings were blocked in Washington, new flags appeared almost every morning, and nearly $40,000 a month was at risk. We took it off their plate entirely. We researched the regulation down to the chemical identifiers, handled every appeal ourselves and, when standard support kept returning the same denials, escalated until Amazon corrected the screening itself. More than 45 listings were reinstated the day before their Black Friday promotions began, and their full catalog is now protected from the same issue.',
+    full_story_url: '',
+  },
+  {
+    case_id: 'buybox-three-hours', status: 'Ready',
+    title: 'Buy Box back in under three hours',
+    category: 'Nail care', brand_size: 'Nail care brand, 250+ products, 16 top-selling kits', channels: 'Amazon',
+    topics: 'listing health, sellers, pricing', headline: 'Buy Box restored on 16 top sellers in under three hours',
+    email_summary: 'Right after Prime Big Deal Days, 16 of one of our nail care partners’ top-selling kits lost the Buy Box on Amazon, with no lower-priced offer anywhere to explain it. We caught it during our post-event review, ruled out pricing conflicts and escalated through Seller Support and directly to our Amazon account manager. The Buy Box was back on all 16 listings in under three hours, protecting their best sellers heading into Black Friday.',
+    full_story_url: '',
+  },
+  {
+    case_id: 'skincare-581', status: 'Ready',
+    title: 'Growing a skincare brand 581% across three channels',
+    category: 'Skincare', brand_size: 'Skincare brand, partner since 2018', channels: 'Amazon, Shopify, TikTok Shop',
+    topics: 'search, advertising, new channels, pricing', headline: '+581% revenue · advertising 2.2x more efficient',
+    email_summary: 'We’ve grown alongside one of our skincare partners since 2018 across Amazon, Shopify and TikTok Shop. Over that time their revenue has grown 581%, and over the last few years we’ve made their advertising 2.2 times more efficient. What made the difference wasn’t one tactic. It was having one team responsible for every channel, so advertising, inventory and listings all moved toward the same goal.',
+    full_story_url: '',
+  },
+  {
+    case_id: 'nailcare-251', status: 'Ready',
+    title: 'Scaling a nail care catalog to 192 products',
+    category: 'Nail care', brand_size: 'Nail care brand, partner since 2018', channels: 'Amazon, Shopify',
+    topics: 'catalog, listings, pricing, sellers', headline: '+251% revenue · catalog grown to 192 products',
+    email_summary: 'We’ve partnered with one of our nail care brands since 2018 on Amazon and Shopify. Their revenue has grown 251% in that time, and together we expanded their catalog to 192 products without the operational growing pains that usually come with it.',
+    full_story_url: '',
+  },
+  {
+    case_id: 'wellness-410', status: 'Ready',
+    title: 'Growing a supplement brand 410% on Amazon and Walmart',
+    category: 'Supplements & wellness', brand_size: 'Supplement brand, partner since 2025', channels: 'Amazon, Walmart',
+    topics: 'advertising, new channels, search', headline: '+410% revenue · 62% lower ad cost of sale',
+    email_summary: 'Since one of our supplement partners began working with us on Amazon and Walmart in 2025, their revenue has grown 410% and their advertising cost of sale has come down 62%. Bringing both marketplaces under one team meant their advertising, inventory and listings could finally work together.',
+    full_story_url: '',
+  },
+];
+
 export const SEED_SOURCES = [
   { source_name: 'Credo Beauty', source_type: 'shopify_vendors', signal_label: 'Sold at Credo',
     source_value: 'credobeauty.com' },
