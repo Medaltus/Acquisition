@@ -512,6 +512,11 @@ mark.fl-need{background:#FBF0E2;border-bottom:1px dashed var(--warn);padding:0 2
 .ob-row .unit i{position:absolute;right:10px;top:50%;transform:translateY(-50%);font-style:normal;font-size:11px;color:var(--muted);pointer-events:none;}
 .ob-row .unit input{padding-right:42px;}
 .ob-row input::-webkit-inner-spin-button{display:none;}.ob-row input{-moz-appearance:textfield;}
+.ob-mix{display:flex;height:54px;border-radius:var(--radius-sm);overflow:hidden;margin-top:14px;gap:2px;}
+.ob-mix div{display:flex;flex-direction:column;justify-content:center;padding:0 12px;min-width:0;color:var(--navy);white-space:nowrap;overflow:hidden;}
+.ob-mix div.dk{color:#fff;}
+.ob-mix b{font-family:var(--font-subheader);font-size:20px;line-height:1;}
+.ob-mix span{font-size:11px;opacity:.85;}
 .ob-hero{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:14px 0 4px;}
 .ob-hero div{background:var(--navy);color:#fff;border-radius:var(--radius);padding:16px 16px 14px;}
 .ob-hero b{display:block;font-family:var(--font-subheader);font-size:34px;line-height:1;color:var(--green);letter-spacing:-.5px;}
@@ -729,15 +734,19 @@ mark.fl-need{background:#FBF0E2;border-bottom:1px dashed var(--warn);padding:0 2
     <button class="nav-btn" data-page="retired" onclick="showPage('retired')">
       <svg viewBox="0 0 16 16"><rect x="1.5" y="3" width="13" height="3" rx="1"/><path d="M2.5 6v7.5a1 1 0 001 1h9a1 1 0 001-1V6M6.5 9h3"/></svg>Retired Brands<span class="nav-badge" id="nb-retired">–</span>
     </button>
-    <div class="nav-section">Growth</div>
-    <button class="nav-btn" data-page="inbound" onclick="showPage('inbound')">
-      <svg viewBox="0 0 16 16"><path d="M1.5 9.5h3.5l1 2h4l1-2h3.5"/><path d="M1.5 9.5L3.5 3h9l2 6.5v4a1 1 0 01-1 1h-11a1 1 0 01-1-1z"/></svg>Inbound Leads<span class="nav-badge" id="nb-inbound">–</span>
-    </button>
+    <div class="nav-section">Flows</div>
     <button class="nav-btn" data-page="flow" onclick="showPage('flow')">
       <svg viewBox="0 0 16 16"><circle cx="3" cy="8" r="1.8"/><circle cx="13" cy="8" r="1.8"/><circle cx="8" cy="8" r="1.8"/><path d="M4.8 8h1.4M9.8 8h1.4"/></svg>Inbound Flow
     </button>
+    <button class="nav-btn" data-page="oflow" onclick="showPage('oflow')">
+      <svg viewBox="0 0 16 16"><circle cx="3" cy="8" r="1.8"/><circle cx="8" cy="8" r="1.8"/><path d="M4.8 8h1.4M9.8 8h4.2M12 5.8L14.2 8 12 10.2"/></svg>Outbound Flow
+    </button>
     <button class="nav-btn" data-page="outbound" onclick="showPage('outbound')">
-      <svg viewBox="0 0 16 16"><path d="M14.5 1.5L7 9"/><path d="M14.5 1.5L10 14.5 7 9 1.5 6z"/></svg>Outbound
+      <svg viewBox="0 0 16 16"><path d="M14.5 1.5L7 9"/><path d="M14.5 1.5L10 14.5 7 9 1.5 6z"/></svg>Outbound Math
+    </button>
+    <div class="nav-section">Pipeline</div>
+    <button class="nav-btn" data-page="inbound" onclick="showPage('inbound')">
+      <svg viewBox="0 0 16 16"><path d="M1.5 9.5h3.5l1 2h4l1-2h3.5"/><path d="M1.5 9.5L3.5 3h9l2 6.5v4a1 1 0 01-1 1h-11a1 1 0 01-1-1z"/></svg>Inbound Leads<span class="nav-badge" id="nb-inbound">–</span>
     </button>
     <button class="nav-btn" data-page="prospects" onclick="showPage('prospects')">
       <svg viewBox="0 0 16 16"><circle cx="7" cy="7" r="5"/><path d="M10.7 10.7L14.5 14.5"/></svg>Future Prospects<span class="nav-badge" id="nb-prospects">–</span>
@@ -842,12 +851,28 @@ mark.fl-need{background:#FBF0E2;border-bottom:1px dashed var(--warn);padding:0 2
     </div>
   </section>
 
+  <!-- ══ OUTBOUND FLOW (planning map) ══ -->
+  <section class="page" id="page-oflow">
+    <div class="page-hd">
+      <div>
+        <div class="page-title">Outbound Flow</div>
+        <div class="page-sub">Day 0 is the day email 1 goes out. What happens to an outbound brand from the first finding to a yes or a close-out, who does each part, and what each touch is for. HubSpot sends every email. Click any box for the detail.</div>
+      </div>
+      <div class="seg fl-tabs" id="of-tabs"></div>
+    </div>
+    <div class="fl-wrap" id="of-all-wrap" hidden><div class="fl-card"><div class="fl-key" id="of-key"></div><div class="fl-all" id="of-all"></div></div></div>
+    <div class="fl-wrap" id="of-map-wrap">
+      <div class="fl-map" id="of-map"></div>
+      <div class="fl-detail"><div class="fl-card" id="of-step"></div><div class="fl-card" id="of-open"></div></div>
+    </div>
+  </section>
+
   <!-- ══ OUTBOUND (planning math) ══ -->
   <section class="page" id="page-outbound">
     <div class="page-hd">
       <div>
-        <div class="page-title">Outbound</div>
-        <div class="page-sub">What it takes to sign new brands from outbound, worked backwards from the goal. Change any number and everything below updates.</div>
+        <div class="page-title">Outbound Math</div>
+        <div class="page-sub">The goal is 2 new brands a month across every channel: outbound, inbound, ads and organic together. This page works out outbound’s share of it, backwards from the goal. Change any number and everything below updates.</div>
       </div>
       <button class="btn btn-ghost" onclick="obReset()">Reset to defaults</button>
     </div>
@@ -1025,7 +1050,7 @@ mark.fl-need{background:#FBF0E2;border-bottom:1px dashed var(--warn);padding:0 2
 const KEY_STORE = 'medaltus_portfolio_key';
 let DATA = null;
 const UI = { currentRows: [], retiredRows: [], stage: '', az: '', shown: 60, open: null, productCache: {}, missingOnly: {}, currentSort: 'sign_date' };
-const PAGE_TITLES = { plan: 'Growth Plan', current: 'Current Brands', retired: 'Retired Brands', inbound: 'Inbound Leads', flow: 'Inbound Flow', outbound: 'Outbound', prospects: 'Future Prospects', audit: 'Audit Builder' };
+const PAGE_TITLES = { plan: 'Growth Plan', current: 'Current Brands', retired: 'Retired Brands', inbound: 'Inbound Leads', flow: 'Inbound Flow', outbound: 'Outbound Math', oflow: 'Outbound Flow', prospects: 'Future Prospects', audit: 'Audit Builder' };
 
 // rank = order for "Sort: best fit" (best prospects first)
 const AZ = [
@@ -1124,6 +1149,7 @@ function showPage(page) {
   if (page === 'flow') renderFlow();
   if (page === 'plan') renderGrowth();
   if (page === 'outbound') renderOutbound();
+  if (page === 'oflow') renderOFlow();
   document.querySelector('.main').scrollTop = 0;
 }
 
@@ -3376,16 +3402,293 @@ async function saveAnswers(e) {
 }
 
 
+/* ───────────── Outbound Flow (planning map) ───────────── */
+// Same layout as the inbound flow. Day 0 = email 1 goes out. Sample prospect: Dana at Solace Botanica (made up).
+const OFLOW = [
+  { id: 'pick', tick: 'Before', sub: 'pick the brand', cls: 'pre', status: 'partial',
+    title: 'Pick the brand and the finding', when: 'The working day before email 1',
+    goal: 'Only reach out when we have something true and specific to say about their brand.',
+    scanner: ['Finds the brand and its products, and scores fit (category, size, channels)', 'Runs a light scan: Amazon sellers and prices against their site, whether they sell on Amazon at all, Walmart, Target+ and TikTok Shop presence', 'Ranks the findings and suggests the one to lead with, plus a second for email 2', 'Finds the highest-level ecommerce or marketing contact (email lookup stays a manual button to save credits)'],
+    you: ['Approve the brand or mark it not a fit', 'Check the lead finding against the live listing', 'Pick the email 1 version and write the first line yourself if something personal stands out', 'Enroll them in the HubSpot sequence'],
+    chips: { scanner: 'Find, score, light scan, contact', you: 'Approve, check finding, enroll', lead: '' },
+    cost: ['api', 'hunter'] },
+  { id: 'e1', tick: 'Day 0', sub: 'email 1', cls: 'd0', status: 'planned',
+    title: 'Email 1: the finding', when: 'Day 0, sent from your inbox',
+    goal: 'Show we looked before we reached out, and offer the growth and gap analysis.',
+    scanner: ['Fills the finding, product and numbers into the template', 'Logs the send on the prospect so Future Prospects shows Contacted'],
+    you: ['Read it once before it goes', 'Send from the sequence in HubSpot'],
+    chips: { scanner: 'Fill in the finding', you: 'Review, send in HubSpot', lead: 'One real finding + the offer' },
+    cost: [] },
+  { id: 'li1', tick: 'Day 1', sub: 'LinkedIn', status: 'planned',
+    title: 'LinkedIn connection', when: 'Day 1, from your own profile',
+    goal: 'A familiar name before the next email, with no pitch.',
+    scanner: ['Adds a LinkedIn task to your HubSpot queue with their profile link and the note filled in'],
+    you: ['Send the connection request with the short note'],
+    chips: { scanner: 'Create the task', you: 'Send the request', lead: 'A short connection note' },
+    cost: [] },
+  { id: 'e2', tick: 'Day 3', sub: 'email 2', status: 'planned',
+    title: 'Email 2: a second look', when: 'Day 3, in the same thread',
+    goal: 'A second, different finding, so email 1 doesn’t read as a one-off.',
+    scanner: ['Uses the second finding from the scan, often a competitor or channel angle', 'HubSpot sends it in the same thread unless they replied'],
+    you: ['Nothing'],
+    chips: { scanner: 'Second finding', you: '', lead: 'Another angle on their brand' },
+    cost: [] },
+  { id: 'e3', tick: 'Day 7', sub: 'email 3', status: 'planned',
+    title: 'Email 3: proof', when: 'Day 7, new thread',
+    goal: 'Show what fixing this has looked like for a brand like theirs.',
+    scanner: ['Picks the case study or article whose topic matches their lead finding', 'HubSpot sends it unless they replied'],
+    you: ['Nothing. You can change the story before it goes'],
+    chips: { scanner: 'Match the story', you: '', lead: 'A case study or article' },
+    cost: [] },
+  { id: 'li2', tick: 'Day 10', sub: 'LinkedIn', status: 'planned',
+    title: 'LinkedIn message', when: 'Day 10, only if they accepted the connection',
+    goal: 'A lighter way to reply for people who don’t answer email.',
+    scanner: ['Adds the task with the message filled in, and skips it if they haven’t connected'],
+    you: ['Send the message'],
+    chips: { scanner: 'Create the task', you: 'Send the message', lead: 'A short note on the finding' },
+    cost: [] },
+  { id: 'e4', tick: 'Day 14', sub: 'email 4', status: 'planned',
+    title: 'Email 4: close-out', when: 'Day 14, in the email 1 thread',
+    goal: 'An easy, no-pressure way to say yes, later or no. Often the email that gets the most replies.',
+    scanner: ['HubSpot sends it unless they replied', 'If no reply after 3 days, moves the brand to Nurture'],
+    you: ['Nothing'],
+    chips: { scanner: 'Send, then move to Nurture', you: '', lead: 'Should I close this out?' },
+    cost: [] },
+  { id: 'yes', tick: 'Yes', sub: 'they want it', cls: 'post', status: 'planned',
+    title: 'They say yes', when: 'Any day they reply yes',
+    goal: 'Thank them right away and hand off to the inbound flow, so they get the same analysis and follow-up.',
+    scanner: ['Takes them out of the outbound sequence', 'Starts the full scan and puts them on Inbound Leads with the analysis due in 2 business days', 'From here they follow the inbound flow from day 2: analysis, case study, rank check, close-out'],
+    you: ['Send the thank-you reply the same day', 'Verify and send the analysis'],
+    chips: { scanner: 'Full scan, hand to inbound', you: 'Reply the same day', lead: 'Thank you + what’s next' },
+    cost: ['api', 'h10:4'] },
+  { id: 'nurture', tick: 'After', sub: 'no reply', cls: 'post', status: 'planned',
+    title: 'Nurture', when: 'About 90 days after the close-out',
+    goal: 'Come back once with something new, not the same ask.',
+    scanner: ['Re-runs the light scan and flags anything that changed', 'Something changed: drafts the re-open email. Nothing changed: the brand rests in Future Prospects'],
+    you: ['Review the draft and send it'],
+    chips: { scanner: 'Re-scan at 90 days', you: 'Review, send', lead: 'Something new, once' },
+    cost: ['api'] },
+];
+const OFLOW_EXITS = ['They reply → you answer within a day', 'They say yes → inbound flow', 'They book a call', 'They fill out the website form → inbound flow', 'Not interested, unsubscribes or asks to be removed', 'Email bounces'];
+const OFLOW_OPEN = [
+  ['Who sends', 'You and one teammate to start. Each person sends from their own inbox with their own name and signature, and owns their own list so no brand hears from both of you.'],
+  ['HubSpot sequences', 'Sequences send emails 2 through 4 from your own inbox and stop on a reply. They need a paid Sales seat for each sender, so confirm which HubSpot plan includes them before setup.'],
+  ['Sending setup', 'Outbound Math shows emails a day per person and sending inboxes needed at the current channel mix. Decide whether that runs on medaltus.com or a second domain that protects the main one.'],
+  ['Lead findings', 'Which findings email 1 may lead with. Starting set: pricing and other sellers, not on Amazon yet, search visibility, a missing channel. Each needs a number you can stand behind.'],
+  ['Compliance', 'Every email carries the Medaltus mailing address and a way to opt out. HubSpot adds both to sequence emails.'],
+  ['Analysis capacity', 'Outbound yeses share the same analysis queue as inbound. See Outbound Math for the weekly count at the current channel mix.'],
+  ['Day spacing', 'Day 0, 1, 3, 7, 10 and 14, then a 90-day nurture. Does that spacing feel right?'],
+];
+const OF = { sel: 'e1', view: 'map' };
+const OF_TO = '{{Dana Reyes <dana@solacebotanica.com>}}';
+
+/* Example emails. {{x}} = filled in from the prospect's scan; [[x]] = still needs real content from us.
+   Sample prospect: Dana at Solace Botanica, a made-up skincare brand. */
+const OFLOW_EMAILS = {
+  e1: { review: true, why: 'The first impression, so a person reads every one. Each version leads with a different kind of finding; the scanner suggests which one fits the brand.', variants: [
+    { label: 'Other sellers, lower prices', subj: 'Your {{Vitamin C Serum}} on Amazon', body: `
+Hi {{Dana}},
+
+I was looking at {{Solace Botanica}} on Amazon this week and noticed {{three other sellers offering your Vitamin C Serum, the lowest at about 18% below your own site}}.
+
+For a brand growing the way yours is, that tends to happen quietly. Shoppers start to anchor on the lower price, and you lose a say in how the product is presented.
+
+I'm Jaclyn, a brand manager at Medaltus. We partner with skincare and wellness brands across Amazon, Walmart and TikTok Shop, and we only earn when our partners' sales grow.
+
+We put together a short growth and gap analysis for brands we think we can help: pricing, search and the channels worth adding next. Would it be helpful if I sent yours over?` },
+    { label: 'Not on Amazon yet', subj: '{{Solace Botanica}} and Amazon', body: `
+Hi {{Dana}},
+
+I've been following {{Solace Botanica}} and noticed you aren't selling on Amazon yet. Shoppers are already looking for you there: {{searches for your brand name turn up other vitamin C serums instead of yours}}.
+
+That's a common spot for a brand with real momentum on its own site, and it's usually a sign Amazon could become a strong channel rather than a risky one.
+
+I'm Jaclyn, a brand manager at Medaltus. We help skincare and wellness brands launch and grow on Amazon, Walmart and TikTok Shop, and we only earn when your sales grow.
+
+We put together a short growth and gap analysis for brands like yours, covering what launching would look like and where the opportunity is. Would it be helpful if I sent yours over?` },
+    { label: 'Search visibility', subj: 'How shoppers find {{Solace Botanica}} on Amazon', body: `
+Hi {{Dana}},
+
+I was looking at how {{Solace Botanica}} shows up in Amazon search and noticed {{you're on the first page for 2 of the 10 biggest searches for vitamin C serums, while brands at a similar price point hold 6 or 7}}.
+
+Your reviews are strong, so this usually comes down to how the listings are built and supported rather than the product itself.
+
+I'm Jaclyn, a brand manager at Medaltus. We partner with skincare and wellness brands across Amazon, Walmart and TikTok Shop, and we only earn when our partners' sales grow.
+
+We put together a short growth and gap analysis for brands we think we can help. Would it be helpful if I sent yours over?` },
+    { label: 'A channel they’re missing', subj: '{{Solace Botanica}} on Walmart', body: `
+Hi {{Dana}},
+
+I was looking at where {{Solace Botanica}} sells today and noticed you're on {{Amazon and your own site, but not Walmart}}, where {{two brands in your category at a similar price point are already selling}}.
+
+Walmart often gets treated as a backup plan, but for skincare brands with steady Amazon sales it can grow into a meaningful channel of its own.
+
+I'm Jaclyn, a brand manager at Medaltus. We run Walmart, Amazon and TikTok Shop for skincare and wellness brands, and we only earn when our partners' sales grow.
+
+We put together a short growth and gap analysis for brands we think we can help. Would it be helpful if I sent yours over?` }] },
+  li1: { review: true, why: 'Sent by hand from your LinkedIn profile. LinkedIn caps connection notes at a short length, so this stays brief and has no ask.', variants: [
+    { label: 'Connection note', subj: 'LinkedIn connection request', body: `
+Hi {{Dana}}, I work with skincare and wellness brands on Amazon, Walmart and TikTok Shop, and I've enjoyed seeing what {{Solace Botanica}} is building. I'd love to connect.` }] },
+  e2: { review: false, why: 'HubSpot sends it in the email 1 thread unless they replied. It uses a different finding from email 1, so it adds something new.', variants: [
+    { label: 'Competitor angle', subj: 'Re: Your {{Vitamin C Serum}} on Amazon', body: `
+Hi {{Dana}},
+
+I wanted to share one more thing we noticed. {{Two serum brands at a similar price point have added Walmart this year, and both now show up there when shoppers search for vitamin C serum. Solace Botanica doesn't yet.}}
+
+Your reviews and your story are stronger than either of theirs, which is why it stood out to us.
+
+The growth and gap analysis goes into this alongside what we found on Amazon. Happy to send it over if it would be useful.` },
+    { label: 'Listing angle', subj: 'Re: Your {{Vitamin C Serum}} on Amazon', body: `
+Hi {{Dana}},
+
+One more thing that stood out. {{Your Vitamin C Serum listing uses 4 images, while the leading serums use 7 or more to show texture, results and how to use it.}}
+
+It's a small change on its own, but it tends to be one of the first places shoppers decide between two products that look alike in search.
+
+The growth and gap analysis covers this along with pricing and search. Happy to send it over if it would be useful.` }] },
+  e3: { review: false, why: 'HubSpot sends it unless they replied. The scanner matches the story to their lead finding; none of the stories name the brand.', variants: [
+    { label: 'Pricing and sellers', subj: 'What this looked like for another brand', body: `
+Hi {{Dana}},
+
+I thought this might be useful given what we noticed on your listings. Ahead of Black Friday, one of our partners found unauthorized sellers undercutting their best sellers right before the busiest week of the year. Our team moved quickly and protected nearly $40,000 in holiday sales.
+
+You can read the full story here: {{medaltus.com/case-studies/protecting-40000-ahead-of-black-friday}}
+
+Situations like yours are often where we start with a new partner. If you'd like the full picture for {{Solace Botanica}}, I'd be glad to send over your growth and gap analysis.` },
+    { label: 'Amazon growth', subj: 'What this looked like for another brand', body: `
+Hi {{Dana}},
+
+I thought this might be useful given where {{Solace Botanica}} is today. One of the brands we partner with doubled their annual Amazon revenue with us, then grew another 47% the following year.
+
+You can read how it came together here: {{medaltus.com/case-studies/doubling-amazon-revenue-continued-growth}}
+
+It started much the way yours would: a clear look at where the brand stood and where the biggest openings were. If you'd like that picture for {{Solace Botanica}}, I'd be glad to send over your growth and gap analysis.` },
+    { label: 'Listings taken down', subj: 'What this looked like for another brand', body: `
+Hi {{Dana}},
+
+I wanted to share a story that shows how we work behind the scenes. When listings for one of our partners' licensed collaborations were taken down, our team worked through it and got 100% of them reinstated.
+
+You can read the full story here: {{medaltus.com/case-studies/licensed-brand-collaborations-reinstatement}}
+
+It's a good example of what we mean by working as an extension of your team. If you'd like a look at where {{Solace Botanica}} stands today, I'd be glad to send over your growth and gap analysis.` },
+    { label: 'Walmart article', subj: 'A read on Walmart for brands like yours', body: `
+Hi {{Dana}},
+
+Since Walmart came up in my last note, I thought you might find this useful. It's how we decide whether Walmart can become a profitable channel for a beauty or wellness brand, and the areas we look at before recommending it.
+
+{{medaltus.com/blog/walmart-marketplace-growth-guide-beauty-wellness}}
+
+If you'd like us to look at it for {{Solace Botanica}} specifically, the growth and gap analysis covers it. Happy to send it over.` }] },
+  li2: { review: true, why: 'Sent by hand, and only if they accepted the connection.', variants: [
+    { label: 'LinkedIn message', subj: 'LinkedIn message', body: `
+Thanks for connecting, {{Dana}}. I sent a note by email about {{your Vitamin C Serum on Amazon}}, but I know inboxes get busy. If a short growth and gap analysis for {{Solace Botanica}} would be useful, I'm happy to send it here instead.` }] },
+  e4: { review: false, why: 'HubSpot sends it in the email 1 thread unless they replied. Short and gracious, and it makes “not now” an easy answer.', variants: [
+    { label: 'Close-out', subj: 'Re: Your {{Vitamin C Serum}} on Amazon', body: `
+Hi {{Dana}},
+
+I don't want to keep filling your inbox, so this will be my last note for now.
+
+If a growth and gap analysis for {{Solace Botanica}} would be helpful, just reply "yes" and I'll send it over. If the timing isn't right, that's completely okay too, and I'd be glad to reconnect whenever it is.
+
+Either way, I've really enjoyed learning about the brand.` }] },
+  yes: { review: true, why: 'Same day, from you. It sets the date for the analysis and asks the same questions as the inbound welcome, so the analysis can be specific.', variants: [
+    { label: 'Thank you', subj: 'Re: Your {{Vitamin C Serum}} on Amazon', body: `
+Hi {{Dana}},
+
+Wonderful, thank you. We'll have your growth and gap analysis over to you by {{Wednesday}}.
+
+A little more detail from you will help us make it as strategic as possible. If you have a few minutes, this short form asks about the products that matter most right now, how revenue splits across your channels and what's on the horizon: [[Brand Details link]]
+
+And if it's easier to talk it through, you can [[grab time on my calendar]].
+
+Looking forward to sharing it with you.` }] },
+  nurture: { review: true, why: 'Once, about 90 days later, and only when the re-scan found something new. Otherwise the brand rests in Future Prospects.', variants: [
+    { label: 'Something changed', subj: 'Something new on {{Solace Botanica}}’s listings', body: `
+Hi {{Dana}},
+
+We spoke a few months ago, and I noticed something since that I thought you'd want to know: {{a new seller is now winning the Buy Box on your Vitamin C Serum, at $6 under your site price}}.
+
+No pressure at all. If it would be helpful to see the full picture, I'm still happy to put together a growth and gap analysis for {{Solace Botanica}}.` }] },
+};
+const OFV = {};
+const OF_KEY = '<span><mark class="fl-m">Green</mark> fills in from the prospect and their scan</span><span><mark class="fl-need">Orange</mark> still needed from us</span><span>Sample prospect: Dana at Solace Botanica, a made-up skincare brand</span>';
+
+function ofCard(id) {
+  const e = OFLOW_EMAILS[id]; if (!e) return '';
+  const vars = e.variants, i = Math.min(OFV[id] || 0, vars.length - 1), v = vars[i];
+  const inline = t => esc(t).replace(/\{\{(.+?)\}\}/g, '<mark class="fl-m">$1</mark>').replace(/\[\[(.+?)\]\]/g, '<mark class="fl-need">$1</mark>');
+  const li = /^li/.test(id);
+  return `${vars.length > 1 ? `<div class="fl-var">${vars.map((x, j) => `<button class="${i === j ? 'on' : ''}" onclick="OFV['${id}']=${j};renderOFlowBody()">${esc(x.label)}</button>`).join('')}</div>` : ''}
+    <div class="fl-mail"><div class="fl-mail-hd"><span>From</span><b>${li ? 'Jaclyn Sonberg on LinkedIn' : esc(FLOW_FROM)}</b><span>To</span><b>${inline(OF_TO)}</b><div class="subj">${inline(v.subj)}</div></div>
+    <div class="fl-mail-body">${mailHtml(v.body)}${li ? '' : FLOW_SIG}</div></div>`;
+}
+const ofTag = id => { const e = OFLOW_EMAILS[id]; if (!e) return ''; const li = /^li/.test(id);
+  return `<em class="fl-rv ${e.review ? 'rv' : 'auto'}">${li ? 'You, LinkedIn' : e.review ? 'You send' : 'HubSpot sends'}</em>`; };
+function setOFlowView(v) { OF.view = v; renderOFlow(); }
+function selectOFlow(id) { OF.sel = id; renderOFlow(); }
+function renderOFlowBody() {
+  if (OF.view === 'emails') {
+    $('of-key').innerHTML = OF_KEY;
+    $('of-all').innerHTML = OFLOW.filter(s => OFLOW_EMAILS[s.id]).map(s => `<div class="fl-all-step"><div class="tick">${esc(s.tick)}<span>${esc(s.title)}</span></div>
+      <div><div class="fl-why">${ofTag(s.id)} ${esc(OFLOW_EMAILS[s.id].why)}</div>${ofCard(s.id)}</div></div>`).join('');
+    return;
+  }
+  const s = OFLOW.find(x => x.id === OF.sel) || OFLOW[0];
+  const list = a => `<ul>${a.map(x => `<li>${esc(x)}</li>`).join('')}</ul>`;
+  $('of-step').innerHTML = `<div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start">
+      <div><div class="when">${esc(s.when)}</div><h2>${esc(s.title)}</h2></div><span class="fl-st ${s.status}">${FLOW_STATUS[s.status]}</span></div>
+    <div class="fl-goal">${esc(s.goal)}</div>
+    <div class="fl-sec"><h4>The scanner</h4>${list(s.scanner)}${s.cost.length ? `<div class="fl-cost" style="margin-top:6px">${ofCost(s.cost)}</div>` : ''}</div>
+    <div class="fl-sec"><h4>You</h4>${list(s.you)}</div>
+    ${OFLOW_EMAILS[s.id] ? `<div class="fl-sec"><h4>What they receive ${ofTag(s.id)}</h4><div class="fl-why">${esc(OFLOW_EMAILS[s.id].why)}</div><div class="fl-key">${OF_KEY}</div>${ofCard(s.id)}</div>` : ''}`;
+}
+const ofCost = c => c.map(x => x === 'hunter' ? '<i>Email lookup</i>' : flowCost([x])).join('');
+
+function renderOFlow() {
+  $('of-tabs').innerHTML = [['map', 'Flow map'], ['emails', 'Read the emails']].map(([v, l]) => `<button class="${OF.view === v ? 'active' : ''}" onclick="setOFlowView('${v}')">${l}</button>`).join('');
+  $('of-map-wrap').hidden = OF.view !== 'map';
+  $('of-all-wrap').hidden = OF.view !== 'emails';
+  if (OF.view === 'emails') { renderOFlowBody(); return; }
+  const cols = OFLOW.map(s => `<div class="fl-tick ${s.cls || ''}"><b>${esc(s.tick)}</b><span>${esc(s.sub)}</span>${ofTag(s.id)}</div>`).join('');
+  let grid = `<div class="fl-grid" style="--n:${OFLOW.length}"><div></div><div class="fl-axis">${cols}</div>`;
+  for (const [lane, name, sub] of FLOW_LANES) {
+    grid += `<div class="fl-lane-name"><b>${name}</b><span>${lane === 'lead' ? 'The email or message' : sub}</span></div>`;
+    for (const s of OFLOW) {
+      const label = s.chips[lane];
+      grid += `<div class="fl-cell">${label ? `<button class="fl-chip lane-${lane}${OF.sel === s.id ? ' sel' : ''}" onclick="selectOFlow('${s.id}')">
+        <span>${esc(label)}</span>${lane === 'scanner' ? `<span class="fl-cost">${ofCost(s.cost)}</span><span class="fl-st ${s.status}">${FLOW_STATUS[s.status]}</span>` : ''}</button>`
+        : '<div class="fl-chip empty"></div>'}</div>`;
+    }
+  }
+  grid += `<div></div><div class="fl-exit"><b>Stops the sequence at any point:</b>${OFLOW_EXITS.map(e => `<span>${esc(e)}</span>`).join('')}</div></div>`;
+  const E = Object.entries(OFLOW_EMAILS), mails = E.filter(([k]) => !/^li/.test(k));
+  $('of-map').innerHTML = grid + `<div class="fl-legend">
+    <span><span class="fl-st built">Built</span> works today</span>
+    <span><span class="fl-st partial">Partly built</span> pieces in place</span>
+    <span><span class="fl-st planned">Planned</span> to build</span>
+    <span><em class="fl-rv rv">You send</em> ${mails.filter(([, e]) => e.review).length} emails, reviewed and sent from HubSpot</span>
+    <span><em class="fl-rv auto">HubSpot sends</em> ${mails.filter(([, e]) => !e.review).length} emails in the sequence</span>
+    <span>${E.length - mails.length} LinkedIn touches, sent by hand</span></div>`;
+  renderOFlowBody();
+  $('of-open').innerHTML = `<div class="when">To settle before the first send</div><h2>Open decisions</h2>
+    <ul class="fl-q" style="margin-top:14px">${OFLOW_OPEN.map(([t, d]) => `<li><b>${esc(t)}</b>${esc(d)}</li>`).join('')}</ul>`;
+}
+
 /* ───────────── Outbound (planning math) ───────────── */
-const OB_DEF = { goal: 2, share: 100, senders: 2, days: 21, reply: 6, yes: 40, call: 50, prop: 50, close: 30, cycle: 3, emails: 4, cap: 50, minNew: 6, minAn: 45, minCall: 60, minProp: 90 };
+const OB_DEF = { goal: 2, mOut: 25, mIn: 25, mAds: 25, mOrg: 25, senders: 2, days: 21, reply: 6, yes: 40, call: 50, prop: 50, close: 30, cycle: 3, emails: 4, cap: 50, minNew: 6, minAn: 45, minCall: 60, minProp: 90 };
 const OB_FIELDS = [
   ['Goal', [
-    ['goal', 'New brands a month', 'The target we are working toward', '/mo', .5],
-    ['share', 'Share that comes from outbound', 'Inbound and referrals cover the rest', '%', 5],
+    ['goal', 'New brands a month, all channels', 'Outbound, inbound, ads and organic together', '/mo', .5],
     ['senders', 'People sending', 'Each owns a list and their own inbox', '', 1],
     ['days', 'Working days a month', '', 'days', 1],
   ]],
-  ['Conversion rates', [
+  ['Channel mix', [
+    ['mOut', 'Outbound', 'Brands we reach out to first', '%', 5],
+    ['mIn', 'Inbound', 'Website form and direct inquiries', '%', 5],
+    ['mAds', 'Ads', 'LinkedIn and lead-gen ads', '%', 5],
+    ['mOrg', 'Organic', 'LinkedIn posts, blog, search', '%', 5],
+  ]],
+  ['Outbound conversion rates', [
     ['reply', 'Reply rate', 'Benchmark average about 3.4%; 5–10% is good', '%', .5],
     ['yes', 'Replies that want the analysis', 'Say yes to the growth and gap analysis', '%', 5],
     ['call', 'Analysis to call', 'Walkthrough or discovery call booked', '%', 5],
@@ -3402,13 +3705,14 @@ const OB_FIELDS = [
   ]],
 ];
 let OB = { ...OB_DEF };
-try { Object.assign(OB, JSON.parse(localStorage.getItem('ob-inputs') || '{}')); } catch (e) {}
+const obMix = o => { const t = o.mOut + o.mIn + o.mAds + o.mOrg; return { t, share: t > 0 ? o.mOut / t * 100 : 0 }; };
+try { const sv = JSON.parse(localStorage.getItem('ob-inputs') || '{}'); if ('mOut' in sv) Object.assign(OB, sv); } catch (e) {}
 
 const obFmt = (n, d = 0) => (Math.round(n * 10 ** d) / 10 ** d).toLocaleString('en-US', { maximumFractionDigits: d });
 const obRnd = n => n >= 10 ? obFmt(n) : obFmt(n, 1);
 
 function obCalc(o = OB, goalOverride) {
-  const T = (goalOverride ?? o.goal) * o.share / 100;
+  const T = (goalOverride ?? o.goal) * obMix(o).share / 100;
   const conv = (o.reply / 100) * (o.yes / 100) * (o.call / 100) * (o.prop / 100) * (o.close / 100);
   const N = conv > 0 ? T / conv : 0;
   const replies = N * o.reply / 100, analyses = replies * o.yes / 100, calls = analyses * o.call / 100, props = calls * o.prop / 100;
@@ -3425,6 +3729,14 @@ function obSet(k, v) {
   const n = parseFloat(v); if (isNaN(n) || n < 0) return;
   OB[k] = n; try { localStorage.setItem('ob-inputs', JSON.stringify(OB)); } catch (e) {}
   renderOutbound(true);
+}
+function obShare(pct) {
+  const rest = OB.mIn + OB.mAds + OB.mOrg, left = 100 - pct;
+  OB.mOut = pct;
+  if (rest > 0) { OB.mIn = Math.round(OB.mIn / rest * left); OB.mAds = Math.round(OB.mAds / rest * left); OB.mOrg = left - OB.mIn - OB.mAds; }
+  else { OB.mIn = left; }
+  try { localStorage.setItem('ob-inputs', JSON.stringify(OB)); } catch (e) {}
+  renderOutbound();
 }
 function obReset() { OB = { ...OB_DEF }; try { localStorage.removeItem('ob-inputs'); } catch (e) {} renderOutbound(); }
 
@@ -3444,7 +3756,11 @@ function renderOutbound(keepInputs) {
     ['Signed brands', 'From outbound', R.T, 'the goal'],
   ];
   const max = R.N || 1;
-  $('ob-out').innerHTML = `<div class="gp-eyebrow">The answer</div><div class="gp-h">What ${obRnd(R.T)} outbound brand${R.T === 1 ? '' : 's'} a month takes</div>
+  const MX = obMix(OB), mixRows = [['Outbound', OB.mOut, 'var(--navy)'], ['Inbound', OB.mIn, 'var(--slate)'], ['Ads', OB.mAds, 'var(--silver)'], ['Organic', OB.mOrg, 'var(--sand)']];
+  $('ob-out').innerHTML = `<div class="gp-eyebrow">The answer</div><div class="gp-h">${obRnd(OB.goal)} brands a month, all channels</div>
+    <div class="gp-lead">The goal covers every channel together. Outbound carries ${obRnd(R.T)} of the ${obRnd(OB.goal)}${MX.t !== 100 ? ` <b style="color:var(--warn)">(the mix adds to ${obFmt(MX.t)}%, so it is scaled to 100%)</b>` : ''}.</div>
+    <div class="ob-mix">${mixRows.map(([l, v, c]) => `<div style="flex:${Math.max(v, .001)};background:${c}" class="${c === 'var(--navy)' || c === 'var(--slate)' ? 'dk' : ''}"><b>${obRnd(OB.goal * (MX.t ? v / MX.t : 0))}</b><span>${l}</span></div>`).join('')}</div>
+    <div class="gp-h" style="font-size:16px;margin-top:18px">What ${obRnd(R.T)} outbound brand${R.T === 1 ? '' : 's'} a month takes</div>
     <div class="gp-lead">At these rates, 1 in every ${obFmt(R.oneIn)} brands we reach out to signs. That sets the volume.</div>
     <div class="ob-hero">
       <div><b>${obFmt(R.N)}</b><span>brands to reach out to each month</span></div>
@@ -3463,12 +3779,13 @@ function renderOutbound(keepInputs) {
     </div>
     <div class="gp-note">Bar widths use a square-root scale so the bottom of the funnel stays readable.</div>`;
 
-  const goals = [.5, 1, 1.5, 2, 3];
-  $('ob-back').innerHTML = `<div class="gp-eyebrow">Working backwards</div><div class="gp-h">Pick the starting goal</div>
-    <div class="gp-lead">Every row runs on the same rates and team size. Pick where we start, hit it for a month, then step up. Click a row to use it above.</div>
-    <table class="ob-tbl"><thead><tr><th>Outbound goal</th><th class="n">Brands a month</th><th class="n">Brands a week</th><th class="n">A day, each person</th><th class="n">Analyses a week</th><th class="n">Calls a week</th><th class="n">Hours a week, each</th></tr></thead><tbody>
-    ${goals.map(g => { const x = obCalc(OB, g); const on = Math.abs(g - OB.goal) < 1e-9;
-      return `<tr class="ob-pick${on ? ' on' : ''}" onclick="OB.goal=${g};$('ob-goal').value=${g};obSet('goal',${g})"><td>${g} brand${g === 1 ? '' : 's'} a month${OB.share !== 100 ? ` <span style="color:var(--muted)">(${obRnd(x.T)} from outbound)</span>` : ''}</td>
+  const goals = [.5, 1, 1.5, 2];
+  $('ob-back').innerHTML = `<div class="gp-eyebrow">Working backwards</div><div class="gp-h">How much of the ${obRnd(OB.goal)} outbound carries</div>
+    <div class="gp-lead">Every row runs on the same rates and team size. Pick outbound’s share of the monthly goal to start, hit it, then step up as the other channels prove out. Click a row to set the outbound share above.</div>
+    <table class="ob-tbl"><thead><tr><th>Outbound brands a month</th><th class="n">Brands a month</th><th class="n">Brands a week</th><th class="n">A day, each person</th><th class="n">Analyses a week</th><th class="n">Calls a week</th><th class="n">Hours a week, each</th></tr></thead><tbody>
+    ${goals.filter(g => g <= OB.goal + 1e-9).map(g => { const x = obCalc({ ...OB, mOut: 100, mIn: 0, mAds: 0, mOrg: 0 }, g); const on = Math.abs(g - R.T) < 1e-6;
+      const pct = Math.round(g / OB.goal * 100);
+      return `<tr class="ob-pick${on ? ' on' : ''}" onclick="obShare(${pct})"><td>${g} brand${g === 1 ? '' : 's'} a month <span style="color:var(--muted)">(${pct}% of the goal)</span></td>
         <td class="n">${obFmt(x.N)}</td><td class="n">${obFmt(Math.ceil(x.perWeek))}</td><td class="n">${obFmt(Math.ceil(x.perDay))}</td><td class="n">${obRnd(x.analyses / x.wk)}</td><td class="n">${obRnd(x.calls / x.wk)}</td><td class="n">${obRnd(x.hrsWk)}</td></tr>`; }).join('')}
     </tbody></table>`;
 
