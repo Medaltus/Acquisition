@@ -499,6 +499,73 @@ mark.fl-need{background:#FBF0E2;border-bottom:1px dashed var(--warn);padding:0 2
 .fl-all-step .tick span{display:block;font-family:var(--font);font-size:11px;color:var(--muted);}
 .fl-key{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin-bottom:14px;}
 @media (max-width:1100px){.fl-detail{grid-template-columns:1fr;}}
+/* ── Outbound ── */
+.ob-wrap{display:flex;flex-direction:column;gap:18px;max-width:1240px;}
+.ob-top{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.45fr);gap:18px;align-items:start;}
+.ob-in{display:flex;flex-direction:column;gap:10px;margin-top:14px;}
+.ob-in h5{font-family:var(--font-header);font-weight:500;font-size:12px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-top:8px;}
+.ob-row{display:grid;grid-template-columns:1fr 104px;gap:10px;align-items:center;}
+.ob-row label{font-size:12.5px;line-height:1.3;}
+.ob-row label small{display:block;font-size:11px;color:var(--muted);}
+.ob-row input{width:100%;border:1px solid var(--border);border-radius:var(--radius-sm);padding:6px 8px;font-size:13px;color:var(--navy);text-align:right;background:var(--white);}
+.ob-row .unit{position:relative;}
+.ob-row .unit i{position:absolute;right:10px;top:50%;transform:translateY(-50%);font-style:normal;font-size:11px;color:var(--muted);pointer-events:none;}
+.ob-row .unit input{padding-right:42px;}
+.ob-row input::-webkit-inner-spin-button{display:none;}.ob-row input{-moz-appearance:textfield;}
+.ob-hero{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:14px 0 4px;}
+.ob-hero div{background:var(--navy);color:#fff;border-radius:var(--radius);padding:16px 16px 14px;}
+.ob-hero b{display:block;font-family:var(--font-subheader);font-size:34px;line-height:1;color:var(--green);letter-spacing:-.5px;}
+.ob-hero span{font-size:11.5px;opacity:.8;display:block;margin-top:6px;}
+.ob-fun{display:flex;flex-direction:column;gap:7px;margin-top:16px;}
+.ob-frow{display:grid;grid-template-columns:170px 1fr 120px;gap:12px;align-items:center;}
+.ob-frow .lbl{font-family:var(--font-header);font-size:13px;}
+.ob-frow .lbl small{display:block;font-family:var(--font);font-size:11px;color:var(--muted);}
+.ob-frow .rate{font-size:11.5px;color:var(--muted);}
+.ob-bar{height:32px;border-radius:6px;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-family:var(--font-bold);font-size:14px;margin:0 auto;min-width:58px;transition:width .25s;}
+.ob-frow.last .ob-bar{background:var(--green);color:var(--navy);}
+.ob-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:16px;}
+.ob-k{border:1px solid var(--border);border-radius:var(--radius);padding:12px 14px;}
+.ob-k b{display:block;font-family:var(--font-subheader);font-size:24px;line-height:1.1;}
+.ob-k span{font-size:11.5px;color:var(--muted);}
+.ob-tbl{width:100%;border-collapse:collapse;margin-top:14px;font-size:12.5px;}
+.ob-tbl th{text-align:left;font-weight:400;font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);padding:8px 10px;border-bottom:1px solid var(--border);}
+.ob-tbl td{padding:10px;border-bottom:1px solid var(--border2);}
+.ob-tbl td.n{font-family:var(--font-bold);text-align:right;}
+.ob-tbl th.n{text-align:right;}
+.ob-tbl tr.ob-pick{cursor:pointer;}
+.ob-tbl tr.ob-pick:hover td{background:var(--bg);}
+.ob-tbl tr.on td{background:var(--green-dim);}
+.ob-tbl tr.on td:first-child{box-shadow:inset 3px 0 0 var(--green);}
+.ob-ramp{display:grid;grid-template-columns:repeat(12,1fr);gap:6px;align-items:end;height:170px;margin-top:18px;}
+.ob-m{display:flex;flex-direction:column;justify-content:flex-end;align-items:center;height:100%;gap:4px;}
+.ob-m .bar{width:100%;border-radius:5px 5px 0 0;background:var(--green);display:flex;align-items:flex-start;justify-content:center;font-family:var(--font-bold);font-size:11px;color:var(--navy);padding-top:3px;min-height:3px;transition:height .25s;}
+.ob-m .bar.zero{background:var(--bg2);}
+.ob-m .ml{font-size:10.5px;color:var(--muted);}
+.ob-m .c{font-size:10px;color:var(--slate);}
+.ob-dots{display:flex;flex-wrap:wrap;gap:3px;margin-top:16px;}
+.ob-dots i{width:8px;height:8px;border-radius:2px;background:var(--bg2);}
+.ob-dots i.d1{background:var(--silver);}
+.ob-dots i.d2{background:var(--sand);}
+.ob-dots i.d3{background:var(--slate);}
+.ob-dots i.d4{background:var(--navy);}
+.ob-dots i.d5{background:var(--green);outline:2px solid var(--green-ink);}
+.ob-leg{display:flex;gap:14px;flex-wrap:wrap;font-size:11.5px;color:var(--muted);margin-top:12px;}
+.ob-leg span{display:inline-flex;align-items:center;gap:6px;}
+.ob-leg i{width:10px;height:10px;border-radius:2px;display:inline-block;}
+.ob-week{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-top:14px;}
+.ob-day{border:1px solid var(--border);border-radius:var(--radius);padding:12px;}
+.ob-day h6{font-family:var(--font-header);font-weight:500;font-size:13px;margin-bottom:8px;}
+.ob-task{font-size:11.5px;padding:6px 8px;border-radius:var(--radius-sm);margin-bottom:6px;background:var(--bg);}
+.ob-task b{display:block;font-family:var(--font-bold);font-size:11.5px;}
+.ob-task.a{background:#FBF3EC;}
+.ob-task.c{background:var(--green-dim);}
+.ob-levers{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:14px;}
+.ob-lev{border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;}
+.ob-lev h4{font-family:var(--font-header);font-weight:500;font-size:14px;margin-bottom:4px;}
+.ob-lev p{font-size:11.5px;color:var(--muted);}
+.ob-lev .eff{margin-top:8px;font-size:12px;color:var(--green-ink);font-family:var(--font-bold);}
+.ob-src{font-size:11.5px;color:var(--muted);margin-top:12px;line-height:1.6;}
+@media (max-width:1100px){.ob-top{grid-template-columns:1fr;}.ob-kpis{grid-template-columns:repeat(2,1fr);}.ob-week,.ob-levers{grid-template-columns:1fr;}}
 @media (prefers-reduced-motion:reduce){*{transition:none !important;}}
 /* ── Growth Plan ── */
 .gp-wrap{display:flex;flex-direction:column;gap:18px;max-width:1240px;}
@@ -669,6 +736,9 @@ mark.fl-need{background:#FBF0E2;border-bottom:1px dashed var(--warn);padding:0 2
     <button class="nav-btn" data-page="flow" onclick="showPage('flow')">
       <svg viewBox="0 0 16 16"><circle cx="3" cy="8" r="1.8"/><circle cx="13" cy="8" r="1.8"/><circle cx="8" cy="8" r="1.8"/><path d="M4.8 8h1.4M9.8 8h1.4"/></svg>Inbound Flow
     </button>
+    <button class="nav-btn" data-page="outbound" onclick="showPage('outbound')">
+      <svg viewBox="0 0 16 16"><path d="M14.5 1.5L7 9"/><path d="M14.5 1.5L10 14.5 7 9 1.5 6z"/></svg>Outbound
+    </button>
     <button class="nav-btn" data-page="prospects" onclick="showPage('prospects')">
       <svg viewBox="0 0 16 16"><circle cx="7" cy="7" r="5"/><path d="M10.7 10.7L14.5 14.5"/></svg>Future Prospects<span class="nav-badge" id="nb-prospects">–</span>
     </button>
@@ -769,6 +839,30 @@ mark.fl-need{background:#FBF0E2;border-bottom:1px dashed var(--warn);padding:0 2
     <div class="fl-wrap" id="fl-map-wrap">
       <div class="fl-map" id="fl-map"></div>
       <div class="fl-detail"><div class="fl-card" id="fl-step"></div><div class="fl-card" id="fl-open"></div></div>
+    </div>
+  </section>
+
+  <!-- ══ OUTBOUND (planning math) ══ -->
+  <section class="page" id="page-outbound">
+    <div class="page-hd">
+      <div>
+        <div class="page-title">Outbound</div>
+        <div class="page-sub">What it takes to sign new brands from outbound, worked backwards from the goal. Change any number and everything below updates.</div>
+      </div>
+      <button class="btn btn-ghost" onclick="obReset()">Reset to defaults</button>
+    </div>
+    <div class="ob-wrap">
+      <div class="ob-top">
+        <div class="gp-card"><div class="gp-eyebrow">The inputs</div><div class="gp-h">Goal and conversion rates</div>
+          <div class="gp-lead">Rates start from 2026 cold email benchmarks, set for a small, researched list where every email leads with a real finding. We replace them with our own numbers once HubSpot has 90 days of sends.</div>
+          <div class="ob-in" id="ob-in"></div></div>
+        <div class="gp-card" id="ob-out"></div>
+      </div>
+      <div class="gp-card" id="ob-back"></div>
+      <div class="gp-card" id="ob-ramp"></div>
+      <div class="gp-card" id="ob-grid"></div>
+      <div class="gp-card" id="ob-week"></div>
+      <div class="gp-card" id="ob-lev"></div>
     </div>
   </section>
 
@@ -931,7 +1025,7 @@ mark.fl-need{background:#FBF0E2;border-bottom:1px dashed var(--warn);padding:0 2
 const KEY_STORE = 'medaltus_portfolio_key';
 let DATA = null;
 const UI = { currentRows: [], retiredRows: [], stage: '', az: '', shown: 60, open: null, productCache: {}, missingOnly: {}, currentSort: 'sign_date' };
-const PAGE_TITLES = { plan: 'Growth Plan', current: 'Current Brands', retired: 'Retired Brands', inbound: 'Inbound Leads', flow: 'Inbound Flow', prospects: 'Future Prospects', audit: 'Audit Builder' };
+const PAGE_TITLES = { plan: 'Growth Plan', current: 'Current Brands', retired: 'Retired Brands', inbound: 'Inbound Leads', flow: 'Inbound Flow', outbound: 'Outbound', prospects: 'Future Prospects', audit: 'Audit Builder' };
 
 // rank = order for "Sort: best fit" (best prospects first)
 const AZ = [
@@ -1029,6 +1123,7 @@ function showPage(page) {
   history.replaceState(null, '', '#' + page);
   if (page === 'flow') renderFlow();
   if (page === 'plan') renderGrowth();
+  if (page === 'outbound') renderOutbound();
   document.querySelector('.main').scrollTop = 0;
 }
 
@@ -3278,6 +3373,151 @@ async function saveAnswers(e) {
     }
   } catch (err) { if (err.message !== 'unauthorized') toast(err.message, true); }
   finally { $('ans-save').disabled = false; }
+}
+
+
+/* ───────────── Outbound (planning math) ───────────── */
+const OB_DEF = { goal: 2, share: 100, senders: 2, days: 21, reply: 6, yes: 40, call: 50, prop: 50, close: 30, cycle: 3, emails: 4, cap: 50, minNew: 6, minAn: 45, minCall: 60, minProp: 90 };
+const OB_FIELDS = [
+  ['Goal', [
+    ['goal', 'New brands a month', 'The target we are working toward', '/mo', .5],
+    ['share', 'Share that comes from outbound', 'Inbound and referrals cover the rest', '%', 5],
+    ['senders', 'People sending', 'Each owns a list and their own inbox', '', 1],
+    ['days', 'Working days a month', '', 'days', 1],
+  ]],
+  ['Conversion rates', [
+    ['reply', 'Reply rate', 'Benchmark average about 3.4%; 5–10% is good', '%', .5],
+    ['yes', 'Replies that want the analysis', 'Say yes to the growth and gap analysis', '%', 5],
+    ['call', 'Analysis to call', 'Walkthrough or discovery call booked', '%', 5],
+    ['prop', 'Call to proposal', 'Same as the Growth Plan', '%', 5],
+    ['close', 'Proposal to signed', 'Growth Plan uses 25–30%', '%', 5],
+    ['cycle', 'First email to signed', 'Sales cycle length', 'mo', 1],
+  ]],
+  ['Workload', [
+    ['emails', 'Emails per brand in the sequence', 'HubSpot sends 2 through 4', '', 1],
+    ['cap', 'Cold emails per inbox per day', 'Keeps sending reputation healthy', '', 5],
+    ['minNew', 'Minutes per new brand', 'Review the scanner finding, personalize email 1', 'min', 1],
+    ['minAn', 'Minutes per analysis', 'Verify and finish the growth and gap analysis', 'min', 5],
+    ['minCall', 'Minutes per call', 'Including prep and recap', 'min', 5],
+  ]],
+];
+let OB = { ...OB_DEF };
+try { Object.assign(OB, JSON.parse(localStorage.getItem('ob-inputs') || '{}')); } catch (e) {}
+
+const obFmt = (n, d = 0) => (Math.round(n * 10 ** d) / 10 ** d).toLocaleString('en-US', { maximumFractionDigits: d });
+const obRnd = n => n >= 10 ? obFmt(n) : obFmt(n, 1);
+
+function obCalc(o = OB, goalOverride) {
+  const T = (goalOverride ?? o.goal) * o.share / 100;
+  const conv = (o.reply / 100) * (o.yes / 100) * (o.call / 100) * (o.prop / 100) * (o.close / 100);
+  const N = conv > 0 ? T / conv : 0;
+  const replies = N * o.reply / 100, analyses = replies * o.yes / 100, calls = analyses * o.call / 100, props = calls * o.prop / 100;
+  const s = Math.max(1, o.senders), wk = 52 / 12;
+  const perDay = N / (s * Math.max(1, o.days));
+  const emailsDay = perDay * o.emails;
+  const inboxes = Math.max(1, Math.ceil(emailsDay / Math.max(1, o.cap)));
+  const minsMonth = N * o.minNew + analyses * o.minAn + calls * o.minCall + props * o.minProp;
+  const hrsWk = minsMonth / 60 / s / wk;
+  return { T, conv, N, replies, analyses, calls, props, perDay, perWeek: N / wk, emailsDay, inboxes, hrsWk, oneIn: conv > 0 ? 1 / conv : 0, s, wk };
+}
+
+function obSet(k, v) {
+  const n = parseFloat(v); if (isNaN(n) || n < 0) return;
+  OB[k] = n; try { localStorage.setItem('ob-inputs', JSON.stringify(OB)); } catch (e) {}
+  renderOutbound(true);
+}
+function obReset() { OB = { ...OB_DEF }; try { localStorage.removeItem('ob-inputs'); } catch (e) {} renderOutbound(); }
+
+function renderOutbound(keepInputs) {
+  if (!keepInputs || !$('ob-in').children.length) {
+    $('ob-in').innerHTML = OB_FIELDS.map(([h, rows]) => `<h5>${h}</h5>` + rows.map(([k, l, hint, u, step]) =>
+      `<div class="ob-row"><label for="ob-${k}">${l}${hint ? `<small>${hint}</small>` : ''}</label>
+      <div class="${u ? 'unit' : ''}"><input id="ob-${k}" type="number" min="0" step="${step}" value="${OB[k]}" oninput="obSet('${k}', this.value)">${u ? `<i>${u}</i>` : ''}</div></div>`).join('')).join('');
+  }
+  const R = obCalc();
+  const stages = [
+    ['Brands contacted', 'Email 1 plus LinkedIn', R.N, `${OB.reply}% reply`],
+    ['Replies', 'Any human reply', R.replies, `${OB.yes}% want it`],
+    ['Analyses sent', 'Growth and gap analysis', R.analyses, `${OB.call}% book a call`],
+    ['Calls', 'Walkthrough or discovery', R.calls, `${OB.prop}% get a proposal`],
+    ['Proposals', '', R.props, `${OB.close}% sign`],
+    ['Signed brands', 'From outbound', R.T, 'the goal'],
+  ];
+  const max = R.N || 1;
+  $('ob-out').innerHTML = `<div class="gp-eyebrow">The answer</div><div class="gp-h">What ${obRnd(R.T)} outbound brand${R.T === 1 ? '' : 's'} a month takes</div>
+    <div class="gp-lead">At these rates, 1 in every ${obFmt(R.oneIn)} brands we reach out to signs. That sets the volume.</div>
+    <div class="ob-hero">
+      <div><b>${obFmt(R.N)}</b><span>brands to reach out to each month</span></div>
+      <div><b>${obFmt(Math.ceil(R.perWeek))}</b><span>new brands a week across the team</span></div>
+      <div><b>${obFmt(Math.ceil(R.perDay))}</b><span>new brands a day for each of ${R.s} ${R.s === 1 ? 'person' : 'people'}</span></div>
+    </div>
+    <div class="ob-fun">${stages.map(([l, sub, v, r], i) => {
+      const w = Math.max(6, Math.sqrt(v / max) * 100);
+      return `<div class="ob-frow${i === stages.length - 1 ? ' last' : ''}"><div class="lbl">${l}${sub ? `<small>${sub}</small>` : ''}</div><div><div class="ob-bar" style="width:${w}%">${obRnd(v)}</div></div><div class="rate">${r}</div></div>`;
+    }).join('')}</div>
+    <div class="ob-kpis">
+      <div class="ob-k"><b>${obRnd(R.analyses / R.wk)}</b><span>analyses to finish each week</span></div>
+      <div class="ob-k"><b>${obRnd(R.calls / R.wk)}</b><span>calls a week</span></div>
+      <div class="ob-k"><b>${obFmt(Math.ceil(R.emailsDay))}</b><span>emails a day per person, ${R.inboxes} sending inbox${R.inboxes === 1 ? '' : 'es'} each</span></div>
+      <div class="ob-k"><b>${obRnd(R.hrsWk)} hrs</b><span>a week per person</span></div>
+    </div>
+    <div class="gp-note">Bar widths use a square-root scale so the bottom of the funnel stays readable.</div>`;
+
+  const goals = [.5, 1, 1.5, 2, 3];
+  $('ob-back').innerHTML = `<div class="gp-eyebrow">Working backwards</div><div class="gp-h">Pick the starting goal</div>
+    <div class="gp-lead">Every row runs on the same rates and team size. Pick where we start, hit it for a month, then step up. Click a row to use it above.</div>
+    <table class="ob-tbl"><thead><tr><th>Outbound goal</th><th class="n">Brands a month</th><th class="n">Brands a week</th><th class="n">A day, each person</th><th class="n">Analyses a week</th><th class="n">Calls a week</th><th class="n">Hours a week, each</th></tr></thead><tbody>
+    ${goals.map(g => { const x = obCalc(OB, g); const on = Math.abs(g - OB.goal) < 1e-9;
+      return `<tr class="ob-pick${on ? ' on' : ''}" onclick="OB.goal=${g};$('ob-goal').value=${g};obSet('goal',${g})"><td>${g} brand${g === 1 ? '' : 's'} a month${OB.share !== 100 ? ` <span style="color:var(--muted)">(${obRnd(x.T)} from outbound)</span>` : ''}</td>
+        <td class="n">${obFmt(x.N)}</td><td class="n">${obFmt(Math.ceil(x.perWeek))}</td><td class="n">${obFmt(Math.ceil(x.perDay))}</td><td class="n">${obRnd(x.analyses / x.wk)}</td><td class="n">${obRnd(x.calls / x.wk)}</td><td class="n">${obRnd(x.hrsWk)}</td></tr>`; }).join('')}
+    </tbody></table>`;
+
+  const cyc = Math.max(0, Math.round(OB.cycle)); let cum = 0;
+  const months = Array.from({ length: 12 }, (_, i) => { const s = i + 1 > cyc ? R.T : 0; cum += s; return { s, cum }; });
+  const top = Math.max(R.T, .01);
+  $('ob-ramp').innerHTML = `<div class="gp-eyebrow">The timeline</div><div class="gp-h">When signed brands start landing</div>
+    <div class="gp-lead">With a ${cyc}-month sales cycle, the first outbound signings land in month ${cyc + 1}, so we start at full pace in month 1. Keeping this pace all year signs ${obRnd(cum)} brands from outbound by month 12.</div>
+    <div class="ob-ramp">${months.map((m, i) => `<div class="ob-m"><div class="c">${obFmt(R.N)} sent</div><div class="bar${m.s ? '' : ' zero'}" style="height:${m.s ? Math.max(14, m.s / top * 110) : 3}px">${m.s ? obRnd(m.s) : ''}</div><div class="ml">M${i + 1} · ${obRnd(m.cum)}</div></div>`).join('')}</div>
+    <div class="gp-note">Bars show brands signed each month; the label under each is the running total.</div>`;
+
+  const cnt = { s: Math.round(R.T), p: Math.round(R.props), c: Math.round(R.calls), a: Math.round(R.analyses), r: Math.round(R.replies) };
+  const total = Math.round(R.N), cap = 2000, scale = total > cap ? cap / total : 1, show = Math.round(total * scale);
+  const sc = n => Math.max(n ? 1 : 0, Math.round(n * scale));
+  const lev = [[5, sc(cnt.s)], [4, sc(cnt.p) - sc(cnt.s)], [3, sc(cnt.c) - sc(cnt.p)], [2, sc(cnt.a) - sc(cnt.c)], [1, sc(cnt.r) - sc(cnt.a)]];
+  let dots = ''; lev.forEach(([k, n]) => { dots += `<i class="d${k}"></i>`.repeat(Math.max(0, n)); });
+  dots += '<i></i>'.repeat(Math.max(0, show - lev.reduce((a, [, n]) => a + Math.max(0, n), 0)));
+  $('ob-grid').innerHTML = `<div class="gp-eyebrow">One month, every brand</div><div class="gp-h">${obFmt(total)} brands, one square each</div>
+    <div class="gp-lead">This is what a month at goal pace looks like. Most brands never reply, and that is normal. The work is making sure the few who do get a fast, personal analysis.${scale < 1 ? ` Showing ${obFmt(show)} squares, scaled down.` : ''}</div>
+    <div class="ob-dots">${dots}</div>
+    <div class="ob-leg">
+      <span><i style="background:var(--green)"></i>Signed ${cnt.s}</span><span><i style="background:var(--navy)"></i>Proposal ${cnt.p}</span>
+      <span><i style="background:var(--slate)"></i>Call ${cnt.c}</span><span><i style="background:var(--sand)"></i>Analysis ${cnt.a}</span>
+      <span><i style="background:var(--silver)"></i>Replied ${cnt.r}</span><span><i style="background:var(--bg2)"></i>No reply yet ${obFmt(total - cnt.r)}</span></div>`;
+
+  const nd = Math.ceil(R.perDay), anW = R.analyses / R.wk / R.s, callW = R.calls / R.wk / R.s;
+  const anDays = [Math.ceil(anW / 2), Math.floor(anW / 2)], callDays = [Math.ceil(callW / 2), Math.floor(callW / 2)];
+  const newBlock = `<div class="ob-task"><b>${nd} new brands</b>Review finding, send email 1 and LinkedIn · ${obFmt(nd * OB.minNew)} min</div>`;
+  const D = [
+    ['Monday', [`<div class="ob-task"><b>Pipeline review</b>Replies, analyses due, calls this week · 30 min</div>`, newBlock]],
+    ['Tuesday', [newBlock, anDays[0] ? `<div class="ob-task a"><b>${anDays[0]} analys${anDays[0] === 1 ? 'is' : 'es'}</b>Verify and send · ${obFmt(anDays[0] * OB.minAn)} min</div>` : '']],
+    ['Wednesday', [newBlock, callDays[0] ? `<div class="ob-task c"><b>${callDays[0]} call${callDays[0] === 1 ? '' : 's'}</b>Walk through the analysis · ${obFmt(callDays[0] * OB.minCall)} min</div>` : '']],
+    ['Thursday', [newBlock, anDays[1] ? `<div class="ob-task a"><b>${anDays[1]} analys${anDays[1] === 1 ? 'is' : 'es'}</b>Verify and send · ${obFmt(anDays[1] * OB.minAn)} min</div>` : '']],
+    ['Friday', [newBlock, callDays[1] ? `<div class="ob-task c"><b>${callDays[1]} call${callDays[1] === 1 ? '' : 's'}</b>Walk through the analysis · ${obFmt(callDays[1] * OB.minCall)} min</div>` : '', `<div class="ob-task"><b>Replies and LinkedIn</b>Answer, connect, comment · 30 min</div>`]],
+  ];
+  $('ob-week').innerHTML = `<div class="gp-eyebrow">Example week</div><div class="gp-h">One person’s week at this pace</div>
+    <div class="gp-lead">Brand Scanner finds the brand and the finding; the person checks it and makes email 1 personal. HubSpot sends emails 2 through ${OB.emails} on its own, so they don’t appear here. Numbers are rounded up to whole brands.</div>
+    <div class="ob-week">${D.map(([d, t]) => `<div class="ob-day"><h6>${d}</h6>${t.join('')}</div>`).join('')}</div>`;
+
+  const L = [
+    ['Sharper targeting', `Reply rate from ${OB.reply}% to ${OB.reply + 3}%`, 'Only reach out to brands where the scanner found a clear, costly gap, and lead with it.', { reply: OB.reply + 3 }],
+    ['A stronger offer', `Analysis yes rate from ${OB.yes}% to ${Math.min(100, OB.yes + 10)}%`, 'Make the analysis easy to say yes to: one real finding in email 1, the full picture one click away.', { yes: Math.min(100, OB.yes + 10) }],
+    ['Better calls', `Close rate from ${OB.close}% to ${Math.min(100, OB.close + 10)}%`, 'Case studies matched to the brand’s situation, and a proposal built on their own numbers.', { close: Math.min(100, OB.close + 10) }],
+  ];
+  $('ob-lev').innerHTML = `<div class="gp-eyebrow">What moves the math</div><div class="gp-h">Three levers that cut the volume</div>
+    <div class="gp-lead">Volume is one way to the goal. Each lever below reaches the same number of signed brands with fewer outreach emails.</div>
+    <div class="ob-levers">${L.map(([h, ch, p, d]) => { const x = obCalc({ ...OB, ...d }); const pct = R.N ? Math.round((1 - x.N / R.N) * 100) : 0;
+      return `<div class="ob-lev"><h4>${h}</h4><p>${ch}</p><p style="margin-top:6px">${p}</p><div class="eff">${obFmt(R.N)} → ${obFmt(x.N)} brands a month (${pct}% fewer)</div></div>`; }).join('')}</div>
+    <div class="ob-src">Benchmarks behind the starting rates: platform-wide cold email reply rates average about 3.4% in 2026, 5–10% counts as good, and small, well-researched lists (under 50 recipients per campaign) reply at roughly 5.8% versus 2.1% for large blasts (Instantly, Woodpecker, Belkins). Positive reply rates of 1.5–3% count as good (Mailshake). Our starting rates sit at about 2.4% positive, in the upper half of that range, because every email leads with a finding about the brand. Call, proposal and close rates match the Growth Plan.</div>`;
 }
 
 /* ───────────── Init ───────────── */
