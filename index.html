@@ -571,6 +571,70 @@ mark.fl-need{background:#FBF0E2;border-bottom:1px dashed var(--warn);padding:0 2
 .ob-lev .eff{margin-top:8px;font-size:12px;color:var(--green-ink);font-family:var(--font-bold);}
 .ob-src{font-size:11.5px;color:var(--muted);margin-top:12px;line-height:1.6;}
 @media (max-width:1100px){.ob-top{grid-template-columns:1fr;}.ob-kpis{grid-template-columns:repeat(2,1fr);}.ob-week,.ob-levers{grid-template-columns:1fr;}}
+/* ── Outbound Leads / outreach setup ── */
+.ox-banner{display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:#FBF3EC;border:1px solid #F0D9C4;border-radius:var(--radius);padding:10px 14px;font-size:12px;color:var(--navy);margin-bottom:16px;}
+.ox-banner b{font-family:var(--font-bold);}
+.ox-banner .toggle{margin-left:auto;}
+.ox-dots{display:flex;gap:4px;align-items:center;}
+.ox-dots i{width:18px;height:6px;border-radius:3px;background:var(--bg2);display:block;}
+.ox-dots i.done{background:var(--green);}
+.ox-dots i.li.done{background:var(--slate);}
+.ox-dots i.next{background:none;box-shadow:inset 0 0 0 1.5px var(--navy);}
+.ox-dots i.stop{background:var(--border);}
+.ox-step{font-size:11px;color:var(--muted);margin-top:4px;white-space:nowrap;}
+.ox-sample{display:inline-block;font-size:9.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--warn);background:rgba(200,125,47,.12);border-radius:8px;padding:1px 6px;margin-left:6px;vertical-align:middle;}
+.ox-out{font-size:11px;border:1px solid var(--border);border-radius:var(--radius-sm);padding:3px 6px;background:var(--white);color:var(--navy);margin-top:6px;}
+.ox-tl{list-style:none;margin:6px 0 0;padding:0;border-left:2px solid var(--border2);}
+.ox-tl li{position:relative;padding:4px 0 8px 16px;font-size:12px;}
+.ox-tl li::before{content:'';position:absolute;left:-6px;top:8px;width:10px;height:10px;border-radius:50%;background:var(--bg2);border:2px solid var(--white);}
+.ox-tl li.sent::before{background:var(--navy);}
+.ox-tl li.li::before{background:var(--slate);}
+.ox-tl li.open::before,.ox-tl li.click::before{background:var(--silver);}
+.ox-tl li.reply::before,.ox-tl li.yes::before{background:var(--green);}
+.ox-tl li.bounce::before,.ox-tl li.notint::before{background:var(--danger);}
+.ox-tl li.next::before{background:var(--white);box-shadow:0 0 0 1.5px var(--navy);}
+.ox-tl li span{color:var(--muted);font-size:11px;margin-left:6px;}
+.ox-tl li.next{color:var(--muted);}
+.ox-expand{padding:16px 22px 18px;border-left:3px solid var(--green);display:grid;grid-template-columns:1.2fr 1fr;gap:24px;}
+.ox-expand h6{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;font-weight:400;margin-bottom:6px;}
+.ox-block{margin:18px 0;padding:16px 0 18px;border-top:1px solid var(--border2);border-bottom:1px solid var(--border2);}
+.ox-block-hd{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+.ox-block-hd .detail-hd{margin:0;}
+.ox-block-hd .btn{margin-left:auto;}
+/* setup modal */
+.ox-modal{max-width:1180px;width:100%;max-height:92vh;overflow:hidden;display:flex;flex-direction:column;padding:0;}
+.ox-mhd{padding:20px 24px 14px;border-bottom:1px solid var(--border2);display:flex;gap:14px;align-items:flex-start;}
+.ox-mhd h3{margin:0;}
+.ox-mhd p{margin:4px 0 0;}
+.ox-mhd .x{margin-left:auto;background:none;border:none;font-size:22px;color:var(--muted);cursor:pointer;line-height:1;}
+.ox-mbody{display:grid;grid-template-columns:380px 1fr;min-height:0;flex:1;}
+.ox-left{padding:16px 20px 20px;overflow-y:auto;border-right:1px solid var(--border2);}
+.ox-right{padding:16px 22px 22px;overflow-y:auto;background:var(--bg);}
+.ox-left h5{font-family:var(--font-header);font-weight:500;font-size:11.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin:16px 0 8px;}
+.ox-left h5:first-child{margin-top:0;}
+.ox-left label{display:block;font-size:12px;margin-bottom:8px;color:var(--navy);}
+.ox-left label .input{margin-top:4px;}
+.ox-two{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.ox-opts{display:flex;flex-wrap:wrap;gap:6px;}
+.ox-opts button{border:1px solid var(--border);background:var(--white);border-radius:999px;padding:5px 11px;font-size:11.5px;color:var(--navy);cursor:pointer;}
+.ox-opts button.on{background:var(--navy);color:#fff;border-color:var(--navy);}
+.ox-opts button em{font-style:normal;font-size:9.5px;font-weight:700;color:var(--green-ink);margin-left:5px;}
+.ox-opts button.on em{color:var(--green);}
+.ox-fill textarea{min-height:58px;font-size:12px;}
+.ox-hint{font-size:11px;color:var(--muted);margin:-2px 0 8px;}
+.ox-touch{margin-bottom:16px;}
+.ox-touch-hd{display:flex;align-items:center;gap:8px;font-size:12px;margin-bottom:6px;}
+.ox-touch-hd b{font-family:var(--font-bold);}
+.ox-touch-hd span{color:var(--muted);}
+.ox-touch-hd em{margin-left:auto;}
+.ox-hs{margin-top:8px;font-size:12px;}
+.ox-hs summary{cursor:pointer;font-family:var(--font-bold);color:var(--navy);}
+.ox-hs table{width:100%;border-collapse:collapse;margin-top:8px;font-size:11.5px;}
+.ox-hs td{border-bottom:1px solid var(--border2);padding:5px 6px;vertical-align:top;}
+.ox-hs td:first-child{font-family:var(--mono);font-size:11px;color:var(--slate);white-space:nowrap;}
+.ox-mft{padding:12px 24px;border-top:1px solid var(--border2);display:flex;gap:10px;align-items:center;}
+.ox-mft .note{font-size:11.5px;color:var(--muted);margin-right:auto;}
+@media (max-width:1000px){.ox-mbody{grid-template-columns:1fr;}.ox-left{border-right:none;}.ox-expand{grid-template-columns:1fr;}}
 @media (prefers-reduced-motion:reduce){*{transition:none !important;}}
 /* ── Growth Plan ── */
 .gp-wrap{display:flex;flex-direction:column;gap:18px;max-width:1240px;}
@@ -742,11 +806,14 @@ mark.fl-need{background:#FBF0E2;border-bottom:1px dashed var(--warn);padding:0 2
       <svg viewBox="0 0 16 16"><circle cx="3" cy="8" r="1.8"/><circle cx="8" cy="8" r="1.8"/><path d="M4.8 8h1.4M9.8 8h4.2M12 5.8L14.2 8 12 10.2"/></svg>Outbound Flow
     </button>
     <button class="nav-btn" data-page="outbound" onclick="showPage('outbound')">
-      <svg viewBox="0 0 16 16"><path d="M14.5 1.5L7 9"/><path d="M14.5 1.5L10 14.5 7 9 1.5 6z"/></svg>Outbound Math
+      <svg viewBox="0 0 16 16"><rect x="2.5" y="1.5" width="11" height="13" rx="1.5"/><path d="M5 4.5h6M5 8h1.5M9.5 8H11M5 11h1.5M9.5 11H11"/></svg>Outbound Math
     </button>
     <div class="nav-section">Pipeline</div>
     <button class="nav-btn" data-page="inbound" onclick="showPage('inbound')">
       <svg viewBox="0 0 16 16"><path d="M1.5 9.5h3.5l1 2h4l1-2h3.5"/><path d="M1.5 9.5L3.5 3h9l2 6.5v4a1 1 0 01-1 1h-11a1 1 0 01-1-1z"/></svg>Inbound Leads<span class="nav-badge" id="nb-inbound">–</span>
+    </button>
+    <button class="nav-btn" data-page="oleads" onclick="showPage('oleads')">
+      <svg viewBox="0 0 16 16"><path d="M14.5 1.5L7 9"/><path d="M14.5 1.5L10 14.5 7 9 1.5 6z"/></svg>Outbound Leads<span class="nav-badge" id="nb-oleads">–</span>
     </button>
     <button class="nav-btn" data-page="prospects" onclick="showPage('prospects')">
       <svg viewBox="0 0 16 16"><circle cx="7" cy="7" r="5"/><path d="M10.7 10.7L14.5 14.5"/></svg>Future Prospects<span class="nav-badge" id="nb-prospects">–</span>
@@ -813,6 +880,21 @@ mark.fl-need{background:#FBF0E2;border-bottom:1px dashed var(--warn);padding:0 2
     <div class="filters"><div class="seg" id="ib-seg"></div></div>
     <div class="card"><div class="table-wrap" id="inbound-table"><div class="loading">Loading leads…</div></div></div>
     <div id="inbound-unmatched"></div>
+  </section>
+
+  <!-- ══ OUTBOUND LEADS ══ -->
+  <section class="page" id="page-oleads">
+    <div class="page-hd">
+      <div>
+        <div class="page-title">Outbound Leads</div>
+        <div class="page-sub">Every brand we have reached out to: which flow they are on, what has been sent, opened and replied, and what is next. HubSpot sends the emails from your inbox; this page reads the activity back every hour.</div>
+      </div>
+      <button class="btn btn-primary" onclick="oxPickBrand()">Set up outreach</button>
+    </div>
+    <div class="ox-banner" id="ox-banner"></div>
+    <div class="kpi-row" id="ox-kpis"></div>
+    <div class="filters"><div class="seg" id="ox-seg"></div></div>
+    <div class="card"><div class="table-wrap" id="ox-table"></div></div>
   </section>
 
   <!-- ══ GROWTH PLAN (discussion view) ══ -->
@@ -941,6 +1023,11 @@ mark.fl-need{background:#FBF0E2;border-bottom:1px dashed var(--warn);padding:0 2
 </main>
 </div>
 
+<!-- Set up outreach (outbound flow picker) -->
+<div class="modal-bg" id="ox-modal" onclick="if(event.target===this)closeModal('ox-modal')">
+  <div class="modal ox-modal" id="ox-modal-inner"></div>
+</div>
+
 <!-- Add / edit brand modal -->
 <div class="modal-bg" id="add-modal" onclick="if(event.target===this)closeModal('add-modal')">
   <form class="modal modal-wide" onsubmit="savePartner(event)">
@@ -1050,7 +1137,7 @@ mark.fl-need{background:#FBF0E2;border-bottom:1px dashed var(--warn);padding:0 2
 const KEY_STORE = 'medaltus_portfolio_key';
 let DATA = null;
 const UI = { currentRows: [], retiredRows: [], stage: '', az: '', shown: 60, open: null, productCache: {}, missingOnly: {}, currentSort: 'sign_date' };
-const PAGE_TITLES = { plan: 'Growth Plan', current: 'Current Brands', retired: 'Retired Brands', inbound: 'Inbound Leads', flow: 'Inbound Flow', outbound: 'Outbound Math', oflow: 'Outbound Flow', prospects: 'Future Prospects', audit: 'Audit Builder' };
+const PAGE_TITLES = { plan: 'Growth Plan', current: 'Current Brands', retired: 'Retired Brands', inbound: 'Inbound Leads', flow: 'Inbound Flow', outbound: 'Outbound Math', oflow: 'Outbound Flow', oleads: 'Outbound Leads', prospects: 'Future Prospects', audit: 'Audit Builder' };
 
 // rank = order for "Sort: best fit" (best prospects first)
 const AZ = [
@@ -1138,7 +1225,7 @@ async function load(manual = false) {
     }
   }
 }
-function renderAll() { if ($('page-plan').classList.contains('active')) renderGrowth(); renderCurrent(); renderRetired(); renderInbound(); renderPipeline(); renderAzSeg(); renderProspects(); }
+function renderAll() { if ($('page-plan').classList.contains('active')) renderGrowth(); renderCurrent(); renderRetired(); renderInbound(); renderOLeads(); oxBadge(); renderPipeline(); renderAzSeg(); renderProspects(); }
 
 /* ───────────── Navigation ───────────── */
 function showPage(page) {
@@ -1150,6 +1237,7 @@ function showPage(page) {
   if (page === 'plan') renderGrowth();
   if (page === 'outbound') renderOutbound();
   if (page === 'oflow') renderOFlow();
+  if (page === 'oleads') renderOLeads();
   document.querySelector('.main').scrollTop = 0;
 }
 
@@ -2111,7 +2199,7 @@ function renderProspects() {
   }
   const page = list.slice(0, UI.shown);
   $('prospect-table').innerHTML = `<table class="data-table"><thead><tr>
-      <th>Brand</th><th>Category</th><th>Found at</th><th>Amazon</th><th>Products</th><th>Outreach</th><th>Updated</th>
+      <th>Brand</th><th>Category</th><th>Found at</th><th>Amazon</th><th>Products</th><th>Outreach</th><th>Outbound flow</th><th>Updated</th>
     </tr></thead><tbody>${page.map(p => `
     <tr class="row${UI.open === p.brand_id ? ' open' : ''}" onclick="toggleDetail('${esc(p.brand_id)}')" tabindex="0" onkeydown="if(event.key==='Enter')toggleDetail('${esc(p.brand_id)}')">
       <td><div class="brand-cell">${brandMark(p.brand_name, p.logo_url)}<div>${p.scan_completed_at
@@ -2122,9 +2210,10 @@ function renderProspects() {
       <td>${amazonCell(p)}</td>
       <td>${productSummary(p)}</td>
       <td>${outreachSelect(p)}</td>
+      <td class="nowrap">${oxCell(p)}</td>
       <td class="small muted nowrap">${esc(relTime(p.outreach_updated))}</td>
     </tr>
-    ${UI.open === p.brand_id ? `<tr class="detail"><td colspan="7">${detailHtml(p)}</td></tr>` : ''}`).join('')}
+    ${UI.open === p.brand_id ? `<tr class="detail"><td colspan="8">${detailHtml(p)}</td></tr>` : ''}`).join('')}
   </tbody></table>${list.length > UI.shown ? `<div class="more-row"><button class="btn btn-ghost" onclick="UI.shown+=60;renderProspects()">Show ${Math.min(60, list.length - UI.shown)} more</button></div>` : ''}`;
   if (UI.open && page.some(p => p.brand_id === UI.open)) loadProducts(UI.open);
 }
@@ -2193,6 +2282,7 @@ function detailHtml(p) {
         <div class="form-actions"><span class="small muted">${p.outreach_updated ? 'Last updated ' + esc(relTime(p.outreach_updated)) : ''}</span>${p.website_url ? `<button class="btn btn-ghost btn-sm" type="button" onclick="buildAudit('${id}')">Build audit</button>` : ''}<button class="btn btn-primary btn-sm" type="submit">${p.hubspot_company_id ? 'Save notes' : 'Save outreach'}</button></div>
       </form>
     </div>
+    ${oxDetailBlock(p)}
     ${contactsBlock(p)}
     <div class="products-hd">
       <div class="detail-hd" style="margin:0">Products on their website</div>
@@ -3673,6 +3763,288 @@ function renderOFlow() {
   $('of-open').innerHTML = `<div class="when">To settle before the first send</div><h2>Open decisions</h2>
     <ul class="fl-q" style="margin-top:14px">${OFLOW_OPEN.map(([t, d]) => `<li><b>${esc(t)}</b>${esc(d)}</li>`).join('')}</ul>`;
 }
+
+/* ───────────── Outbound Leads + outreach setup (preview mode) ─────────────
+   The dashboard picks each brand's flow; HubSpot sends it from the sender's
+   connected inbox and the hourly sync reads sends, opens and replies back.
+   Until the HubSpot sequence is connected, flows save in this browser and the
+   activity shown is sample data. */
+const OX_STEPS = [['e1', 0, 'Email 1'], ['li1', 1, 'LinkedIn'], ['e2', 3, 'Email 2'], ['e3', 7, 'Email 3'], ['li2', 10, 'LinkedIn'], ['e4', 14, 'Email 4']];
+const OX_SENDERS = ['Jaclyn Sonberg', 'Second sender (to add)'];
+const OX_OUTCOMES = { yes: 'Yes, wants the analysis', notnow: 'Not now', notint: 'Not interested' };
+const OX_STATUS = {
+  ready: ['Ready to enroll', 'st-na'], active: ['In sequence', 'st-ok'], replied: ['Replied: needs you', 'st-warn'],
+  yes: ['Yes → inbound flow', 'st-ok'], notnow: ['Not now', 'st-na'], notint: ['Not interested', 'st-na'],
+  finished: ['Finished → nurture', 'st-na'], bounced: ['Bounced', 'st-bad'],
+};
+const OX_E3_MATCH = [4, 1, 1, 3]; // email 1 finding → suggested proof story
+const OX = { seg: '', open: null, draft: null };
+const oxLS = (k, d) => { try { return JSON.parse(localStorage.getItem(k) || 'null') ?? d; } catch (e) { return d; } };
+const oxSave = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} };
+const oxDay = (iso, n) => { const d = new Date(iso + 'T12:00:00'); d.setDate(d.getDate() + n); return d; };
+const oxIso = d => d.toISOString().slice(0, 10);
+const oxFmt = d => d ? new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '—';
+const oxShowSamples = () => oxLS('obx-samples', true);
+
+// Add the new distributor story as a proof option for email 3 (once).
+if (!OFLOW_EMAILS.e3.variants.some(v => v.label === 'Unauthorized sellers')) OFLOW_EMAILS.e3.variants.push({ label: 'Unauthorized sellers', subj: 'What this looked like for another brand', body: `
+Hi {{Dana}},
+
+Given what we noticed on your listings, I thought this story might be useful. One of our partners, a professional haircare brand, kept losing the Featured Offer to two unauthorized sellers who restocked no matter what. We traced both back to a single distributor, our partner addressed it at the source, and they won the Featured Offer back once that supply ran out.
+
+You can read the full story here: {{medaltus.com/case-studies/beyond-unauthorized-sellers-uncovering-the-source}}
+
+If you'd like a look at where {{Solace Botanica}} stands today, I'd be glad to send over your growth and gap analysis.` });
+
+/* ── sample activity ── */
+function oxHash(s) { let h = 0; for (const c of String(s)) h = (h * 31 + c.charCodeAt(0)) >>> 0; return h; }
+const OX_SAMPLE_BRANDS = ['Solace Botanica', 'Kindred Glow', 'Marlowe Apothecary', 'Tidewell Skin', 'Oak & Ember Wellness', 'Velvet Fern', 'Northshore Botanics', 'Clearpath Derm', 'Hollis Hair Co', 'Saffron Ritual', 'Juniper Lane Beauty', 'Bramble & Bloom'];
+const OX_SAMPLE_PEOPLE = ['Dana Reyes', 'Priya Shah', 'Morgan Ellis', 'Nina Park', 'Caleb Ortiz', 'Ava Lindqvist', 'Jordan Blake', 'Sam Whitaker', 'Leah Moreno', 'Iris Chen', 'Theo Grant', 'Maya Collins'];
+// [days since email 1, ends with: '' | 'reply@d' | 'bounce' | outcome]
+const OX_SAMPLE_PLAN = [[0, ''], [2, ''], [4, ''], [8, ''], [11, ''], [5, 'reply@4'], [9, 'reply@8'], [12, 'yes@3'], [16, 'notnow@15'], [18, 'notint@6'], [20, ''], [3, 'bounce']];
+function oxSamples() {
+  const real = (DATA?.prospects || []).filter(p => p.discovery_status !== 'Not a Fit' && !p.inbound_at).slice(0, OX_SAMPLE_PLAN.length);
+  const today = new Date(); today.setHours(12, 0, 0, 0);
+  return OX_SAMPLE_PLAN.map(([age, end], i) => {
+    const p = real[i];
+    const name = p ? p.brand_name : OX_SAMPLE_BRANDS[i];
+    const person = (p && p.contact_name) || OX_SAMPLE_PEOPLE[i];
+    const h = oxHash(name), start = new Date(today); start.setDate(start.getDate() - age);
+    const e1 = h % 4, rec = { brand_id: p ? p.brand_id : 'sample-' + i, brand_name: name, contact_name: person,
+      contact_email: (p && p.contact_email) || person.split(' ')[0].toLowerCase() + '@' + name.toLowerCase().replace(/[^a-z]/g, '') + '.com',
+      sender: OX_SENDERS[i % 3 === 2 ? 1 : 0], e1, e2: h % 2, e3: OX_E3_MATCH[e1], li: true, start: oxIso(start), sample: true, events: [] };
+    const [kind, at] = end.split('@'); const stopDay = at !== undefined ? +at : kind === 'bounce' ? 0 : 99;
+    for (const [id, off, label] of OX_STEPS) {
+      if (off > age || off > stopDay) break;
+      const d = new Date(start); d.setDate(d.getDate() + off);
+      if (kind === 'bounce' && id === 'e1') { rec.events.push({ t: 'sent', step: id, at: oxIso(d) }, { t: 'bounce', at: oxIso(d) }); break; }
+      rec.events.push({ t: id.startsWith('li') ? 'li' : 'sent', step: id, at: oxIso(d), label });
+      if (!id.startsWith('li') && (h >> (off + 1)) % 3 !== 0 && off + 1 <= age) {
+        const o = new Date(d); o.setDate(o.getDate() + ((h >> off) % 2)); rec.events.push({ t: 'open', step: id, at: oxIso(o) });
+        if ((h >> (off + 3)) % 5 === 0) rec.events.push({ t: 'click', step: id, at: oxIso(o) });
+      }
+    }
+    if (at !== undefined) { const d = new Date(start); d.setDate(d.getDate() + stopDay); rec.events.push({ t: 'reply', at: oxIso(d) }); if (kind !== 'reply') rec.outcome = kind; }
+    return rec;
+  });
+}
+function oxRecords() {
+  const saved = oxLS('obx-flows', {}), outs = oxLS('obx-outcomes', {});
+  const list = oxShowSamples() ? oxSamples() : [];
+  const map = new Map(list.map(r => [r.brand_id, r]));
+  Object.values(saved).forEach(r => map.set(r.brand_id, { ...r, events: r.events || [] }));
+  return [...map.values()].map(r => outs[r.brand_id] ? { ...r, outcome: outs[r.brand_id] } : r);
+}
+function oxStatus(r) {
+  if (r.outcome) return r.outcome;
+  if (r.events.some(e => e.t === 'bounce')) return 'bounced';
+  if (r.events.some(e => e.t === 'reply')) return 'replied';
+  if (!r.events.length) return 'ready';
+  const age = (Date.now() - oxDay(r.start, 0)) / 86400000;
+  return age >= 17 ? 'finished' : 'active';
+}
+const oxStopped = r => ['replied', 'yes', 'notnow', 'notint', 'bounced', 'finished'].includes(oxStatus(r));
+function oxNext(r) {
+  if (oxStopped(r)) return null;
+  const done = new Set(r.events.filter(e => e.step).map(e => e.step));
+  const s = OX_STEPS.find(([id]) => !done.has(id) && (r.li || !id.startsWith('li')));
+  return s ? { id: s[0], label: s[2], at: oxDay(r.start, s[1]) } : null;
+}
+function oxDots(r) {
+  const done = new Set(r.events.filter(e => e.step).map(e => e.step)), nx = oxNext(r), stop = oxStopped(r);
+  return `<div class="ox-dots">${OX_STEPS.map(([id, , l]) => `<i title="${l}" class="${id.startsWith('li') ? 'li ' : ''}${done.has(id) ? 'done' : nx?.id === id ? 'next' : stop ? 'stop' : ''}"></i>`).join('')}</div>`;
+}
+function oxStepText(r) {
+  const st = oxStatus(r), nx = oxNext(r);
+  if (st === 'ready') return `Starts ${oxFmt(oxDay(r.start, 0))}`;
+  if (nx) return `Next: ${nx.label} · ${oxFmt(nx.at)}`;
+  return OX_STATUS[st][0];
+}
+const oxPill = r => { const [l, c] = OX_STATUS[oxStatus(r)]; return `<span class="pill ${c}">${l}</span>`; };
+const oxFlowChips = r => `<span class="chip">${esc(OFLOW_EMAILS.e1.variants[r.e1]?.label || '')}</span><span class="chip">${esc(OFLOW_EMAILS.e3.variants[r.e3]?.label || '')}</span>`;
+const oxLast = (r, t) => { const e = r.events.filter(x => x.t === t).sort((a, b) => b.at.localeCompare(a.at)); return e; };
+function oxTimeline(r) {
+  const lab = { sent: e => `${e.label || 'Email'} sent`, li: e => `${e.label || 'LinkedIn'} touch sent`, open: e => `Opened ${OX_STEPS.find(s => s[0] === e.step)?.[2] || 'email'}`,
+    click: () => 'Clicked a link', reply: () => 'Replied', bounce: () => 'Email bounced', yes: () => 'Said yes', notnow: () => 'Marked not now', notint: () => 'Marked not interested' };
+  const ev = [...r.events].sort((a, b) => b.at.localeCompare(a.at));
+  const nx = oxNext(r);
+  return `<ul class="ox-tl">${nx ? `<li class="next">${nx.label} scheduled<span>${oxFmt(nx.at)}</span></li>` : ''}${r.outcome ? `<li class="${r.outcome}">${lab[r.outcome]()}</li>` : ''}
+    ${ev.map(e => `<li class="${e.t}">${lab[e.t](e)}<span>${oxFmt(e.at + 'T12:00:00')}</span></li>`).join('') || '<li class="next">Nothing sent yet</li>'}</ul>`;
+}
+
+/* ── Outbound Leads page ── */
+function oxBanner() {
+  return `<b>Preview.</b> Flows you set up save in this browser, and the sends, opens and replies shown are sample data until the HubSpot sequence and sync are connected.
+    <label class="toggle"><input type="checkbox" ${oxShowSamples() ? 'checked' : ''} onchange="oxSave('obx-samples',this.checked);renderOLeads();renderProspects?.()"> Show sample activity</label>`;
+}
+function setOxSeg(k) { OX.seg = k; renderOLeads(); }
+function oxSetOutcome(id, v) {
+  const o = oxLS('obx-outcomes', {}); if (v) o[id] = v; else delete o[id]; oxSave('obx-outcomes', o);
+  if (v === 'yes') toast('Moves to the inbound flow: analysis due in 2 business days');
+  renderOLeads(); if (DATA) renderProspects();
+}
+function renderOLeads() {
+  if (!$('ox-table')) return;
+  $('ox-banner').innerHTML = oxBanner();
+  const all = oxRecords(), now = Date.now(), wk = now - 7 * 86400000, mo = new Date(); mo.setDate(1); mo.setHours(0, 0, 0, 0);
+  const started = all.filter(r => r.events.length);
+  const replied = started.filter(r => r.events.some(e => e.t === 'reply'));
+  const yes = all.filter(r => r.outcome === 'yes');
+  const newWk = started.filter(r => oxDay(r.start, 0) >= wk).length;
+  let target = 0; try { target = Math.ceil(obCalc().perWeek); } catch (e) {}
+  const needs = all.filter(r => oxStatus(r) === 'replied').length;
+  $('ox-kpis').innerHTML = `
+    <div class="kpi-card"><div class="kpi-label">New brands this week</div><div class="kpi-value">${newWk}</div><div class="kpi-sub">Target ${target} a week (Outbound Math)</div></div>
+    <div class="kpi-card"><div class="kpi-label">Reply rate</div><div class="kpi-value">${started.length ? Math.round(replied.length / started.length * 100) : 0}%</div><div class="kpi-sub">${replied.length} of ${started.length} brands replied</div></div>
+    <div class="kpi-card"><div class="kpi-label">Said yes</div><div class="kpi-value">${yes.length}</div><div class="kpi-sub">${replied.length ? Math.round(yes.length / replied.length * 100) : 0}% of replies want the analysis</div></div>
+    <div class="kpi-card"><div class="kpi-label">Needs you</div><div class="kpi-value"${needs ? ' style="color:var(--warn)"' : ''}>${needs}</div><div class="kpi-sub">Replies waiting on an answer</div></div>
+    <div class="kpi-card"><div class="kpi-label">Enrolled this month</div><div class="kpi-value">${started.filter(r => oxDay(r.start, 0) >= mo).length}</div><div class="kpi-sub">${all.filter(r => oxStatus(r) === 'ready').length} ready to enroll</div></div>`;
+  const groups = { '': all.length };
+  all.forEach(r => { const s = oxStatus(r); groups[s] = (groups[s] || 0) + 1; });
+  const segs = [['', 'All'], ['replied', 'Needs you'], ['ready', 'Ready'], ['active', 'In sequence'], ['yes', 'Yes'], ['notnow', 'Not now'], ['notint', 'Not interested'], ['finished', 'Finished'], ['bounced', 'Bounced']];
+  $('ox-seg').innerHTML = segs.filter(([k]) => !k || groups[k]).map(([k, l]) => `<button class="${OX.seg === k ? 'active' : ''}" onclick="setOxSeg('${k}')">${l}<span class="n">${groups[k] || 0}</span></button>`).join('');
+  const order = { replied: 0, ready: 1, active: 2, yes: 3, bounced: 4, notnow: 5, finished: 6, notint: 7 };
+  const rows = all.filter(r => !OX.seg || oxStatus(r) === OX.seg).sort((a, b) => order[oxStatus(a)] - order[oxStatus(b)] || b.start.localeCompare(a.start));
+  if (!rows.length) { $('ox-table').innerHTML = `<div class="empty"><strong>No outbound brands yet</strong>Open a brand on Future Prospects and click Set up outreach, or use the button above.</div>`; return; }
+  $('ox-table').innerHTML = `<table class="data-table plain"><thead><tr><th>Brand</th><th>Sender</th><th>Flow</th><th>Progress</th><th>Last sent</th><th>Opens</th><th>Replied</th><th>Status</th></tr></thead><tbody>
+    ${rows.map(r => {
+      const sent = oxLast(r, 'sent'), opens = oxLast(r, 'open'), rep = oxLast(r, 'reply'), st = oxStatus(r), id = esc(r.brand_id);
+      return `<tr class="row${OX.open === r.brand_id ? ' open' : ''}" onclick="OX.open=OX.open==='${id}'?null:'${id}';renderOLeads()">
+        <td><div class="brand-name">${esc(r.brand_name)}${r.sample ? '<span class="ox-sample">Sample</span>' : ''}</div><div class="small muted">${esc(r.contact_name)}</div></td>
+        <td class="small">${esc(r.sender)}</td>
+        <td style="max-width:200px">${oxFlowChips(r)}</td>
+        <td>${oxDots(r)}<div class="ox-step">${esc(oxStepText(r))}</div></td>
+        <td class="nowrap small">${sent[0] ? oxFmt(sent[0].at + 'T12:00:00') : '—'}</td>
+        <td class="small nowrap">${opens.length ? `${opens.length}<span class="muted"> · last ${oxFmt(opens[0].at + 'T12:00:00')}</span>` : '<span class="muted">—</span>'}</td>
+        <td class="small nowrap">${rep[0] ? oxFmt(rep[0].at + 'T12:00:00') : '<span class="muted">—</span>'}</td>
+        <td onclick="event.stopPropagation()">${oxPill(r)}${['replied', 'yes', 'notnow', 'notint'].includes(st) ? `<div><select class="ox-out" onchange="oxSetOutcome('${id}',this.value)"><option value="">${st === 'replied' ? 'Set outcome…' : 'Clear outcome'}</option>${Object.entries(OX_OUTCOMES).map(([k, l]) => `<option value="${k}"${r.outcome === k ? ' selected' : ''}>${l}</option>`).join('')}</select></div>` : ''}</td>
+      </tr>${OX.open === r.brand_id ? `<tr class="detail"><td colspan="8"><div class="ox-expand" onclick="event.stopPropagation()">
+        <div><h6>Activity</h6>${oxTimeline(r)}</div>
+        <div><h6>Flow</h6><dl class="kv"><dt>Email 1</dt><dd>${esc(OFLOW_EMAILS.e1.variants[r.e1]?.label)}</dd><dt>Email 2</dt><dd>${esc(OFLOW_EMAILS.e2.variants[r.e2]?.label)}</dd><dt>Email 3</dt><dd>${esc(OFLOW_EMAILS.e3.variants[r.e3]?.label)}</dd><dt>LinkedIn</dt><dd>${r.li ? 'Day 1 and Day 10' : 'Off'}</dd><dt>Started</dt><dd>${oxFmt(oxDay(r.start, 0))}</dd><dt>Contact</dt><dd>${esc(r.contact_email)}</dd></dl>
+        <div class="form-actions" style="justify-content:flex-start">${r.sample ? '<span class="small muted">Sample activity</span>' : `<button class="btn btn-ghost btn-sm" onclick="oxOpenSetup('${id}')">${st === 'ready' ? 'Edit flow' : 'View flow'}</button>`}</div></div>
+      </div></td></tr>` : ''}`; }).join('')}</tbody></table>`;
+}
+
+/* ── Future Prospects hooks ── */
+function oxFor(id) { return oxRecords().find(r => r.brand_id === id); }
+function oxCell(p) {
+  const r = oxFor(p.brand_id);
+  if (!r) return '<span class="muted small">Not started</span>';
+  return `${oxPill(r)}<div class="ox-step">${esc(oxStepText(r))}</div>`;
+}
+function oxDetailBlock(p) {
+  const r = oxFor(p.brand_id), id = esc(p.brand_id);
+  return `<div class="ox-block"><div class="ox-block-hd"><div class="detail-hd">Outbound outreach</div>${r ? oxPill(r) : ''}${r?.sample ? '<span class="ox-sample">Sample</span>' : ''}
+    <button class="btn ${r ? 'btn-ghost' : 'btn-primary'} btn-sm" onclick="oxOpenSetup('${id}')">${r ? (oxStatus(r) === 'ready' ? 'Edit flow' : 'View flow') : 'Set up outreach'}</button></div>
+    ${r ? `<div class="ox-expand" style="border-left:none;padding:0"><div>${oxDots(r)}<div class="ox-step" style="margin-bottom:6px">${esc(oxStepText(r))}</div>${oxTimeline(r)}</div>
+      <div><dl class="kv"><dt>Sender</dt><dd>${esc(r.sender)}</dd><dt>Flow</dt><dd>${oxFlowChips(r)}</dd><dt>Contact</dt><dd>${esc(r.contact_name)} · ${esc(r.contact_email)}</dd></dl></div></div>`
+      : '<div class="small muted">Not in an outbound flow yet. Set one up to pick the finding, angle and proof story this brand gets.</div>'}</div>`;
+}
+
+/* ── Set up outreach modal ── */
+function oxPickBrand() {
+  const list = (DATA?.prospects || []).filter(p => p.discovery_status !== 'Not a Fit' && !oxFor(p.brand_id));
+  const opts = list.slice(0, 400).map(p => `<option value="${esc(p.brand_id)}">${esc(p.brand_name)}</option>`).join('');
+  $('ox-modal-inner').innerHTML = `<div class="ox-mhd"><div><h3>Set up outreach</h3><p>Choose a brand from Future Prospects.</p></div><button class="x" onclick="closeModal('ox-modal')">×</button></div>
+    <div style="padding:20px 24px">${list.length ? `<select class="input" id="ox-pick">${opts}</select><div class="form-actions"><button class="btn btn-primary" onclick="oxOpenSetup($('ox-pick').value)">Continue</button></div>`
+      : `<div class="small muted">No prospects loaded yet. <button class="btn btn-ghost btn-sm" onclick="oxOpenSetup('preview-solace')">Try it with the sample brand</button></div>`}</div>`;
+  $('ox-modal').classList.add('open');
+}
+function oxSuggestE1(p) {
+  const az = String(p?.amazon_status || '').toLowerCase();
+  if (/absent|not on|not found/.test(az)) return 1;
+  if (+(p?.amazon_max_sellers || 0) > 1 || /sold by others|reseller/.test(az)) return 0;
+  return 2;
+}
+function oxNextBizDay() { const d = new Date(); d.setDate(d.getDate() + 1); while ([0, 6].includes(d.getDay())) d.setDate(d.getDate() + 1); return oxIso(d); }
+function oxOpenSetup(id) {
+  const p = (DATA?.prospects || []).find(x => x.brand_id === id);
+  const saved = oxLS('obx-flows', {})[id], rec = oxFor(id);
+  const name = p?.brand_name || rec?.brand_name || 'Solace Botanica';
+  const sug = oxSuggestE1(p);
+  OX.draft = saved ? JSON.parse(JSON.stringify(saved)) : {
+    brand_id: id, brand_name: name, contact_name: p?.contact_name || rec?.contact_name || '', contact_email: p?.contact_email || rec?.contact_email || '',
+    product: String(p?.hero_products || '').split(/[,;|]/)[0].trim(), sender: OX_SENDERS[0], start: oxNextBizDay(),
+    e1: sug, e2: 0, e3: OX_E3_MATCH[sug], li: true, fills: {}, events: [] };
+  OX.draft.sug = sug; OX.draft.locked = !!(rec && rec.events.length);
+  $('ox-modal').classList.add('open'); oxRenderSetup();
+}
+function oxSet(k, v) { OX.draft[k] = v; if (k === 'e1') OX.draft.e3 = OX_E3_MATCH[v]; oxRenderSetup(k); }
+function oxFill(snip, v) { OX.draft.fills[snip] = v; oxRenderPreview(); }
+const OX_FIXED = s => s === 'Dana' || s === 'Solace Botanica' || s === 'Vitamin C Serum' || /^medaltus\.com\//.test(s) || s === 'Wednesday';
+function oxResolve(s, d, raw) {
+  const first = (d.contact_name || '').trim().split(/\s+/)[0] || '[[first name]]';
+  const sub = t => t.replace(/Solace Botanica/g, d.brand_name).replace(/Vitamin C Serum/g, d.product || 'hero product').replace(/\bDana\b/g, first);
+  if (s === 'Dana') return first;
+  if (s === 'Solace Botanica') return d.brand_name;
+  if (s === 'Vitamin C Serum') return d.product || '[[hero product]]';
+  if (s === 'Wednesday') return 'two business days from their reply';
+  if (/^medaltus\.com\//.test(s)) return s;
+  return d.fills[s] ?? sub(s);
+}
+function oxTouches(d) {
+  const pick = (id, i) => OFLOW_EMAILS[id].variants[i] || OFLOW_EMAILS[id].variants[0];
+  return OX_STEPS.filter(([id]) => d.li || !id.startsWith('li')).map(([id, off, label]) => {
+    const v = id === 'e1' ? pick('e1', d.e1) : id === 'e2' ? pick('e2', d.e2) : id === 'e3' ? pick('e3', d.e3) : pick(id, 0);
+    return { id, off, label, v };
+  });
+}
+function oxSnippets(d) {
+  const set = new Map();
+  oxTouches(d).forEach(({ v }) => (v.subj + v.body).replace(/\{\{(.+?)\}\}/g, (m, s) => { if (!OX_FIXED(s) && !set.has(s)) set.set(s, true); }));
+  return [...set.keys()];
+}
+function oxRenderSetup(changed) {
+  const d = OX.draft, E = OFLOW_EMAILS, lock = d.locked ? 'disabled' : '';
+  const opts = (k, list, extra = () => '') => `<div class="ox-opts">${list.map((v, i) => `<button ${lock} class="${d[k] === i ? 'on' : ''}" onclick="oxSet('${k}',${i})">${esc(v.label)}${extra(i)}</button>`).join('')}</div>`;
+  const snips = oxSnippets(d);
+  $('ox-modal-inner').innerHTML = `<div class="ox-mhd"><div><h3>${d.locked ? 'Outreach flow' : 'Set up outreach'}: ${esc(d.brand_name)}</h3>
+      <p>${d.locked ? 'This flow is already sending, so it is read-only.' : 'Pick the flow this brand gets. Every touch on the right fills in as you choose. Green is filled from the brand; orange still needs you.'}</p></div><button class="x" onclick="closeModal('ox-modal')">×</button></div>
+    <div class="ox-mbody"><div class="ox-left">
+      <h5>Contact and sender</h5>
+      <div class="ox-two"><label>Contact name<input ${lock} class="input" value="${esc(d.contact_name)}" oninput="OX.draft.contact_name=this.value;oxRenderPreview()" onchange="oxRenderSetup()"></label>
+      <label>Email<input ${lock} class="input" value="${esc(d.contact_email)}" oninput="OX.draft.contact_email=this.value;oxRenderPreview()"></label></div>
+      <div class="ox-two"><label>Sender<select ${lock} class="input" onchange="OX.draft.sender=this.value;oxRenderPreview()">${OX_SENDERS.map(s => `<option${d.sender === s ? ' selected' : ''}>${esc(s)}</option>`).join('')}</select></label>
+      <label>Email 1 goes out<input ${lock} class="input" type="date" value="${d.start}" onchange="OX.draft.start=this.value;oxRenderPreview()"></label></div>
+      <label>Hero product<input ${lock} class="input" value="${esc(d.product)}" placeholder="e.g. Vitamin C Serum" oninput="OX.draft.product=this.value;oxRenderPreview()" onchange="oxRenderSetup()"></label>
+      <h5>Email 1: lead finding</h5>${opts('e1', E.e1.variants, i => i === d.sug ? '<em>Suggested</em>' : '')}
+      <h5>Email 2: second angle</h5>${opts('e2', E.e2.variants)}
+      <h5>Email 3: proof story</h5>${opts('e3', E.e3.variants, i => i === OX_E3_MATCH[d.e1] ? '<em>Matches</em>' : '')}
+      <h5>LinkedIn</h5><label class="toggle"><input ${lock} type="checkbox" ${d.li ? 'checked' : ''} onchange="oxSet('li',this.checked)"> Connection on Day 1 and a message on Day 10</label>
+      ${snips.length ? `<h5>Fill in the findings</h5><div class="ox-hint">Start from the scan, then make each one true and specific for ${esc(d.brand_name)}.</div>
+        <div class="ox-fill">${snips.map(s => `<label><textarea ${lock} class="input" oninput="oxFill(${esc(JSON.stringify(s))},this.value)">${esc(oxResolve(s, d))}</textarea></label>`).join('')}</div>` : ''}
+    </div><div class="ox-right" id="ox-preview"></div></div>
+    <div class="ox-mft"><span class="note">Enroll turns on once the HubSpot sequence is connected. Until then, Save keeps this flow on the dashboard.</span>
+      <button class="btn btn-ghost" onclick="closeModal('ox-modal')">${d.locked ? 'Close' : 'Cancel'}</button>
+      ${d.locked ? '' : `<button class="btn btn-ghost" onclick="oxSaveFlow()">Save flow</button><button class="btn btn-primary" disabled title="Needs the HubSpot sequence and a Sales Hub Professional seat">Enroll in HubSpot</button>`}</div>`;
+  oxRenderPreview();
+}
+function oxRenderPreview() {
+  const d = OX.draft, el = $('ox-preview'); if (!el) return;
+  const fill = (t, html) => { const r = String(t).replace(/\{\{(.+?)\}\}/g, (m, s) => `\u0001${oxResolve(s, d)}\u0002`);
+    if (!html) return r.replace(/[\u0001\u0002]/g, '');
+    return esc(r).replace(/\u0001(.*?)\u0002/gs, '<mark class="fl-m">$1</mark>').replace(/\[\[(.+?)\]\]/g, '<mark class="fl-need">$1</mark>'); };
+  const ts = oxTouches(d);
+  const from = d.sender.startsWith('Jaclyn') ? FLOW_FROM : esc(d.sender);
+  el.innerHTML = ts.map(({ id, off, label, v }) => {
+    const li = id.startsWith('li'), body = fill(v.body, true).split(/\n\s*\n/).map(x => x.trim()).filter(Boolean).map(x => `<p>${x.replace(/\n/g, '<br>')}</p>`).join('');
+    return `<div class="ox-touch"><div class="ox-touch-hd"><b>Day ${off} · ${label}</b><span>${oxFmt(oxDay(d.start, off))}</span>${ofTag(id)}</div>
+      <div class="fl-mail"><div class="fl-mail-hd"><span>From</span><b>${li ? esc(d.sender) + ' on LinkedIn' : from}</b><span>To</span><b>${esc(d.contact_name || '[[contact]]')}${li ? '' : ` &lt;${esc(d.contact_email || 'email')}&gt;`}</b><div class="subj">${fill(v.subj, true)}</div></div>
+      <div class="fl-mail-body">${body}${li ? '' : FLOW_SIG}</div></div></div>`;
+  }).join('') + `<details class="ox-hs"><summary>What gets written to the HubSpot contact</summary><table>
+    ${[['ob_flow', `${OFLOW_EMAILS.e1.variants[d.e1].label} / ${OFLOW_EMAILS.e2.variants[d.e2].label} / ${OFLOW_EMAILS.e3.variants[d.e3].label}`], ['ob_sender', d.sender], ['ob_start_date', d.start], ['ob_linkedin', d.li ? 'Yes' : 'No'],
+      ...ts.flatMap(({ id, v }) => id.startsWith('li') ? [[`ob_${id}_note`, fill(v.body).trim().slice(0, 90) + '…']] : [[`ob_${id}_subject`, fill(v.subj)], [`ob_${id}_body`, fill(v.body).trim().slice(0, 90) + '…']])]
+      .map(([k, v]) => `<tr><td>${k}</td><td>${esc(v)}</td></tr>`).join('')}</table>
+    <div class="small muted" style="margin-top:6px">The HubSpot sequence holds one step per touch, and each template is just these tokens, so every brand gets its own flow from one sequence.</div></details>`;
+}
+function oxSaveFlow() {
+  const d = OX.draft, flows = oxLS('obx-flows', {});
+  const { sug, locked, ...rec } = d; flows[d.brand_id] = { ...rec, events: [], sample: false, saved_at: new Date().toISOString() };
+  oxSave('obx-flows', flows); closeModal('ox-modal'); toast(`Flow saved for ${d.brand_name}`);
+  renderOLeads(); if (DATA) renderProspects();
+}
+
+function oxBadge() { const n = oxRecords().filter(r => oxStatus(r) === 'replied').length; if ($('nb-oleads')) $('nb-oleads').textContent = n; }
 
 /* ───────────── Outbound (planning math) ───────────── */
 const OB_DEF = { goal: 2, mOut: 25, mIn: 25, mAds: 25, mOrg: 25, senders: 2, days: 21, reply: 6, yes: 40, call: 50, prop: 50, close: 30, cycle: 3, emails: 4, cap: 50, minNew: 6, minAn: 45, minCall: 60, minProp: 90 };
